@@ -2,6 +2,8 @@ package com.example.theexplorer;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.theexplorer.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -44,4 +46,16 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.toolbar_profile){
+            Toast.makeText(this, "This button works", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else if (item.getItemId() == R.id.toolbar_search){
+            Toast.makeText(this,"This button works", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
