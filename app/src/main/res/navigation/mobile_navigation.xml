@@ -11,12 +11,6 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
-
-<!--    <fragment-->
-<!--        android:id="@+id/navigation_dashboard"-->
-<!--        android:name="com.example.theexplorer.ui.dashboard.DashboardFragment"-->
-<!--        android:label="@string/title_dashboard"-->
-<!--        tools:layout="@layout/fragment_dashboard" />-->
     <fragment
         android:id="@+id/navigation_scan"
         android:name="com.example.theexplorer.ui.scan.ScanFragment"
@@ -28,4 +22,7 @@
         android:name="com.example.theexplorer.ui.map.MapFragment"
         android:label="@string/title_map"
         tools:layout="@layout/fragment_map" />
+    <fragment
+        android:id="@+id/navigation_profile"
+        />
 </navigation>
