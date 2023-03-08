@@ -8,8 +8,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/toolbar_profile"
-        android:orderInCategory="300"
-        android:title="User"
+        android:title="Profile"
         android:icon="@drawable/ic_account_circle_24dp"
         app:showAsAction="always" />
 </menu>
