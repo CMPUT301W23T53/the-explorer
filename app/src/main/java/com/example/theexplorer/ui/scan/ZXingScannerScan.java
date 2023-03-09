@@ -37,7 +37,7 @@ public class ZXingScannerScan extends AppCompatActivity {
         scan = findViewById(R.id.scan_button);
         preview = findViewById(R.id.image_preview);
 
-        //crateing a testing bit map it can be used when no result is returned
+        //creating a testing bit map it can be used when no result is returned
         Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawColor(Color.GRAY);
@@ -99,7 +99,7 @@ public class ZXingScannerScan extends AppCompatActivity {
     }
 
 
-    //a class to conver bit map
+    //a class to convert bit map
     private Bitmap encodeAsBitmap(String contents) {
         Bitmap bitmap = null;
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
