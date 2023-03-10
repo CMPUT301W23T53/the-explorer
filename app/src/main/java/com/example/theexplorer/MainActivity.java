@@ -1,15 +1,11 @@
 package com.example.theexplorer;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.example.theexplorer.ui.scan.ZXingScannerScan;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -37,12 +33,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(MainActivity.this,new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            },100);
-        }
     }
 
 }
