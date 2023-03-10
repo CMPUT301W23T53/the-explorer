@@ -58,5 +58,14 @@
         android:layout_below="@+id/address_button"
         android:text="Score=" />
 
+    <ImageView
+        android:id="@+id/imageView_photo"
+        android:layout_width="400dp"
+        android:layout_height="300dp"
+        android:layout_below="@+id/score"
+        android:layout_centerHorizontal="true"
+         />
+
+
 
 </RelativeLayout>
