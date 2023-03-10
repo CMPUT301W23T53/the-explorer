@@ -1,5 +1,6 @@
 package com.example.theexplorer.ui.scan;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -7,6 +8,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,8 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.theexplorer.MainActivity;
 import com.example.theexplorer.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
@@ -24,10 +31,15 @@ import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.MultiFormatWriter;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.util.Locale;
 
-public class ZXingScannerScan extends AppCompatActivity {
+
+public class ZXingScannerScan extends AppCompatActivity implements LocationListener {
     private Button scan;
     private ImageView preview;
+    private Button LocationButton;
+    private TextView AddressText;
+    private LocationManager locationManager;
 
 
     @Override
@@ -37,7 +49,10 @@ public class ZXingScannerScan extends AppCompatActivity {
         scan = findViewById(R.id.scan_button);
         preview = findViewById(R.id.image_preview);
 
-        //crateing a testing bit map it can be used when no result is returned
+        AddressText= findViewById(R.id.addressText);
+        LocationButton = findViewById(R.id.locationButton);
+
+        //creating a testing bit map it can be used when no result is returned
         Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawColor(Color.GRAY);
@@ -68,6 +83,14 @@ public class ZXingScannerScan extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ZXingScannerScan.this, ZXingScannerScan.class);
                 startActivity(intent);
+            }
+        });
+
+        LocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //create method
+                getLocation();
             }
         });
     }
@@ -111,6 +134,29 @@ public class ZXingScannerScan extends AppCompatActivity {
             e.printStackTrace();
         }
         return bitmap;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getLocation() {
+        try {
+            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,5, ZXingScannerScan.this);
+        }catch (Exception e){
+            e.printStackTrace();
+        }}
+
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        Toast.makeText(this, ""+location.getLatitude()+","+location.getLongitude(), Toast.LENGTH_SHORT).show();
+        try {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            AddressText.setText("Latitude: "+ latitude + "\n" + "Longitude: "+ longitude);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
