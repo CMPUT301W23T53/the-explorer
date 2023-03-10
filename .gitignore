@@ -83,3 +83,7 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+local.properties
+.idea/misc.xml
+.idea/misc.xml
+local.properties
