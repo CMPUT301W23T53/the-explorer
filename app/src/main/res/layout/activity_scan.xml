@@ -50,4 +50,13 @@
         android:layout_toEndOf="@+id/address_text_view"
         android:text="Locate" />
 
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/address_button"
+        android:text="Score=" />
+
+
 </RelativeLayout>

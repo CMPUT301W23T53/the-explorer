@@ -44,6 +44,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     Button LocationButton;
     TextView AddressText;
     LocationManager locationManager;
+    private TextView score;
 
 
     @Override
@@ -52,6 +53,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         setContentView(R.layout.activity_scan);
         scan = findViewById(R.id.scan_button);
         preview = findViewById(R.id.image_preview);
+        score = findViewById(R.id.score);
         //get address
         AddressText= findViewById(R.id.address_text_view);
         LocationButton = findViewById(R.id.address_button);
@@ -110,6 +112,19 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 Toast.makeText(this, "no result", Toast.LENGTH_SHORT).show();
             } else { //on success
                 Toast.makeText(this, "Scan result：" + result.getContents(), Toast.LENGTH_SHORT).show();
+                score.setText(result.getContents());
+                //calculate the score
+                String content = result.getContents();
+                int theScore=0;
+                for (char c : content.toCharArray()){
+                    //place to implement scoring strat
+                    //strat now: each & is 1 each = will have 1 and each / will have 1
+                    if(c == '&' || c == '=' || c == '/'){
+                        theScore++;
+                    }
+                }
+                score.setText("Score = " + Integer.toString(theScore));
+
                 //getting the bitmap
                 Bitmap bitmap = encodeAsBitmap(result.getContents()); //result -> bitmap
                 if (bitmap != null) {
