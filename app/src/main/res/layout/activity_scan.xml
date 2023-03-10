@@ -32,22 +32,4 @@
         android:layout_marginTop="16dp"
         android:text="Scan Again"/>
 
-    <TextView
-        android:id="@+id/addressText"
-        android:layout_width="224dp"
-        android:layout_height="71dp"
-        android:layout_below="@+id/scan_button"
-        android:layout_marginTop="34dp"
-        android:text="User location" />
-
-    <Button
-        android:id="@+id/locationButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/scan_button"
-        android:layout_marginStart="73dp"
-        android:layout_marginTop="52dp"
-        android:layout_toEndOf="@+id/addressText"
-        android:text="Locate" />
-
 </RelativeLayout>
