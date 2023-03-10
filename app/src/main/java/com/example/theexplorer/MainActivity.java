@@ -1,10 +1,6 @@
 package com.example.theexplorer;
 
 import android.os.Bundle;
-import android.util.Log;
-
-import com.example.theexplorer.services.RestService;
-import com.example.theexplorer.services.User;
 import com.example.theexplorer.services.UserService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -15,16 +11,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.theexplorer.databinding.ActivityMainBinding;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-
     }
 
 }

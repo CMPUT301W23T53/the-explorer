@@ -4,7 +4,7 @@ import java.util.List;
 
 public class User {
     private int userId;
-    private List<Integer> QRList;
+    private List<QRCode> QRList;
 
     public int getUserId() {
         return userId;
@@ -14,11 +14,11 @@ public class User {
         this.userId = userId;
     }
 
-    public List<Integer> getQRList() {
+    public List<QRCode> getQRList() {
         return QRList;
     }
 
-    public void setQRList(List<Integer> QRList) {
+    public void setQRList(List<QRCode> QRList) {
         this.QRList = QRList;
     }
 

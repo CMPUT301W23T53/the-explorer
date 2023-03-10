@@ -12,5 +12,5 @@ public interface RestService {
     Call<User> getUser(@Query("userId") int userId);
 
     @PUT("the-explorerr")
-    Call<User> putUser(@Query("userId") int userId, @Body User updatedUser);
+    Call<User> putUser(@Body User updatedUser);
 }

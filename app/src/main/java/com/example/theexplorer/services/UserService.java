@@ -47,9 +47,9 @@ public class UserService {
         });
     }
 
-    public User putUser(int userId, User updatedUser) {
+    public User putUser(User updatedUser) {
         UserService userService = new UserService();
-        CompletableFuture<User> userFuture = userService.putUserAsync(userId, updatedUser);
+        CompletableFuture<User> userFuture = userService.putUserAsync(updatedUser);
         User user = null;
         try {
             user = userFuture.get();
@@ -59,10 +59,10 @@ public class UserService {
         return user;
     }
 
-    private CompletableFuture<User> putUserAsync(int userId, User updatedUser) {
+    private CompletableFuture<User> putUserAsync(User updatedUser) {
         Log.d("PUT", "");
         return CompletableFuture.supplyAsync(() -> {
-            Call<User> call = restService.putUser(userId, updatedUser);
+            Call<User> call = restService.putUser(updatedUser);
             try {
                 Response<User> response = call.execute();
                 if (response.isSuccessful()) {
