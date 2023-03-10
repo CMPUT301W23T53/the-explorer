@@ -59,6 +59,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             @Override
             public void onClick(View v) {
                 //create method
+                AddressText.setText("Getting the location");
                 getLocation();
             }
         });
