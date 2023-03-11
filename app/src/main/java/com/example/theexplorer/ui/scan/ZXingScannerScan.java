@@ -39,6 +39,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.MultiFormatWriter;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,6 +51,8 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     TextView AddressText;
     LocationManager locationManager;
     private TextView score;
+
+    private QRCode qrCode = new QRCode();
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -141,13 +144,13 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         Button add;
         add = findViewById(R.id.add_button);
         User user = userService.getUser(1);
-        user.setUserId(1);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 List<QRCode> qrCodeList = user.getQRList();
-                qrCodeList.get(0).setQRScore(1000);
+//                qrCodeList.add(qrCode);
                 userService.putUser(user);
+
                 Intent intent = new Intent(ZXingScannerScan.this, MainActivity.class);
                 startActivity(intent);
             }
@@ -156,15 +159,23 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
     }
 
+
     //handle the scan result
     //may work here to get the hash
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+//        qrCode.setQRId((int) (Math.random() * 1000));
+
         //deal with picture taking
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap bitmap = (Bitmap) extras.get("data");
+
+            byte[] byteArray = bitmapToByteArray(bitmap);
+//            qrCode.setPhotoBytes(byteArray);
+
             ImageView imageView = findViewById(R.id.imageView_photo);
             imageView.setImageBitmap(bitmap);
         }
@@ -188,6 +199,8 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 }
                 score.setText("Score = " + Integer.toString(theScore));
 
+//                qrCode.setQRScore(theScore);
+
                 //getting the bitmap
                 Bitmap bitmap = encodeAsBitmap(result.getContents()); //result -> bitmap
                 if (bitmap != null) {
@@ -204,6 +217,13 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         }
 
 
+    }
+
+
+    public static byte[] bitmapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        return stream.toByteArray();
     }
 
 
