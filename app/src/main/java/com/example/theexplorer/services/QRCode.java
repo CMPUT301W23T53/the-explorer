@@ -1,12 +1,14 @@
 package com.example.theexplorer.services;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class QRCode {
 
     private int QRId;
     private byte[] photoBytes;
     private int QRScore;
+    private String QRName;
 
     public int getQRId() {
         return QRId;
@@ -36,8 +38,9 @@ public class QRCode {
     public String toString() {
         return "QRCode{" +
                 "QRId=" + QRId +
-                ", photoBytes=" + photoBytes +
+                ", photoBytes=" + Arrays.toString(photoBytes) +
                 ", QRScore=" + QRScore +
+                ", QRName='" + QRName + '\'' +
                 '}';
     }
 }
