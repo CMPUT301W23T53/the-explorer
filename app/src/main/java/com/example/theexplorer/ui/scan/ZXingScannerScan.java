@@ -15,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -44,6 +45,10 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     Button LocationButton;
     TextView AddressText;
     LocationManager locationManager;
+    private TextView score;
+
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+
 
 
     @Override
@@ -52,6 +57,8 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         setContentView(R.layout.activity_scan);
         scan = findViewById(R.id.scan_button);
         preview = findViewById(R.id.image_preview);
+        score = findViewById(R.id.score);
+        ImageView photoTaking = findViewById(R.id.imageView_photo);
         //get address
         AddressText= findViewById(R.id.address_text_view);
         LocationButton = findViewById(R.id.address_button);
@@ -77,6 +84,18 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
         preview.setImageBitmap(bitmap);
 
+        //creatig a defalt image view
+        Bitmap bitmap1 = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888);
+        Canvas canvas1 = new Canvas(bitmap1);
+        canvas1.drawColor(Color.GRAY);
+        Paint paint1 = new Paint();
+        paint1.setColor(Color.WHITE);
+        paint1.setTextSize(30);
+        paint1.setTextAlign(Paint.Align.CENTER);
+        canvas1.drawText("Take a picture", canvas1.getWidth() / 2f, canvas1.getHeight() / 2f, paint);
+        ImageView imageView = findViewById(R.id.imageView_photo);
+        imageView.setImageBitmap(bitmap1);
+
 
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -98,23 +117,62 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 startActivity(intent);
             }
         });
+
+        photoTaking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                }
+                else{
+                    //prumpt camera not found
+                }
+
+
+            }
+        });
     }
 
     //handle the scan result
     //may work here to get the hash
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //deal with picture taking
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            ImageView imageView = findViewById(R.id.imageView_photo);
+            imageView.setImageBitmap(bitmap);
+        }
+        //deal with qr
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) { //scan fail
                 Toast.makeText(this, "no result", Toast.LENGTH_SHORT).show();
             } else { //on success
                 Toast.makeText(this, "Scan result：" + result.getContents(), Toast.LENGTH_SHORT).show();
+                score.setText(result.getContents());
+                //calculate the score
+                String content = result.getContents();
+                int theScore=0;
+                for (char c : content.toCharArray()){
+                    //place to implement scoring strat
+                    //strat now: each & is 1 each = will have 1 and each / will have 1
+                    if(c == '&' || c == '=' || c == '/'){
+                        theScore++;
+                    }
+                }
+                score.setText("Score = " + Integer.toString(theScore));
+
                 //getting the bitmap
                 Bitmap bitmap = encodeAsBitmap(result.getContents()); //result -> bitmap
                 if (bitmap != null) {
                     preview.setImageBitmap(bitmap); //show in the image view for result preview
                 }
+
+
 
 
 
@@ -164,5 +222,9 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             e.printStackTrace();
         }
     }
+
+
+
+
 
 }
