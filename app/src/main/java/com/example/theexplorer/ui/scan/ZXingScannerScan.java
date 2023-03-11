@@ -29,6 +29,9 @@ import androidx.core.content.ContextCompat;
 
 import com.example.theexplorer.MainActivity;
 import com.example.theexplorer.R;
+import com.example.theexplorer.services.QRCode;
+import com.example.theexplorer.services.User;
+import com.example.theexplorer.services.UserService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -36,6 +39,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.MultiFormatWriter;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.util.List;
 import java.util.Locale;
 
 
@@ -48,7 +52,6 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     private TextView score;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-
 
 
     @Override
@@ -132,6 +135,25 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
             }
         });
+
+        // add qr to user
+        UserService userService = new UserService();
+        Button add;
+        add = findViewById(R.id.add_button);
+        User user = userService.getUser(1);
+        user.setUserId(1);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<QRCode> qrCodeList = user.getQRList();
+                qrCodeList.get(0).setQRScore(1000);
+                userService.putUser(user);
+                Intent intent = new Intent(ZXingScannerScan.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     //handle the scan result
