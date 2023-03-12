@@ -19,10 +19,10 @@ public class UserService {
                 .addConverterFactory(GsonConverterFactory.create())
             .build();
     private final RestService restService = retrofit.create(RestService.class);
+    private final int RADIUS_NEARBY_QR = 300;
 
     public User getUser(int userId) {
-        UserService userService = new UserService();
-        CompletableFuture<User> userFuture = userService.getUserAsync(userId);
+        CompletableFuture<User> userFuture = this.getUserAsync(userId);
         User user = null;
         try {
             user = userFuture.get();
@@ -49,8 +49,7 @@ public class UserService {
     }
 
     public User putUser(User updatedUser) {
-        UserService userService = new UserService();
-        CompletableFuture<User> userFuture = userService.putUserAsync(updatedUser);
+        CompletableFuture<User> userFuture = this.putUserAsync(updatedUser);
         User user = null;
         try {
             user = userFuture.get();
@@ -78,31 +77,31 @@ public class UserService {
         });
     }
 
-    public List<QRCode> getQRCodesOfUser(int userId) {
-        User user = getUser(userId);
-        return user.getQRList();
+    public List<QRCode> getNearbyQRCodes(double latitude, double longitude) {
+        CompletableFuture<List<QRCode>> nearbyQRCodesFuture = this.getNearbyQRCodeAsync(latitude, longitude);
+        List<QRCode> nearbyQRCodes = null;
+        try {
+            nearbyQRCodes = nearbyQRCodesFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        return nearbyQRCodes;
     }
 
-    public int getHighestAndLowestQRScore(int userId) {
-        User user = getUser(userId);
-        int maxScore = 0;
-        for (QRCode qrCode: user.getQRList()) {
-            if (qrCode.getQRScore() > maxScore) {
-                maxScore = qrCode.getQRScore();
+    private CompletableFuture<List<QRCode>> getNearbyQRCodeAsync(double latitude, double longitude) {
+        return CompletableFuture.supplyAsync(() -> {
+            Call<List<QRCode>> call = restService.getNearbyQRCodes(latitude, longitude, RADIUS_NEARBY_QR);
+            try {
+                Response<List<QRCode>> response = call.execute();
+                if (response.isSuccessful()) {
+                    return response.body();
+                } else {
+                    throw new RuntimeException("Failed to get user");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        }
-        return maxScore;
-    }
-
-    public int getLowestQRScore(int userId) {
-        User user = getUser(userId);
-        int minScore = Integer.MAX_VALUE;
-        for (QRCode qrCode: user.getQRList()) {
-            if (qrCode.getQRScore() < minScore) {
-                minScore = qrCode.getQRScore();
-            }
-        }
-        return minScore;
+        });
     }
 
 }
