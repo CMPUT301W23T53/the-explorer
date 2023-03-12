@@ -3,6 +3,7 @@ package com.example.theexplorer.services;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -76,4 +77,32 @@ public class UserService {
             }
         });
     }
+
+    public List<QRCode> getQRCodesOfUser(int userId) {
+        User user = getUser(userId);
+        return user.getQRList();
+    }
+
+    public int getHighestAndLowestQRScore(int userId) {
+        User user = getUser(userId);
+        int maxScore = 0;
+        for (QRCode qrCode: user.getQRList()) {
+            if (qrCode.getQRScore() > maxScore) {
+                maxScore = qrCode.getQRScore();
+            }
+        }
+        return maxScore;
+    }
+
+    public int getLowestQRScore(int userId) {
+        User user = getUser(userId);
+        int minScore = Integer.MAX_VALUE;
+        for (QRCode qrCode: user.getQRList()) {
+            if (qrCode.getQRScore() < minScore) {
+                minScore = qrCode.getQRScore();
+            }
+        }
+        return minScore;
+    }
+
 }
