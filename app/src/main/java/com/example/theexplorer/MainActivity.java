@@ -16,6 +16,7 @@ import com.example.theexplorer.services.UserService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.Toolbar;
@@ -81,6 +82,13 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.toolbar_searchView);
+
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint("Find users");
+        searchView.setIconified(false);
+
         return true;
     }
 
@@ -90,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             switchFragment(new ProfileFragment(),"Profile");
             return true;
         }
-        else if (item.getItemId() == R.id.toolbar_search) {
+        else if (item.getItemId() == R.id.toolbar_searchView) {
             Toast.makeText(this, "This button works", Toast.LENGTH_SHORT).show();
             return true;
         }

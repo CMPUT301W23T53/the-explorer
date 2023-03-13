@@ -17,5 +17,7 @@
     <style name="Theme.Toolbar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
         <!-- color used by navigation icon and overflow icon -->
         <item name="colorOnPrimary">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorHint">#EEEEEE</item>
     </style>
 </resources>
