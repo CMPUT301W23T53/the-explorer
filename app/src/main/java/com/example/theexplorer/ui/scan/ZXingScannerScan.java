@@ -44,7 +44,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Locale;
 
-
 public class ZXingScannerScan extends AppCompatActivity implements LocationListener {
     private Button scan;
     private ImageView preview;
@@ -282,6 +281,9 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             e.printStackTrace();
         }
     }
+
+    
+
 
 
 
