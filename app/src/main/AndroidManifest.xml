@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.theexplorer.ui.scan.ZXingScannerScan" />
+        <activity android:name="com.example.theexplorer.ui.home.ScoresFragment" />
 
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
