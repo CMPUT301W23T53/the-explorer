@@ -46,20 +46,7 @@ import java.util.Locale;
  * This activity allows users to scan QR codes and capture images with the camera, and display the results
  * on the screen. It also allows users to get their current location and display it on the screen.
  *
- * <p>This activity uses the following components:</p>
- * <ul>
- *   <li>{@link IntentIntegrator} to scan QR codes using the device camera</li>
- *   <li>{@link MediaStore} to capture images using the device camera</li>
- *   <li>{@link Geocoder} to get the user's current location</li>
- * </ul>
  *
- * <p>Users can also view their scan history and scores on this activity.</p>
- *
- * <p>This activity requires the following permissions:</p>
- * <ul>
- *   <li>{@link Manifest.permission#CAMERA} to access the device camera</li>
- *   <li>{@link Manifest.permission#ACCESS_FINE_LOCATION} to access the user's current location</li>
- * </ul>
  */
 public class ZXingScannerScan extends AppCompatActivity implements LocationListener {
     private Button scan;
@@ -72,6 +59,15 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
 
+    /**
+     * This method is called when the activity is created, and is responsible for setting up the UI elements
+     * and initializing the scanning and image capture functionalities. It also allows the user to add a QR code
+     * to their profile and update their score.
+     * @param savedInstanceState
+     *
+     *
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,6 +170,13 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
     }
 
+    /**
+     * This handle the result of scanning, as well as taking pictures.
+     * Store then into the database
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     //handle the scan result
     //may work here to get the hash
     @Override
@@ -225,7 +228,13 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     }
 
 
-    //a class to convert bit map
+
+
+    /**
+     * a method to convert bit map
+     * @param contents
+     * @return
+     */
     private Bitmap encodeAsBitmap(String contents) {
         Bitmap bitmap = null;
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
@@ -239,7 +248,9 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         return bitmap;
     }
 
-    //get location
+    /**
+     * a method to get location
+     */
     @SuppressLint("MissingPermission")
     private void getLocation() {
         try {
@@ -250,6 +261,10 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         }}
 
 
+    /**
+     * this handle when the location are changed
+     * @param location
+     */
     @Override
     public void onLocationChanged(@NonNull Location location) {
         Toast.makeText(this, ""+location.getLatitude()+","+location.getLongitude(), Toast.LENGTH_SHORT).show();
