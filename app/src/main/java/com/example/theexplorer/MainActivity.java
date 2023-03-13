@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.theexplorer.ui.home.HomeFragment;
 import com.example.theexplorer.ui.map.MapFragment;
+import com.example.theexplorer.ui.profile.ProfileFragment;
 import com.example.theexplorer.ui.scan.ZXingScannerScan;
 import com.example.theexplorer.services.UserService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -27,6 +28,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.theexplorer.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         navView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_home) {
-                switchFragment(R.layout.fragment_home);
+                switchFragment(new HomeFragment());
                 return true;
             }
             else if (item.getItemId() == R.id.navigation_scan)
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             else if (item.getItemId() == R.id.navigation_map) {
-                switchFragment(R.layout.fragment_map);
+                switchFragment(new MapFragment());
                 return true;
             }
             return false;
@@ -88,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.toolbar_profile) {
-            switchFragment(R.layout.fragment_profile);
+            switchFragment(new ProfileFragment());
+            return true;
         }
         else if (item.getItemId() == R.id.toolbar_search) {
             Toast.makeText(this, "This button works", Toast.LENGTH_SHORT).show();
@@ -97,11 +101,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void switchFragment(int fragmentID) {
+    public void switchFragment(Fragment fragment) {
         Fragment navHost = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         int currentFragment = navHost.getChildFragmentManager().getFragments().get(0).getId();
-        Fragment toSwitch = new Fragment(fragmentID);
-        navHost.getChildFragmentManager().beginTransaction().replace(currentFragment,toSwitch).commit();
+        navHost
+                .getChildFragmentManager()
+                .beginTransaction()
+                .replace(currentFragment,fragment)
+                .commit();
     }
 
 }
