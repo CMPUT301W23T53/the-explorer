@@ -241,15 +241,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         }
     }
 
-
-    public static int[] getBitmapDimensions(Bitmap bitmap) {
-        int[] dimensions = new int[2];
-
-        dimensions[0] = bitmap.getWidth();
-        dimensions[1] = bitmap.getHeight();
-
-        return dimensions;
-    }
+    
 
 
 
