@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/button_show_highest"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="Show Highest Score"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/highest_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.608"
+        app:layout_constraintStart_toEndOf="@+id/button_show_highest"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_show_lowest"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="Show Lowest Score"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_show_highest" />
+
+    <TextView
+        android:id="@+id/lowest_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.608"
+        app:layout_constraintStart_toEndOf="@+id/button_show_lowest"
+        app:layout_constraintTop_toBottomOf="@+id/highest_score" />
+
+    <Button
+        android:id="@+id/button_show_total"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="Show Total Scanned"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_show_lowest" />
+
+    <TextView
+        android:id="@+id/total_scanned"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.608"
+        app:layout_constraintStart_toEndOf="@+id/button_show_total"
+        app:layout_constraintTop_toBottomOf="@+id/lowest_score" />
+
+    <Button
+        android:id="@+id/button_sum"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="Score Sum"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_show_total" />
+
+    <TextView
+        android:id="@+id/score_sum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.607"
+        app:layout_constraintStart_toEndOf="@+id/button_sum"
+        app:layout_constraintTop_toBottomOf="@+id/total_scanned" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

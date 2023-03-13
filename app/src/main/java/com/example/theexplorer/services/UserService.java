@@ -1,3 +1,10 @@
+/**
+
+ UserService class provides methods for interacting with the user REST API and QRCode REST API.
+ It contains methods for getting a user, updating a user, and getting nearby QR codes.
+ Uses Retrofit and CompletableFuture for async operations.
+ */
+
 package com.example.theexplorer.services;
 
 import android.util.Log;
@@ -18,9 +25,26 @@ public class UserService {
             .baseUrl("https://d6392oa4v7.execute-api.us-east-2.amazonaws.com/default/")
                 .addConverterFactory(GsonConverterFactory.create())
             .build();
-    private final RestService restService = retrofit.create(RestService.class);
+    private RestService restService = retrofit.create(RestService.class);
     private final int RADIUS_NEARBY_QR = 300;
 
+    /**
+     * Creates a new UserService object with the given RestService object.
+     * @param restService the RestService object used to make REST API calls
+     */
+    public UserService(RestService restService) {
+        this.restService = restService;
+    }
+
+    public UserService() {
+    }
+
+    /**
+     * Gets a user with the given userId.
+     * @param userId the id of the user to get
+     * @return the User object with the given userId
+     * @throws RuntimeException if there is an error executing the REST API call
+     */
     public User getUser(int userId) {
         CompletableFuture<User> userFuture = this.getUserAsync(userId);
         User user = null;
@@ -48,6 +72,12 @@ public class UserService {
         });
     }
 
+    /**
+     * Updates a user with the given updatedUser object.
+     * @param updatedUser the updated User object
+     * @return the updated User object
+     * @throws RuntimeException if there is an error executing the REST API call
+     */
     public User putUser(User updatedUser) {
         CompletableFuture<User> userFuture = this.putUserAsync(updatedUser);
         User user = null;
@@ -60,13 +90,11 @@ public class UserService {
     }
 
     private CompletableFuture<User> putUserAsync(User updatedUser) {
-        Log.d("PUT", "");
         return CompletableFuture.supplyAsync(() -> {
             Call<User> call = restService.putUser(updatedUser);
             try {
                 Response<User> response = call.execute();
                 if (response.isSuccessful()) {
-                    Log.d("UPDATED ", response.body().toString());
                     return response.body();
                 } else {
                     throw new RuntimeException("Failed to get user");
@@ -77,6 +105,13 @@ public class UserService {
         });
     }
 
+    /**
+     * Gets nearby QR codes for the given latitude and longitude.
+     * @param latitude the latitude of the user's current location
+     * @param longitude the longitude of the user's current location
+     * @return a List of QRCode objects that are within the RADIUS_NEARBY_QR
+     * @throws RuntimeException if there is an error executing the REST API call
+    */
     public List<QRCode> getNearbyQRCodes(double latitude, double longitude) {
         CompletableFuture<List<QRCode>> nearbyQRCodesFuture = this.getNearbyQRCodeAsync(latitude, longitude);
         List<QRCode> nearbyQRCodes = null;

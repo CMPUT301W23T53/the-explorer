@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TheExplorer"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBi_kDNxri_lrm51Z9Xkq-53zN2mPpxYRU"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -24,6 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.theexplorer.ui.scan.ZXingScannerScan" />
+        <activity android:name="com.example.theexplorer.ui.home.ScoresFragment" />
 
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
