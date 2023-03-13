@@ -15,7 +15,6 @@ import com.example.theexplorer.ui.scan.ZXingScannerScan;
 import com.example.theexplorer.services.UserService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -27,9 +26,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.theexplorer.databinding.ActivityMainBinding;
-import com.google.android.material.navigation.NavigationBarView;
-
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -101,6 +97,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     * Switches the fragment from the current one shown by the navigation controller.
+     * @param fragment - A Fragment object
+     * @param title - The title to be shown on the action bar
+     */
     public void switchFragment(Fragment fragment, String title) {
         Fragment navHost = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         int currentFragment = navHost.getChildFragmentManager().getFragments().get(0).getId();
