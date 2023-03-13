@@ -1,5 +1,7 @@
 package com.example.theexplorer.services;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -13,4 +15,8 @@ public interface RestService {
 
     @PUT("the-explorerr")
     Call<User> putUser(@Body User updatedUser);
+
+    @GET("the-explorer-qr")
+    Call<List<QRCode>> getNearbyQRCodes(@Query("latitude") double latitude, @Query("longitude") double longitude, @Query("radius") int radius);
+
 }
