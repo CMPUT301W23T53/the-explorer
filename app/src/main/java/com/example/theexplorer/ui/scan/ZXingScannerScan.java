@@ -148,7 +148,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             @Override
             public void onClick(View view) {
                 List<QRCode> qrCodeList = user.getQRList();
-//                qrCodeList.add(qrCode);
+                qrCodeList.add(qrCode);
                 userService.putUser(user);
 
                 Intent intent = new Intent(ZXingScannerScan.this, MainActivity.class);
@@ -165,7 +165,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-//        qrCode.setQRId((int) (Math.random() * 1000));
+        qrCode.setQRId((int) (Math.random() * 1000));
 
         //deal with picture taking
         super.onActivityResult(requestCode, resultCode, data);
@@ -174,7 +174,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             Bitmap bitmap = (Bitmap) extras.get("data");
 
             byte[] byteArray = bitmapToByteArray(bitmap);
-//            qrCode.setPhotoBytes(byteArray);
+            qrCode.setPhotoBytes(byteArray);
 
             ImageView imageView = findViewById(R.id.imageView_photo);
             imageView.setImageBitmap(bitmap);
@@ -199,7 +199,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 }
                 score.setText("Score = " + Integer.toString(theScore));
 
-//                qrCode.setQRScore(theScore);
+                qrCode.setQRScore(theScore);
 
                 //getting the bitmap
                 Bitmap bitmap = encodeAsBitmap(result.getContents()); //result -> bitmap
