@@ -244,8 +244,11 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 //        return stream.toByteArray();
 //    }
 
-
-    //a class to convert bit map
+    /**
+     * a class to convert bit map
+     * @param contents
+     * @return
+     */
     private Bitmap encodeAsBitmap(String contents) {
         Bitmap bitmap = null;
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
