@@ -31,21 +31,18 @@ import java.util.Locale;
 
 /**
  * Get the user's current location and show it on the Map. And it also show the nearby QRCode location on the map.
- * <p>
  * This method won't returns anything. When showing this fragment it will get the users' current location
  * and show it with nearby location an the map.
- * @return      null
- * @see         Map
  */
 public class MapFragment extends Fragment implements LocationListener {
 
     private FragmentMapBinding binding;
     private GoogleMap mMap;
-    FusedLocationProviderClient fusedLocationProviderClient;
-    LocationManager locationManager;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationManager locationManager;
 
     View mView;
-    MapView mMapView;
+    private MapView mMapView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
