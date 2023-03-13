@@ -9,6 +9,32 @@ public class QRCode {
     private byte[] photoBytes;
     private int QRScore;
     private String QRName;
+    private double latitude;
+    private double longitude;
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getQRName() {
+        return QRName;
+    }
+
+    public void setQRName(String QRName) {
+        this.QRName = QRName;
+    }
 
     public int getQRId() {
         return QRId;
@@ -41,6 +67,8 @@ public class QRCode {
                 ", photoBytes=" + Arrays.toString(photoBytes) +
                 ", QRScore=" + QRScore +
                 ", QRName='" + QRName + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 '}';
     }
 }
