@@ -44,6 +44,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Locale;
 
+
 public class ZXingScannerScan extends AppCompatActivity implements LocationListener {
     private Button scan;
     private ImageView preview;
@@ -57,6 +58,12 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
 
+    /**
+     * create the UI
+     * set buttons for use
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,8 +169,15 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     }
 
 
-    //handle the scan result
-    //may work here to get the hash
+    /**
+     * handle results
+     * handle result of scanning
+     * handle result of taking picture
+     * interact with database
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -281,9 +295,6 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             e.printStackTrace();
         }
     }
-
-    
-
 
 
 
