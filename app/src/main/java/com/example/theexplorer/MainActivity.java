@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         navView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_home) {
-                switchFragment(new HomeFragment());
+                switchFragment(new HomeFragment(),"Home");
                 return true;
             }
             else if (item.getItemId() == R.id.navigation_scan)
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             else if (item.getItemId() == R.id.navigation_map) {
-                switchFragment(new MapFragment());
+                switchFragment(new MapFragment(),"Map");
                 return true;
             }
             return false;
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.toolbar_profile) {
-            switchFragment(new ProfileFragment());
+            switchFragment(new ProfileFragment(),"Profile");
             return true;
         }
         else if (item.getItemId() == R.id.toolbar_search) {
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void switchFragment(Fragment fragment) {
+    public void switchFragment(Fragment fragment, String title) {
         Fragment navHost = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         int currentFragment = navHost.getChildFragmentManager().getFragments().get(0).getId();
         navHost
@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(currentFragment,fragment)
                 .commit();
+        getSupportActionBar().setTitle(title);
     }
 
 }
