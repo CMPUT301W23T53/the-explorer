@@ -59,27 +59,22 @@ public class MainActivity extends AppCompatActivity {
             }, 100);
         }
 
-        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment navHost = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
-                int currentFragment = navHost.getChildFragmentManager().getFragments().get(0).getId();
-
-                if (item.getItemId() == R.id.navigation_home) {
-                    switchFragment(R.id.navigation_home);
-                    return true;
-                }
-                else if (item.getItemId() == R.id.navigation_scan)
-                {
-                    Intent toGo = new Intent(MainActivity.this, ZXingScannerScan.class);
-                    startActivity(toGo);
-                    return true;}
-                else if (item.getItemId() == R.id.navigation_map) {
-                    switchFragment(R.id.navigation_map);
-                    return true;
-                }
-                return false;
+        navView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.navigation_home) {
+                switchFragment(R.id.navigation_home);
+                return true;
             }
+            else if (item.getItemId() == R.id.navigation_scan)
+            {
+                Intent toGo = new Intent(MainActivity.this, ZXingScannerScan.class);
+                startActivity(toGo);
+                return true;
+            }
+            else if (item.getItemId() == R.id.navigation_map) {
+                switchFragment(R.id.navigation_map);
+                return true;
+            }
+            return false;
         });
     }
 
@@ -92,11 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Fragment navHost = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
-        int currentFragment = navHost.getChildFragmentManager().getFragments().get(0).getId();
-
         if (item.getItemId() == R.id.toolbar_profile) {
-            switchFragment(R.id.toolbar_profile);
+            switchFragment(R.id.navigation_profile);
         }
         else if (item.getItemId() == R.id.toolbar_search) {
             Toast.makeText(this, "This button works", Toast.LENGTH_SHORT).show();
@@ -109,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment navHost = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         int currentFragment = navHost.getChildFragmentManager().getFragments().get(0).getId();
         Fragment toSwitch = new Fragment(fragmentID);
-        navHost.getChildFragmentManager().beginTransaction().replace(currentFragment,toSwitch).commit();
+        navHost.getChildFragmentManager().beginTransaction().replace(currentFragment,toSwitch,null).commit();
     }
 
 }
