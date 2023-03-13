@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         navView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.navigation_home) {
-                switchFragment(R.id.navigation_home);
+                switchFragment(R.layout.fragment_home);
                 return true;
             }
             else if (item.getItemId() == R.id.navigation_scan)
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             else if (item.getItemId() == R.id.navigation_map) {
-                switchFragment(R.id.navigation_map);
+                switchFragment(R.layout.fragment_map);
                 return true;
             }
             return false;
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.toolbar_profile) {
-            switchFragment(R.id.navigation_profile);
+            switchFragment(R.layout.fragment_profile);
         }
         else if (item.getItemId() == R.id.toolbar_search) {
             Toast.makeText(this, "This button works", Toast.LENGTH_SHORT).show();
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment navHost = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_activity_main);
         int currentFragment = navHost.getChildFragmentManager().getFragments().get(0).getId();
         Fragment toSwitch = new Fragment(fragmentID);
-        navHost.getChildFragmentManager().beginTransaction().replace(currentFragment,toSwitch,null).commit();
+        navHost.getChildFragmentManager().beginTransaction().replace(currentFragment,toSwitch).commit();
     }
 
 }
