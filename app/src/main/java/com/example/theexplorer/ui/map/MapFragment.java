@@ -41,11 +41,11 @@ public class MapFragment extends Fragment implements LocationListener {
 
     private FragmentMapBinding binding;
     private GoogleMap mMap;
-    FusedLocationProviderClient fusedLocationProviderClient;
-    LocationManager locationManager;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationManager locationManager;
 
     View mView;
-    MapView mMapView;
+    private MapView mMapView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
