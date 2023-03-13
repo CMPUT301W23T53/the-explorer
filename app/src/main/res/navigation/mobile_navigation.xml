@@ -39,7 +39,10 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
-        />
+        android:name="com.example.theexplorer.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+    </fragment>
     <activity
         android:id="@+id/navigation_activity_scan"
         android:label="Scan"
