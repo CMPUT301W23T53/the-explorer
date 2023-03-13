@@ -1,3 +1,7 @@
+/**
+ Represents a QRCode that can be scanned by the user.
+ */
+
 package com.example.theexplorer.services;
 
 import java.nio.ByteBuffer;
