@@ -221,7 +221,13 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         return bitmap;
     }
 
-    //get location
+    /**
+     * Trying to get the system services and request to update Location
+     * <p>
+     * This method won't returns anything. When call this function it will try to get system service to get location.
+     * And if it has the permission to get the location, it will ask onLocationChanged() to show it.
+     * @return      null
+     */
     @SuppressLint("MissingPermission")
     private void getLocation() {
         try {
@@ -231,7 +237,14 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             e.printStackTrace();
         }}
 
-
+    /**
+     * Get the current location
+     * <p>
+     * This method won't returns anything. When call this function it will get the current location and set the AddressText.
+     * AddressText will show the  latitude and longitude for the current location
+     * @param  location  the location for current location
+     * @return  null
+     */
     @Override
     public void onLocationChanged(@NonNull Location location) {
         Toast.makeText(this, ""+location.getLatitude()+","+location.getLongitude(), Toast.LENGTH_SHORT).show();

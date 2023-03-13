@@ -29,6 +29,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Locale;
 
+/**
+ * Get the user's current location and show it on the Map. And it also show the nearby QRCode location on the map.
+ * <p>
+ * This method won't returns anything. When showing this fragment it will get the users' current location
+ * and show it with nearby location an the map.
+ * @return      null
+ * @see         Map
+ */
 public class MapFragment extends Fragment implements LocationListener {
 
     private FragmentMapBinding binding;
@@ -49,6 +57,13 @@ public class MapFragment extends Fragment implements LocationListener {
         getCurrentLocation();
         return root;
     }
+    /**
+     * Trying to get the system services and request to update Location
+     * <p>
+     * This method won't returns anything. When call this function it will try to get system service to get location.
+     * And if it has the permission to get the location, it will ask onLocationChanged() to show it.
+     * @return      null
+     */
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
         try {
@@ -57,6 +72,14 @@ public class MapFragment extends Fragment implements LocationListener {
         }catch (Exception e){
             e.printStackTrace();
         }}
+    /**
+     * Get the current location and show it on the map
+     * <p>
+     * This method won't returns anything. When call this function it will get the current location and set the mapView.
+     * When mapView is ready it will return the map with a mark at current location
+     * @param  location  the location for current location
+     * @return  null
+     */
     @Override
     public void onLocationChanged(@NonNull Location location) {
         Toast.makeText(getActivity(), ""+location.getLatitude()+","+location.getLongitude(), Toast.LENGTH_SHORT).show();
