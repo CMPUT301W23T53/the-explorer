@@ -44,7 +44,25 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Locale;
 
-
+/**
+ * This activity allows users to scan QR codes and capture images with the camera, and display the results
+ * on the screen. It also allows users to get their current location and display it on the screen.
+ *
+ * <p>This activity uses the following components:</p>
+ * <ul>
+ *   <li>{@link IntentIntegrator} to scan QR codes using the device camera</li>
+ *   <li>{@link MediaStore} to capture images using the device camera</li>
+ *   <li>{@link Geocoder} to get the user's current location</li>
+ * </ul>
+ *
+ * <p>Users can also view their scan history and scores on this activity.</p>
+ *
+ * <p>This activity requires the following permissions:</p>
+ * <ul>
+ *   <li>{@link Manifest.permission#CAMERA} to access the device camera</li>
+ *   <li>{@link Manifest.permission#ACCESS_FINE_LOCATION} to access the user's current location</li>
+ * </ul>
+ */
 public class ZXingScannerScan extends AppCompatActivity implements LocationListener {
     private Button scan;
     private ImageView preview;
@@ -269,6 +287,9 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             e.printStackTrace();
         }
     }
+
+    
+
 
 
 
