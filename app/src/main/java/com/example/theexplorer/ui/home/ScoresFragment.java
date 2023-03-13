@@ -15,6 +15,10 @@ import com.example.theexplorer.services.UserService;
 
 import org.w3c.dom.Text;
 
+/**
+ * This activity allows users to view their highest and lowest scores, as well as the total number
+ * of codes scanned, and the sum of all scores from each code scanned.
+ */
 public class ScoresFragment extends AppCompatActivity {
 
     private Button highest;
