@@ -26,5 +26,5 @@
         <activity android:name="com.example.theexplorer.ui.scan.ZXingScannerScan" />
 
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

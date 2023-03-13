@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.example.theexplorer.ui.scan.ZXingScannerScan;
+import com.example.theexplorer.services.UserService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,8 @@ import com.example.theexplorer.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
+    final private UserService userService = new UserService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
