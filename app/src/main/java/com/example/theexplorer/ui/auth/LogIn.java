@@ -90,7 +90,7 @@ public class LogIn extends AppCompatActivity {
                                 public void onSuccess(AuthResult authResult) {
                                     progressDialog.cancel();
 //                                    startActivity(new Intent(LogIn.this, ProfileFragment.class));
-                                    startActivity(new Intent(LogIn.this, ProfilesActivity.class));
+                                    startActivity(new Intent(LogIn.this, MainActivity.class));
 
 
                                 }
@@ -213,7 +213,7 @@ public class LogIn extends AppCompatActivity {
                             Toast.makeText(LogIn.this, "Existing user... \n" + email, Toast.LENGTH_SHORT).show();
                         }
 //                        startActivity(new Intent(LogIn.this, com.example.theexplorer.ui.profile.ProfileFragment.class));
-                        startActivity(new Intent(LogIn.this, ProfilesActivity.class));
+                        startActivity(new Intent(LogIn.this, MainActivity.class));
                         finish();
                     }
                 })
