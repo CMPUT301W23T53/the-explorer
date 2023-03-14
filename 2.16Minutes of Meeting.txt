@@ -1,4 +1,0 @@
-Assign the job, create the outline. 
-Get a basic UI design, star to make the screen. 
-Make sure app not crushing.
-Create the branch first, it should have a stage 
