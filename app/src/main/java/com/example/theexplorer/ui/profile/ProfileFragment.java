@@ -42,7 +42,7 @@ public class ProfileFragment extends Fragment {
         View root = binding.getRoot();
         final TextView textView = binding.textProfile;
         //profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        setHasOptionsMenu(true); // enable options menu for this fragment
+        //setHasOptionsMenu(true); // enable options menu for this fragment
         return root;
     }
 
@@ -81,11 +81,11 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        inflater.inflate(R.menu.menu_main, menu);
+//        super.onCreateOptionsMenu(menu, inflater);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

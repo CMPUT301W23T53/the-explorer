@@ -247,7 +247,7 @@ public class LogIn extends AppCompatActivity {
             pass.setError("This Field should not be empty");
             return false;
         } else if (Pass.length() < 8) {
-            pass.setError("Password field should not be greater than 8 charcter");
+            pass.setError("Password field should be greater than 8 characters");
             return false;
         } else {
             return true;
