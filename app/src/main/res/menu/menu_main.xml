@@ -11,4 +11,8 @@
         android:title="Profile"
         android:icon="@drawable/ic_account_circle_24dp"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/logout"
+        android:title="Log out"
+        app:showAsAction="never" />
 </menu>
