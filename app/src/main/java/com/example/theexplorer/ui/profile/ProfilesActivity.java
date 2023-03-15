@@ -46,16 +46,6 @@ public class ProfilesActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         checkUser();
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                firebaseAuth.signOut();
-                Intent intent = new Intent(ProfilesActivity.this, LogIn.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
     }
 
     private void checkUser() {
@@ -77,20 +67,4 @@ public class ProfilesActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.logout:
-//                firebaseAuth.signOut();
-//                startActivity(new Intent(ProfilesActivity.this, LogIn.class));
-//                finish();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
-
 }
