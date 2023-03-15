@@ -99,7 +99,7 @@ public class Register extends AppCompatActivity {
                 }
                 if(password.length()<8 )
                 {
-                    passwordd.setError("Password field should not be greater than 8 charcter");
+                    passwordd.setError("Password field should be greater than 8 characters");
                     return ;
                 }
                 progressDialog.show();
