@@ -19,6 +19,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.theexplorer.databinding.FragmentMapBinding;
+import com.example.theexplorer.services.QRCode;
+import com.example.theexplorer.services.UserService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +29,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -84,16 +87,22 @@ public class MapFragment extends Fragment implements LocationListener {
             Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
             double currentLat = location.getLatitude();
             double currentLong = location.getLongitude();
+            UserService userService= new UserService();
+            List<QRCode> nearbyQRCode= userService.getNearbyQRCodes(currentLat,currentLong);
             mMapView.onCreate(null);
             mMapView.onResume();
             mMapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(@NonNull GoogleMap googleMap) {
                     mMap = googleMap;
-                    LatLng sydney = new LatLng(currentLat, currentLong);
-                    mMap.addMarker(new MarkerOptions().position(sydney).title("Current Location"));
-
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,100));
+                    LatLng current = new LatLng(currentLat, currentLong);
+                    mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
+                    for(QRCode code: nearbyQRCode){
+                        LatLng nearby = new LatLng(code.getLatitude(), code.getLongitude());
+                        mMap.addMarker(new MarkerOptions().position(nearby));
+                    }
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
                 }
             });
 
