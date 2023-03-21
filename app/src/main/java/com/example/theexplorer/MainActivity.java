@@ -13,6 +13,7 @@ import com.example.theexplorer.ui.map.MapFragment;
 import com.example.theexplorer.ui.profile.ProfileFragment;
 import com.example.theexplorer.ui.scan.ZXingScannerScan;
 import com.example.theexplorer.services.UserService;
+import com.example.theexplorer.ui.search.SearchActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -95,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         else if (item.getItemId() == R.id.toolbar_search) {
-            Toast.makeText(this, "This button works", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "This button works", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
