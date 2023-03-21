@@ -2,7 +2,9 @@ package com.example.theexplorer.ui.map;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -53,56 +56,64 @@ public class MapFragment extends Fragment implements LocationListener {
 
         binding = FragmentMapBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        mMapView= binding.map;
+        mMapView = binding.map;
         getCurrentLocation();
         return root;
     }
+
     /**
      * Trying to get the system services and request to update Location
      * <p>
      * This method won't returns anything. When call this function it will try to get system service to get location.
      * And if it has the permission to get the location, it will ask onLocationChanged() to show it.
-     * @return      null
+     * @return null
      */
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
         try {
             locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,10,5,this);
-        }catch (Exception e){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 5, this);
+        } catch (Exception e) {
             e.printStackTrace();
-        }}
+        }
+    }
+
     /**
      * Get the current location and show it on the map
      * <p>
      * This method won't returns anything. When call this function it will get the current location and set the mapView.
      * When mapView is ready it will return the map with a mark at current location
      * @param  location  the location for current location
-     * @return  null
+     * @return null
      */
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(getActivity(), ""+location.getLatitude()+","+location.getLongitude(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "" + location.getLatitude() + "," + location.getLongitude(), Toast.LENGTH_SHORT).show();
         try {
             Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
             double currentLat = location.getLatitude();
             double currentLong = location.getLongitude();
-            UserService userService= new UserService();
-            List<QRCode> nearbyQRCode= userService.getNearbyQRCodes(currentLat,currentLong);
+            UserService userService = new UserService();
+            List<QRCode> nearbyQRCode = userService.getNearbyQRCodes(currentLat, currentLong);
             mMapView.onCreate(null);
             mMapView.onResume();
             mMapView.getMapAsync(new OnMapReadyCallback() {
+                @SuppressLint("MissingPermission")
                 @Override
                 public void onMapReady(@NonNull GoogleMap googleMap) {
                     mMap = googleMap;
                     LatLng current = new LatLng(currentLat, currentLong);
                     mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
-                    for(QRCode code: nearbyQRCode){
+                    for (QRCode code : nearbyQRCode) {
                         LatLng nearby = new LatLng(code.getLatitude(), code.getLongitude());
                         mMap.addMarker(new MarkerOptions().position(nearby));
                     }
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
+                    mMap.getUiSettings().setZoomControlsEnabled(true);
+                    
+
+                    mMap.setMyLocationEnabled(true);
                 }
             });
 
