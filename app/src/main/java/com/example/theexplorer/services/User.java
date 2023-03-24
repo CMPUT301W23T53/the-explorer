@@ -42,6 +42,23 @@ public class User {
     }
 
     /**
+     * Returns the name of the highest QR score among all QR codes associated with the user.
+     *
+     * @return the name of the highest QR score
+     */
+    public String getHighestQRScoreName() {
+        int maxScore = 0;
+        String maxScoreName = null;
+        for (QRCode qrCode: this.getQRList()) {
+            if (qrCode.getQRScore() > maxScore) {
+                maxScore = qrCode.getQRScore();
+                maxScoreName = qrCode.getQRName();
+            }
+        }
+        return maxScoreName;
+    }
+
+    /**
      * Returns the lowest QR score among all QR codes associated with the user.
      *
      * @return the lowest QR score
@@ -54,6 +71,23 @@ public class User {
             }
         }
         return minScore;
+    }
+
+    /**
+     * Returns the name of the lowest QR score among all QR codes associated with the user.
+     *
+     * @return the name of the lowest QR score
+     */
+    public String getLowestQRScoreName() {
+        int minScore = Integer.MAX_VALUE;
+        String minScoreName = null;
+        for (QRCode qrCode: this.getQRList()) {
+            if (qrCode.getQRScore() < minScore) {
+                minScore = qrCode.getQRScore();
+                minScoreName = qrCode.getQRName();
+            }
+        }
+        return minScoreName;
     }
 
     /**
