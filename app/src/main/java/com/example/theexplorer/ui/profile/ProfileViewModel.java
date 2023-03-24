@@ -52,8 +52,8 @@ public class ProfileViewModel extends AppCompatActivity {
         toolbar.setTitle("Explorer");
         setSupportActionBar(toolbar);
 
-        txtemail= findViewById(R.id.txtemail);
-        txtname = findViewById(R.id.txtname);
+        txtemail= findViewById(R.id.tvEmail);
+        txtname = findViewById(R.id.etUserName);
         img=findViewById(R.id.img);
 
 

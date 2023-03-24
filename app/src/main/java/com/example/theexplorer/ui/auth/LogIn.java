@@ -34,6 +34,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 public class LogIn extends AppCompatActivity {
 
@@ -45,7 +49,7 @@ public class LogIn extends AppCompatActivity {
     public String Pass, Email;
     ImageView google;
     GoogleSignInClient googleSignInClient;
-
+    FirebaseFirestore firebaseFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,7 @@ public class LogIn extends AppCompatActivity {
         setContentView(R.layout.activity_log_in);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         pass = findViewById(R.id.pass);
         email1 = findViewById(R.id.email);
@@ -190,40 +195,124 @@ public class LogIn extends AppCompatActivity {
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        firebaseAuth.signInWithCredential(credential)
-                .addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        FirebaseUser user = firebaseAuth.getCurrentUser();
+        firebaseAuth.signInWithCredential(credential).addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                        String uid = user.getUid();
-                        String email = user.getEmail();
+                String uid = user.getUid();
+                String email = user.getEmail();
+                String name = user.getDisplayName();
+                String userPhoto = user.getPhotoUrl().toString();
+                //check if user is new or existing
 
-                        //check if user is new or existing
+                Log.e("..00..00..00..00..", "onSuccess: "+uid );
+                Log.e("..00..00..00..00..", "onSuccess: "+user.getPhotoUrl().toString() );
 
-                        if (authResult.getAdditionalUserInfo().isNewUser()) {
-                            //user is new - Account Created
-                            Log.d("GOOGLE_SIGN_IN_TAG", "onSuccess: Account Created...email");
-                            Toast.makeText(LogIn.this, "Account Created...in" + email, Toast.LENGTH_SHORT).show();
+                if (authResult.getAdditionalUserInfo().isNewUser()) {
+                    //user is new - Account Created
+                    Log.d("GOOGLE_SIGN_IN_TAG", "onSuccess: Account Created...email");
+                    Toast.makeText(LogIn.this, "Account Created...in" + email + name, Toast.LENGTH_SHORT).show();
 
-                        } else {
 
-                            Log.d("GOOGLE_SIGN_IN_TAG", "onSuccess: Existing user...\n " + email);
+//                    String[] userNameFromEmail = email.split("@");
+//                    String userName = userNameFromEmail[0];
 
-                            Toast.makeText(LogIn.this, "Existing user... \n" + email, Toast.LENGTH_SHORT).show();
+                    firebaseFirestore.collection("Users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            Log.e("*-*-*-*", "onSuccess: " + queryDocumentSnapshots);
+
+                            ArrayList<String> docIDList = new ArrayList<>();
+
+                            if (queryDocumentSnapshots.getDocuments() != null) {
+                                if (queryDocumentSnapshots.getDocuments().size() > 0) {
+                                    for (int i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
+                                        String docId = queryDocumentSnapshots.getDocuments().get(i).getId();
+                                        docIDList.add(docId);
+                                    }
+
+                                    String[] userNameFromEmail = email.split("@");
+                                    String userName = userNameFromEmail[0];
+
+                                    if (docIDList.contains(email)) {
+                                        progressDialog.cancel();
+                                        Toast.makeText(LogIn.this, "Username already exists", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        progressDialog.cancel();
+
+                                        firebaseFirestore.collection("Users")
+                                                .document(email)
+                                                .set(new UserModel(userPhoto, userName, email))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+                                                        startActivity(new Intent(LogIn.this, MainActivity.class));
+                                                        finish();
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(LogIn.this, ".." + e, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                    }
+
+                                } else {
+                                    progressDialog.cancel();
+
+                                    String[] userNameFromEmail = email.split("@");
+                                    String userName = userNameFromEmail[0];
+
+                                    firebaseFirestore.collection("Users")
+                                            .document(email)
+                                            .set(new UserModel(userPhoto, userName, email))
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    startActivity(new Intent(LogIn.this, MainActivity.class));
+                                                    finish();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(LogIn.this, ".." + e, Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            }
+
                         }
-//                        startActivity(new Intent(LogIn.this, com.example.theexplorer.ui.profile.ProfileFragment.class));
-                        startActivity(new Intent(LogIn.this, MainActivity.class));
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LogIn.this, "Sorry auth failed.", Toast.LENGTH_SHORT).show();
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e("*-*-*-*", "onFailure: " + e);
+                        }
+                    });
 
-                    }
-                });
+
+                } else {
+
+                    Log.d("GOOGLE_SIGN_IN_TAG", "onSuccess: Existing user...\n " + email + name);
+
+                    startActivity(new Intent(LogIn.this, MainActivity.class));
+                    finish();
+
+                    Toast.makeText(LogIn.this, "Existing user... \n" + email + name, Toast.LENGTH_SHORT).show();
+                }
+//                        startActivity(new Intent(Register.this, ProfileViewModel.class));
+//                startActivity(new Intent(Register.this, ProfilesActivity.class));
+//                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(LogIn.this, "Sorry auth failed.", Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
     private void checkUser() {
