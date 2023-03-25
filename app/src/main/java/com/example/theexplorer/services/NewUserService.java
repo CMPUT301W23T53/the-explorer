@@ -52,22 +52,7 @@ public class NewUserService {
                             public QRCode then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                                 if (task.isSuccessful() && task.getResult() != null) {
                                     DocumentSnapshot document = task.getResult();
-                                    Map<String, Object> qrData = document.getData();
-                                    QRCode qrCode = new QRCode();
-
-                                    qrCode.setQRId(document.getId());
-                                    qrCode.setQRName(document.getString("QRName"));
-                                    qrCode.setQRScore(document.getLong("QRScore").intValue());
-
-                                    GeoPoint location = document.getGeoPoint("location");
-                                    qrCode.setLatitude(location.getLatitude());
-                                    qrCode.setLongitude(location.getLongitude());
-
-                                    String photoBytesString = document.getString("photoBytes");
-                                    byte[] photoBytes = Base64.decode(photoBytesString, Base64.DEFAULT);
-                                    qrCode.setPhotoBytes(photoBytes);
-
-                                    return qrCode;
+                                    return mapQRCodeFromFirebase(document);
                                 } else {
                                     throw new Exception("Error fetching QR code: " + task.getException());
                                 }
@@ -194,5 +179,47 @@ public class NewUserService {
         return taskCompletionSource.getTask();
     }
 
+    public Task<List<QRCode>> getNearbyQRCodes(double currentLat, double currentLong, double radius) {
+        double latMin = currentLat - (radius / 111.12);
+        double longMin = currentLong - (radius / 111.12 * Math.cos(currentLat));
+        GeoPoint southWestPoint = new GeoPoint(latMin, longMin);
 
+        double latMax = currentLat + (radius / 111.12);
+        double longMax = currentLong + (radius / 111.12 * Math.cos(currentLat));
+        GeoPoint northEastPoint = new GeoPoint(latMax, longMax);
+
+        Query query = qrCodeRef.whereGreaterThan("location", southWestPoint).whereLessThan("location", northEastPoint);
+        return query.get().continueWith(task -> {
+            List<QRCode> qrCodes = new ArrayList<>();
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                for (DocumentSnapshot documentSnapshot: querySnapshot.getDocuments()) {
+                    QRCode qrCode = mapQRCodeFromFirebase(documentSnapshot);
+                    qrCodes.add(qrCode);
+                }
+            } else {
+                Log.e("Error getting nearby QR codes", task.getException().toString());
+            }
+            return qrCodes;
+        });
+    }
+
+    private QRCode mapQRCodeFromFirebase(DocumentSnapshot document) {
+        Map<String, Object> qrData = document.getData();
+        QRCode qrCode = new QRCode();
+
+        qrCode.setQRId(document.getId());
+        qrCode.setQRName(document.getString("QRName"));
+        qrCode.setQRScore(document.getLong("QRScore").intValue());
+
+        GeoPoint location = document.getGeoPoint("location");
+        qrCode.setLatitude(location.getLatitude());
+        qrCode.setLongitude(location.getLongitude());
+
+        String photoBytesString = document.getString("photoBytes");
+        byte[] photoBytes = Base64.decode(photoBytesString, Base64.DEFAULT);
+        qrCode.setPhotoBytes(photoBytes);
+
+        return qrCode;
+    }
 }
