@@ -7,9 +7,12 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.theexplorer.R;
@@ -58,49 +61,63 @@ public class SearchActivity extends AppCompatActivity {
         ivSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String searchData = etSearch.getText().toString();
-
-                if (searchData.equals("")) {
-                    Toast.makeText(SearchActivity.this, "Please enter username", Toast.LENGTH_SHORT).show();
-                } else {
-                    firebaseFirestore.collection("Users").whereEqualTo("userName", searchData).get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        if (task.getResult().size() != 0) {
-                                            if (task.getResult().getDocuments().size() > 0) {
-                                                for (int i = 0; i < task.getResult().getDocuments().size(); i++) {
-                                                    Toast.makeText(SearchActivity.this, "User exists", Toast.LENGTH_SHORT).show();
-                                                    Log.e("--**--**--**--", "onComplete: " + task.getResult().getDocuments().get(i).getId());
-
-                                                    Intent ii = new Intent(SearchActivity.this, ProfilesActivity.class);
-                                                    ii.putExtra("userName1", task.getResult().getDocuments().get(0).getString("userName"));
-                                                    startActivity(ii);
-
-                                                }
-                                            }
-                                        } else {
-                                            progressDialog.cancel();
-                                            Toast.makeText(SearchActivity.this, "User not exists", Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    } else {
-                                        progressDialog.cancel();
-                                        Log.e("-*-*-*-*-*-*-", "Error getting documents: ", task.getException());
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e("-*-*-*-*-*-*-", "Error getting documents: " + e);
-                                    progressDialog.cancel();
-                                }
-                            });
-                }
-
+                performSearch();
             }
         });
+
+        etSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
+                    performSearch();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void performSearch() {
+        String searchData = etSearch.getText().toString();
+
+        if (searchData.equals("")) {
+            Toast.makeText(SearchActivity.this, "Please enter username", Toast.LENGTH_SHORT).show();
+        } else {
+            firebaseFirestore.collection("Users").whereEqualTo("userName", searchData).get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                if (task.getResult().size() != 0) {
+                                    if (task.getResult().getDocuments().size() > 0) {
+                                        for (int i = 0; i < task.getResult().getDocuments().size(); i++) {
+                                            Toast.makeText(SearchActivity.this, "User exists", Toast.LENGTH_SHORT).show();
+                                            Log.e("--**--**--**--", "onComplete: " + task.getResult().getDocuments().get(i).getId());
+
+                                            Intent ii = new Intent(SearchActivity.this, ProfilesActivity.class);
+                                            ii.putExtra("userName1", task.getResult().getDocuments().get(0).getString("userName"));
+                                            startActivity(ii);
+
+                                        }
+                                    }
+                                } else {
+                                    progressDialog.cancel();
+                                    Toast.makeText(SearchActivity.this, "User not exists", Toast.LENGTH_SHORT).show();
+                                }
+
+                            } else {
+                                progressDialog.cancel();
+                                Log.e("-*-*-*-*-*-*-", "Error getting documents: ", task.getException());
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e("-*-*-*-*-*-*-", "Error getting documents: " + e);
+                            progressDialog.cancel();
+                        }
+                    });
+        }
     }
 }
