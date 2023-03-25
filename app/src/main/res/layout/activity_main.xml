@@ -33,7 +33,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#1A1A1A"
+        android:foregroundTint="#FFFFFF"
+        android:keepScreenOn="false"
         android:visibility="visible"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu" />
