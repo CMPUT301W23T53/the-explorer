@@ -4,11 +4,17 @@
 
 package com.example.theexplorer.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
     private String userId;
     private List<QRCode> QRList;
+
+    public User() {
+        userId = "";
+        QRList = new ArrayList<>();
+    }
 
     public String getUserId() {
         return userId;
