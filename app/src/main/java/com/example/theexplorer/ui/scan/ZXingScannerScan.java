@@ -51,6 +51,10 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    private boolean hideQR = false;
+
+    private Bitmap QRBitmap;
+
 
     /**
      * create the UI
@@ -66,6 +70,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         preview = findViewById(R.id.image_preview);
         score = findViewById(R.id.score);
         ImageView photoTaking = findViewById(R.id.imageView_photo);
+        ImageView previewView = findViewById(R.id.image_preview);
         //get address
         AddressText= findViewById(R.id.address_text_view);
         LocationButton = findViewById(R.id.address_button);
@@ -79,32 +84,11 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         });
 
 
-        //creating a testing bit map it can be used when no result is returned
-        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.GRAY);
-        Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
-        paint.setTextSize(50);
-        paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("Image not found", canvas.getWidth() / 2f, canvas.getHeight() / 2f, paint);
 
-        preview.setImageBitmap(bitmap);
-
-        //creatig a defalt image view
-        Bitmap bitmap1 = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888);
-        Canvas canvas1 = new Canvas(bitmap1);
-        canvas1.drawColor(Color.GRAY);
-        Paint paint1 = new Paint();
-        paint1.setColor(Color.WHITE);
-        paint1.setTextSize(30);
-        paint1.setTextAlign(Paint.Align.CENTER);
-        canvas1.drawText("Take a picture", canvas1.getWidth() / 2f, canvas1.getHeight() / 2f, paint);
+        preview.setImageBitmap(notFound());
+        QRBitmap = notFound();
         ImageView imageView = findViewById(R.id.imageView_photo);
-        imageView.setImageBitmap(bitmap1);
-
-
-
+        imageView.setImageBitmap(takePhoto());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 
@@ -125,6 +109,20 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             }
         });
 
+        previewView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(!hideQR) {
+                    previewView.setImageBitmap(makeUpQR());
+                    hideQR = true;
+                }
+                else{
+                    previewView.setImageBitmap(QRBitmap);
+                    hideQR=false;
+                }
+                return true;
+            }
+        });
         photoTaking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,8 +133,6 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 else{
                     //prumpt camera not found
                 }
-
-
             }
         });
 
@@ -199,36 +195,22 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             } else { //on success
                 Toast.makeText(this, "Scan result：" + result.getContents(), Toast.LENGTH_SHORT).show();
                 score.setText(result.getContents());
-                //calculate the score
-                String content = result.getContents();
-                int theScore=0;
-                for (char c : content.toCharArray()){
-                    //place to implement scoring strat
-                    //strat now: each & is 1 each = will have 1 and each / will have 1
-                    if(c == '&' || c == '=' || c == '/'){
-                        theScore++;
-                    }
-                }
+                //calculate and display the score
+                int theScore = calculateScore(result);
                 score.setText("Score = " + Integer.toString(theScore));
 
                 qrCode.setQRScore(theScore);
 
-                //getting the bitmap
+                //getting the bitmap (of qr)
                 Bitmap bitmap = encodeAsBitmap(result.getContents()); //result -> bitmap
                 if (bitmap != null) {
                     preview.setImageBitmap(bitmap); //show in the image view for result preview
+                    QRBitmap = bitmap;
                 }
-
-
-
-
-
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-
-
     }
 
 
@@ -293,7 +275,66 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         }
     }
 
+    public Bitmap notFound(){
+        //creating a testing bit map it can be used when no result is returned
+        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.GRAY);
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(50);
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("Image not found", canvas.getWidth() / 2f, canvas.getHeight() / 2f, paint);
+        return bitmap;
+    }
 
+    public Bitmap takePhoto(){
+        //creatig a defalt image view
+        Bitmap bitmap1 = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888);
+        Canvas canvas1 = new Canvas(bitmap1);
+        canvas1.drawColor(Color.GRAY);
+        Paint paint1 = new Paint();
+        paint1.setColor(Color.WHITE);
+        paint1.setTextSize(30);
+        paint1.setTextAlign(Paint.Align.CENTER);
+        canvas1.drawText("Take a picture", canvas1.getWidth() / 2f, canvas1.getHeight() / 2f, paint1);
+        return bitmap1;
+    }
+
+    public int calculateScore(IntentResult result){
+        String content = result.getContents();
+        int theScore=0;
+        for (char c : content.toCharArray()){
+            //place to implement scoring strat
+            //strat now: each & is 1 each = will have 1 and each / will have 1
+            if(c == '&' || c == '=' || c == '/'){
+                theScore++;
+            }
+        }
+        return theScore;
+    }
+
+    public Bitmap makeUpQR(){
+        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.GRAY);
+        Paint squarePaint = new Paint();
+        squarePaint.setColor(Color.BLACK);
+        int squareSize = 50;
+        for (int i = 0; i < canvas.getWidth(); i += squareSize) {
+            for (int j = 0; j < canvas.getHeight(); j += squareSize) {
+                if ((i / squareSize + j / squareSize) % 2 == 0) {
+                    canvas.drawRect(i, j, i + squareSize, j + squareSize, squarePaint);
+                }
+            }
+        }
+        Paint textPaint = new Paint();
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextSize(50);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("HIDDEN", canvas.getWidth() / 2f, canvas.getHeight() / 2f, textPaint);
+        return bitmap;
+    }
 
 
 
