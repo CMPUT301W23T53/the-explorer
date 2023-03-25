@@ -15,6 +15,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -57,8 +58,10 @@ public class NewUserService {
                                     qrCode.setQRId(document.getId());
                                     qrCode.setQRName(document.getString("QRName"));
                                     qrCode.setQRScore(document.getLong("QRScore").intValue());
-                                    qrCode.setLatitude(document.getDouble("latitude"));
-                                    qrCode.setLongitude(document.getDouble("longitude"));
+
+                                    GeoPoint location = document.getGeoPoint("location");
+                                    qrCode.setLatitude(location.getLatitude());
+                                    qrCode.setLongitude(location.getLongitude());
 
                                     String photoBytesString = document.getString("photoBytes");
                                     byte[] photoBytes = Base64.decode(photoBytesString, Base64.DEFAULT);
@@ -190,4 +193,6 @@ public class NewUserService {
 
         return taskCompletionSource.getTask();
     }
+
+
 }
