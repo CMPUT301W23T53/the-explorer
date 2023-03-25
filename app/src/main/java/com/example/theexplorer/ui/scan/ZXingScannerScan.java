@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -153,6 +154,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             @Override
             public void onSuccess(User fetchUser) {
                 user[0] = fetchUser;
+                Log.d("USER", user[0].toString());
             }
         });
 
@@ -184,9 +186,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        qrCode.setQRId("triet");
-        qrCode.setLatitude(53.47218437);
-        qrCode.setLongitude(-113.67184307);
+        qrCode.setQRId("temp");
         qrCode.setQRName("QRTEMP");
 
         //deal with picture taking
@@ -198,6 +198,9 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
             qrCode.setPhotoBytes(byteArray);
+
+//            Bitmap trietMap = BitmapFactory.decodeByteArray(user[0].getQRList().get(4).getPhotoBytes(), 0, user[0].getQRList().get(4).getPhotoBytes().length);
+//            Log.d("TRIETMAP", trietMap.toString());
 
             ImageView imageView = findViewById(R.id.imageView_photo);
             imageView.setImageBitmap(bitmap);
@@ -299,6 +302,8 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
             AddressText.setText("Latitude: "+ latitude + "\n" + "Longitude: "+ longitude);
+            qrCode.setLatitude(latitude);
+            qrCode.setLongitude(longitude);
         }catch (Exception e){
             e.printStackTrace();
         }
