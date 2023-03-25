@@ -4,12 +4,16 @@
 
 package com.example.theexplorer.services;
 
+import android.util.Base64;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QRCode {
 
-    private int QRId;
+    private String QRId;
     private byte[] photoBytes;
     private int QRScore;
     private String QRName;
@@ -40,11 +44,11 @@ public class QRCode {
         this.QRName = QRName;
     }
 
-    public int getQRId() {
+    public String getQRId() {
         return QRId;
     }
 
-    public void setQRId(int QRId) {
+    public void setQRId(String QRId) {
         this.QRId = QRId;
     }
 
@@ -74,5 +78,16 @@ public class QRCode {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("QRId", QRId);
+        result.put("QRName", QRName);
+        result.put("QRScore", QRScore);
+        result.put("latitude", latitude);
+        result.put("longitude", longitude);
+        result.put("photoBytes", Base64.encodeToString(photoBytes, Base64.DEFAULT));
+        return result;
     }
 }

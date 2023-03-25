@@ -7,14 +7,14 @@ package com.example.theexplorer.services;
 import java.util.List;
 
 public class User {
-    private int userId;
+    private String userId;
     private List<QRCode> QRList;
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
