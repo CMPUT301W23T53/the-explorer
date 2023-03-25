@@ -175,7 +175,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        qrCode.setQRId((int) (Math.random() * 1000));
+        qrCode.setQRId("test");
         byte[] byteArray = {1, 0, 1, 0, 1, 0, 1, 0};
         qrCode.setPhotoBytes(byteArray);
         qrCode.setLatitude(53.47218437);
