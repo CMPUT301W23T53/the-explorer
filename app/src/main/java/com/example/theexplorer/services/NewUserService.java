@@ -15,6 +15,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -51,20 +52,7 @@ public class NewUserService {
                             public QRCode then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                                 if (task.isSuccessful() && task.getResult() != null) {
                                     DocumentSnapshot document = task.getResult();
-                                    Map<String, Object> qrData = document.getData();
-                                    QRCode qrCode = new QRCode();
-
-                                    qrCode.setQRId(document.getId());
-                                    qrCode.setQRName(document.getString("QRName"));
-                                    qrCode.setQRScore(document.getLong("QRScore").intValue());
-                                    qrCode.setLatitude(document.getDouble("latitude"));
-                                    qrCode.setLongitude(document.getDouble("longitude"));
-
-                                    String photoBytesString = document.getString("photoBytes");
-                                    byte[] photoBytes = Base64.decode(photoBytesString, Base64.DEFAULT);
-                                    qrCode.setPhotoBytes(photoBytes);
-
-                                    return qrCode;
+                                    return mapQRCodeFromFirebase(document);
                                 } else {
                                     throw new Exception("Error fetching QR code: " + task.getException());
                                 }
@@ -152,5 +140,86 @@ public class NewUserService {
                 Log.d("Error getting documents: ", task.getException().toString());
             }
         });
+    }
+
+    public Task<List<User>> getUsersWithMatchingQRCodeScore(QRCode qrCode) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        TaskCompletionSource<List<User>> taskCompletionSource = new TaskCompletionSource<>();
+
+        // Query all QRCode documents with the specified attribute
+        qrCodeRef.whereEqualTo("QRScore", qrCode.getQRScore())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<DocumentReference> matchingQRCodeRefs = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            matchingQRCodeRefs.add(document.getReference());
+                        }
+                        // Query all User documents that have a QRList containing references to the matching QRCode documents
+                        usersRef.whereArrayContainsAny("QRList", matchingQRCodeRefs)
+                                .get()
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        List<User> matchingUsers = new ArrayList<>();
+                                        for (QueryDocumentSnapshot document : task1.getResult()) {
+                                            User user = new User();
+                                            user.setUserId(document.getId());
+                                            matchingUsers.add(user);
+                                        }
+                                        taskCompletionSource.setResult(matchingUsers);
+                                    } else {
+                                        taskCompletionSource.setException(task1.getException());
+                                    }
+                                });
+                    } else {
+                        taskCompletionSource.setException(task.getException());
+                    }
+                });
+
+        return taskCompletionSource.getTask();
+    }
+
+    public Task<List<QRCode>> getNearbyQRCodes(double currentLat, double currentLong, double radius) {
+        double latMin = currentLat - (radius / 111.12);
+        double longMin = currentLong - (radius / 111.12 * Math.cos(currentLat));
+        GeoPoint southWestPoint = new GeoPoint(latMin, longMin);
+
+        double latMax = currentLat + (radius / 111.12);
+        double longMax = currentLong + (radius / 111.12 * Math.cos(currentLat));
+        GeoPoint northEastPoint = new GeoPoint(latMax, longMax);
+
+        Query query = qrCodeRef.whereGreaterThan("location", southWestPoint).whereLessThan("location", northEastPoint);
+        return query.get().continueWith(task -> {
+            List<QRCode> qrCodes = new ArrayList<>();
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                for (DocumentSnapshot documentSnapshot: querySnapshot.getDocuments()) {
+                    QRCode qrCode = mapQRCodeFromFirebase(documentSnapshot);
+                    qrCodes.add(qrCode);
+                }
+            } else {
+                Log.e("Error getting nearby QR codes", task.getException().toString());
+            }
+            return qrCodes;
+        });
+    }
+
+    private QRCode mapQRCodeFromFirebase(DocumentSnapshot document) {
+        Map<String, Object> qrData = document.getData();
+        QRCode qrCode = new QRCode();
+
+        qrCode.setQRId(document.getId());
+        qrCode.setQRName(document.getString("QRName"));
+        qrCode.setQRScore(document.getLong("QRScore").intValue());
+
+        GeoPoint location = document.getGeoPoint("location");
+        qrCode.setLatitude(location.getLatitude());
+        qrCode.setLongitude(location.getLongitude());
+
+        String photoBytesString = document.getString("photoBytes");
+        byte[] photoBytes = Base64.decode(photoBytesString, Base64.DEFAULT);
+        qrCode.setPhotoBytes(photoBytes);
+
+        return qrCode;
     }
 }
