@@ -16,6 +16,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.theexplorer.databinding.FragmentMapBinding;
+import com.example.theexplorer.services.QRCode;
+import com.example.theexplorer.services.UserService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -25,7 +27,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.app.Activity;
+
+import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -57,10 +63,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
+            double currentLat = lastLocation.latitude;
+            double currentLong = lastLocation.longitude;
+            UserService userService = new UserService();
+            List<QRCode> nearbyQRCode = userService.getNearbyQRCodes(currentLat, currentLong);
+            for (QRCode code : nearbyQRCode) {
+                LatLng nearby = new LatLng(code.getLatitude(), code.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(nearby));
+            }
             mMap.setMyLocationEnabled(true);
             createLocationRequest();
             setLocationCallback();
         }
+
     }
 
 
