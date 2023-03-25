@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1A1A1A"
     android:orientation="vertical"
     android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar"
     tools:context=".ui.profile.ProfileFragment">
@@ -12,7 +13,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F0EEED"
+        android:background="#1A1A1A"
         app:titleTextColor="@color/black" />
 
     <RelativeLayout
@@ -52,10 +53,12 @@
             android:id="@+id/etUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_thin"
             android:hint="UserName"
             android:textAlignment="center"
             android:textAllCaps="true"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:textSize="28sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -104,9 +107,10 @@
             android:id="@+id/tvEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_thin"
             android:text="Email"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -114,8 +118,6 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 
     <Button
@@ -126,28 +128,34 @@
         android:layout_marginVertical="15dp"
         android:gravity="center"
         android:text="Save"
-        android:visibility="gone"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btnEdit"
-        android:layout_width="wrap_content"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginVertical="15dp"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="@font/inter_thin"
         android:gravity="center"
-        android:text="Edit"
-        android:textAlignment="center" />
+        android:text="Edit Profile"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF" />
 
     <Button
         android:id="@+id/logout"
-        android:layout_width="wrap_content"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginVertical="10dp"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="@font/inter_thin"
         android:gravity="center"
         android:text="LogOut"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="#FFFFFF" />
 
 
 </LinearLayout>
