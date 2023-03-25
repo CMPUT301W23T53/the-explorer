@@ -14,9 +14,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +51,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     private ImageView preview;
     Button LocationButton;
     TextView AddressText;
+    EditText editQrName;
     LocationManager locationManager;
     private TextView score;
     final NewUserService newUserService = new NewUserService();
@@ -146,6 +150,22 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             }
         });
 
+        editQrName = findViewById(R.id.qr_name_edit);
+        editQrName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String text = charSequence.toString();
+                qrCode.setQRName(text);
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         // add qr to user
         Button add;
         add = findViewById(R.id.add_button);
@@ -164,6 +184,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 List<QRCode> qrCodeList = user[0].getQRList();
                 qrCodeList.add(qrCode);
                 newUserService.putUser(user[0]);
+
 
                 Intent intent = new Intent(ZXingScannerScan.this, MainActivity.class);
                 startActivity(intent);
@@ -185,9 +206,6 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        qrCode.setQRId("temp");
-        qrCode.setQRName("QRTEMP");
 
         //deal with picture taking
         super.onActivityResult(requestCode, resultCode, data);

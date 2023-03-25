@@ -19,6 +19,14 @@ public class QRCode {
     private String QRName;
     private double latitude;
     private double longitude;
+    public QRCode() {
+        QRId = "temp";
+        photoBytes = new byte[]{};
+        QRScore = 0;
+        QRName = "";
+        latitude = 0;
+        longitude = 0;
+    }
 
     public double getLatitude() {
         return latitude;
