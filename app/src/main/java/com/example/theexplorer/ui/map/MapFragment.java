@@ -1,130 +1,146 @@
 package com.example.theexplorer.ui.map;
 
-import static android.content.Context.LOCATION_SERVICE;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.theexplorer.databinding.FragmentMapBinding;
-import com.example.theexplorer.services.QRCode;
-import com.example.theexplorer.services.UserService;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import android.app.Activity;
 
-import java.util.List;
-import java.util.Locale;
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-/**
- * Get the user's current location and show it on the Map. And it also show the nearby QRCode location on the map.
- * This method won't returns anything. When showing this fragment it will get the users' current location
- * and show it with nearby location an the map.
- */
-public class MapFragment extends Fragment implements LocationListener {
-
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private FragmentMapBinding binding;
     private GoogleMap mMap;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationManager locationManager;
-
-    View mView;
-    private MapView mMapView;
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        MapViewModel mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
-
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        mMapView = binding.map;
-        getCurrentLocation();
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+        binding.map.onCreate(savedInstanceState);
+        binding.map.getMapAsync(this);
+
         return root;
     }
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
-    /**
-     * Trying to get the system services and request to update Location
-     * <p>
-     * This method won't returns anything. When call this function it will try to get system service to get location.
-     * And if it has the permission to get the location, it will ask onLocationChanged() to show it.
-     * @return null
-     */
-    @SuppressLint("MissingPermission")
-    private void getCurrentLocation() {
-        try {
-            locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 5, this);
-        } catch (Exception e) {
-            e.printStackTrace();
+        LatLng lastLocation = getLastLocation();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15));
+        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            mMap.setMyLocationEnabled(true);
+            createLocationRequest();
+            setLocationCallback();
         }
     }
 
-    /**
-     * Get the current location and show it on the map
-     * <p>
-     * This method won't returns anything. When call this function it will get the current location and set the mapView.
-     * When mapView is ready it will return the map with a mark at current location
-     * @param  location  the location for current location
-     * @return null
-     */
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(getActivity(), "" + location.getLatitude() + "," + location.getLongitude(), Toast.LENGTH_SHORT).show();
-        try {
-            Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-            double currentLat = location.getLatitude();
-            double currentLong = location.getLongitude();
-            UserService userService = new UserService();
-            List<QRCode> nearbyQRCode = userService.getNearbyQRCodes(currentLat, currentLong);
-            mMapView.onCreate(null);
-            mMapView.onResume();
-            mMapView.getMapAsync(new OnMapReadyCallback() {
-                @SuppressLint("MissingPermission")
-                @Override
-                public void onMapReady(@NonNull GoogleMap googleMap) {
-                    mMap = googleMap;
-                    LatLng current = new LatLng(currentLat, currentLong);
-                    mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
-                    for (QRCode code : nearbyQRCode) {
-                        LatLng nearby = new LatLng(code.getLatitude(), code.getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(nearby));
-                    }
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
-                    mMap.getUiSettings().setZoomControlsEnabled(true);
-                    
 
-                    mMap.setMyLocationEnabled(true);
+    private void createLocationRequest() {
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    private void setLocationCallback() {
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
                 }
-            });
-
-        }catch (Exception e){
-            e.printStackTrace();
+                for (Location location : locationResult.getLocations()) {
+                    LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    saveLastLocation(currentLocation);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+                    fusedLocationClient.removeLocationUpdates(locationCallback);
+                }
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onResume() {
+        super.onResume();
+        binding.map.onResume();
     }
+
+    @Override
+    public void onPause() {
+        binding.map.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        binding.map.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        binding.map.onLowMemory();
+    }
+
+    private void saveLastLocation(LatLng location) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            SharedPreferences sharedPreferences = activity.getSharedPreferences("last_location", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putFloat("latitude", (float) location.latitude);
+            editor.putFloat("longitude", (float) location.longitude);
+            editor.apply();
+        }
+    }
+
+
+    private LatLng getLastLocation() {
+        Activity activity = getActivity();
+        if (activity != null) {
+            SharedPreferences sharedPreferences = activity.getSharedPreferences("last_location", Context.MODE_PRIVATE);
+            float latitude = sharedPreferences.getFloat("latitude", 0);
+            float longitude = sharedPreferences.getFloat("longitude", 0);
+            return new LatLng(latitude, longitude);
+        }
+        return new LatLng(0, 0);
+    }
+
+
+
 }
+
