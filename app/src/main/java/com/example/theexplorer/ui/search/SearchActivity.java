@@ -39,6 +39,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         etSearch = findViewById(R.id.etSearch);
+        etSearch.setSingleLine(true);
         ivSearch = findViewById(R.id.ivSearch);
         ivBack = findViewById(R.id.ivBack);
 
