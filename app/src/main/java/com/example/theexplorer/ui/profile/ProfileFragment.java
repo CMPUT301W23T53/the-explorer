@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -108,6 +109,7 @@ public class ProfileFragment extends Fragment {
         toolbar = view.findViewById(R.id.toolbar);
         toolbar.setTitle("Explorer");
         txtemail = view.findViewById(R.id.tvEmail);
+        txtemail.setPaintFlags(txtemail.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         etUserName = view.findViewById(R.id.etUserName);
         tvName = view.findViewById(R.id.tvName);
         img = view.findViewById(R.id.img);
