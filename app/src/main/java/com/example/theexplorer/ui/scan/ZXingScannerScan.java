@@ -25,9 +25,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.theexplorer.MainActivity;
 import com.example.theexplorer.R;
+import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
 import com.example.theexplorer.services.UserService;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
@@ -46,6 +48,8 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     TextView AddressText;
     LocationManager locationManager;
     private TextView score;
+    final NewUserService newUserService = new NewUserService();
+    final User[] user = {new User()};
 
     public QRCode qrCode = new QRCode();
 
@@ -141,18 +145,22 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         });
 
         // add qr to user
-        UserService userService = new UserService();
         Button add;
         add = findViewById(R.id.add_button);
-        User user = userService.getUser(1);
+        user[0].setUserId("test_nested"); // JUST FOR TESTING
+        newUserService.getUser(user[0].getUserId()).addOnSuccessListener(new OnSuccessListener<User>() {
+            @Override
+            public void onSuccess(User fetchUser) {
+                user[0] = fetchUser;
+            }
+        });
+
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<QRCode> qrCodeList = user.getQRList();
+                List<QRCode> qrCodeList = user[0].getQRList();
                 qrCodeList.add(qrCode);
-                Log.d("QRCODEUPDATED", user.toString());
-                userService.putUser(user);
-
+                newUserService.putUser(user[0]);
 
                 Intent intent = new Intent(ZXingScannerScan.this, MainActivity.class);
                 startActivity(intent);
@@ -175,7 +183,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        qrCode.setQRId("test");
+        qrCode.setQRId("triet");
         byte[] byteArray = {1, 0, 1, 0, 1, 0, 1, 0};
         qrCode.setPhotoBytes(byteArray);
         qrCode.setLatitude(53.47218437);
