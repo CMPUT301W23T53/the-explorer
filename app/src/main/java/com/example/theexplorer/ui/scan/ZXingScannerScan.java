@@ -37,6 +37,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -184,8 +185,6 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         qrCode.setQRId("triet");
-        byte[] byteArray = {1, 0, 1, 0, 1, 0, 1, 0};
-        qrCode.setPhotoBytes(byteArray);
         qrCode.setLatitude(53.47218437);
         qrCode.setLongitude(-113.67184307);
         qrCode.setQRName("QRTEMP");
@@ -195,6 +194,10 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap bitmap = (Bitmap) extras.get("data");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            qrCode.setPhotoBytes(byteArray);
 
             ImageView imageView = findViewById(R.id.imageView_photo);
             imageView.setImageBitmap(bitmap);
