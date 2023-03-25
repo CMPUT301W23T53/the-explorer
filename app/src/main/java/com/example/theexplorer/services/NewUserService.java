@@ -34,6 +34,8 @@ public class NewUserService {
 
     final CollectionReference qrCodeRef = database.collection("qrcodes");
 
+    final CollectionReference commentRef = database.collection("comments");
+
     public Task<User> getUser(String userId) {
         final TaskCompletionSource<User> taskCompletionSource = new TaskCompletionSource<>();
         usersRef.document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -203,6 +205,63 @@ public class NewUserService {
             return qrCodes;
         });
     }
+
+    public Task<List<Comment>> getCommentOfQRCode(QRCode qrCode) {
+        String qrCodeId = qrCode.getQRId();
+        final TaskCompletionSource<List<Comment>> taskCompletionSource = new TaskCompletionSource<>();
+        qrCodeRef.document(qrCodeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Map<String, Object> data = documentSnapshot.getData();
+
+                    ArrayList<DocumentReference> commentRefsList = (ArrayList<DocumentReference>) data.get("comments");
+                    ArrayList<Task<Comment>> commentsTasks = new ArrayList<>();
+
+                    // Fetch each QR code document
+                    for (DocumentReference commentDocRef : commentRefsList) {
+                        Task<Comment> commentTask = commentDocRef.get().continueWith(new Continuation<DocumentSnapshot, Comment>() {
+                            @Override
+                            public Comment then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                                if (task.isSuccessful() && task.getResult() != null) {
+                                    DocumentSnapshot document = task.getResult();
+                                    Comment comment = document.toObject(Comment.class);
+                                    return comment;
+                                } else {
+                                    throw new Exception("Error fetching QR code: " + task.getException());
+                                }
+                            }
+                        });
+                        commentsTasks.add(commentTask);
+                    }
+
+                    // Wait for all QR code tasks to complete
+                    Task<List<Comment>> allQRCodesTask = Tasks.whenAllSuccess(commentsTasks);
+                    allQRCodesTask.addOnSuccessListener(new OnSuccessListener<List<Comment>>() {
+                        @Override
+                        public void onSuccess(List<Comment> comments) {
+                            taskCompletionSource.setResult(comments);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("ERROR: ", e.toString());
+                            taskCompletionSource.setException(e);
+                        }
+                    });
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("ERROR: ", e.toString());
+                taskCompletionSource.setException(e);
+            }
+        });
+
+        return taskCompletionSource.getTask();
+    }
+
 
     private QRCode mapQRCodeFromFirebase(DocumentSnapshot document) {
         Map<String, Object> qrData = document.getData();
