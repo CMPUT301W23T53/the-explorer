@@ -153,4 +153,41 @@ public class NewUserService {
             }
         });
     }
+
+    public Task<List<User>> getUsersWithMatchingQRCodeScore(QRCode qrCode) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        TaskCompletionSource<List<User>> taskCompletionSource = new TaskCompletionSource<>();
+
+        // Query all QRCode documents with the specified attribute
+        qrCodeRef.whereEqualTo("QRScore", qrCode.getQRScore())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<DocumentReference> matchingQRCodeRefs = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            matchingQRCodeRefs.add(document.getReference());
+                        }
+                        // Query all User documents that have a QRList containing references to the matching QRCode documents
+                        usersRef.whereArrayContainsAny("QRList", matchingQRCodeRefs)
+                                .get()
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        List<User> matchingUsers = new ArrayList<>();
+                                        for (QueryDocumentSnapshot document : task1.getResult()) {
+                                            User user = new User();
+                                            user.setUserId(document.getId());
+                                            matchingUsers.add(user);
+                                        }
+                                        taskCompletionSource.setResult(matchingUsers);
+                                    } else {
+                                        taskCompletionSource.setException(task1.getException());
+                                    }
+                                });
+                    } else {
+                        taskCompletionSource.setException(task.getException());
+                    }
+                });
+
+        return taskCompletionSource.getTask();
+    }
 }
