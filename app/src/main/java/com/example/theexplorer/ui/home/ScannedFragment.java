@@ -1,6 +1,7 @@
 package com.example.theexplorer.ui.home;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -75,7 +76,6 @@ public class ScannedFragment extends AppCompatActivity {
                 public void onClick(View view) {
                     // Get the selected QRCode object
                     QRCode selectedItem = getItem(position);
-
                     // Create a new AlertDialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(ScannedFragment.this);
                     builder.setTitle("View QR Code Details");
@@ -105,7 +105,8 @@ public class ScannedFragment extends AppCompatActivity {
 
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            
+                            Intent intent = new Intent(ScannedFragment.this, DetailPageOfOneQR.class);
+                            startActivity(intent);
 
 
 
