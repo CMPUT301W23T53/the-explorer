@@ -38,6 +38,16 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        Button viewCodesButton = binding.buttonViewCodes;
+        viewCodesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ScannedFragment.class);
+                startActivity(intent);
+            }
+        });
+
+
         return root;
     }
 
