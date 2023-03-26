@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.theexplorer.R;
+import com.example.theexplorer.services.Comment;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
@@ -107,7 +108,10 @@ public class ScannedFragment extends AppCompatActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Intent intent = new Intent(ScannedFragment.this, DetailPageOfOneQR.class);
                             startActivity(intent);
-                            
+                            Comment comment = new Comment();
+                            comment.setQRId("test"); // Set it to qrCode.getQRId()
+                            comment.setContent("test contentttt");
+                            newUserService.putComment(comment);
 
 
 
