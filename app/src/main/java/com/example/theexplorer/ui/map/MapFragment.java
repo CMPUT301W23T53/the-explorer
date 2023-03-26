@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.theexplorer.databinding.FragmentMapBinding;
+import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.UserService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import android.app.Activity;
 
@@ -65,12 +67,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         } else {
             double currentLat = lastLocation.latitude;
             double currentLong = lastLocation.longitude;
+            LatLng cc = new LatLng(currentLat, currentLong);
+            mMap.addMarker(new MarkerOptions().position(cc).title("Current Location"));
             UserService userService = new UserService();
             List<QRCode> nearbyQRCode = userService.getNearbyQRCodes(currentLat, currentLong);
             for (QRCode code : nearbyQRCode) {
                 LatLng nearby = new LatLng(code.getLatitude(), code.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(nearby));
             }
+
+//            NewUserService newUserService=new NewUserService();
+//            newUserService.getNearbyQRCodes(currentLat, currentLong, 300).addOnSuccessListener(new OnSuccessListener<List<QRCode>>() {
+//                @Override
+//                public void onSuccess(List<QRCode> qrCodes) {
+//                    for (QRCode qrCode: qrCodes) {
+//                        LatLng nearby = new LatLng(qrCode.getLatitude(), qrCode.getLongitude());
+//                        mMap.addMarker(new MarkerOptions().position(nearby));
+//                    }
+//                }
+//            });
             mMap.setMyLocationEnabled(true);
             createLocationRequest();
             setLocationCallback();
