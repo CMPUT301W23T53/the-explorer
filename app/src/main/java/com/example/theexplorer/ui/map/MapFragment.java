@@ -2,11 +2,13 @@ package com.example.theexplorer.ui.map;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -54,6 +57,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         return root;
     }
+
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -67,28 +71,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         } else {
             double currentLat = lastLocation.latitude;
             double currentLong = lastLocation.longitude;
-            LatLng cc = new LatLng(currentLat, currentLong);
-            mMap.addMarker(new MarkerOptions().position(cc).title("Current Location"));
-            UserService userService = new UserService();
-            List<QRCode> nearbyQRCode = userService.getNearbyQRCodes(currentLat, currentLong);
-            for (QRCode code : nearbyQRCode) {
-                LatLng nearby = new LatLng(code.getLatitude(), code.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(nearby));
-            }
-
-//            NewUserService newUserService=new NewUserService();
-//            newUserService.getNearbyQRCodes(currentLat, currentLong, 300).addOnSuccessListener(new OnSuccessListener<List<QRCode>>() {
-//                @Override
-//                public void onSuccess(List<QRCode> qrCodes) {
-//                    for (QRCode qrCode: qrCodes) {
-//                        LatLng nearby = new LatLng(qrCode.getLatitude(), qrCode.getLongitude());
-//                        mMap.addMarker(new MarkerOptions().position(nearby));
-//                    }
-//                }
-//            });
+            NewUserService newUserService = new NewUserService();
+            newUserService.getNearbyQRCodes(currentLat, currentLong, 300).addOnSuccessListener(new OnSuccessListener<List<QRCode>>() {
+                @Override
+                public void onSuccess(List<QRCode> qrCodes) {
+                    for (QRCode qrCode : qrCodes) {
+                        LatLng nearby = new LatLng(qrCode.getLatitude(), qrCode.getLongitude());
+                        mMap.addMarker(new MarkerOptions().position(nearby));
+                    }
+                }
+            });
             mMap.setMyLocationEnabled(true);
             createLocationRequest();
             setLocationCallback();
+
         }
 
     }
