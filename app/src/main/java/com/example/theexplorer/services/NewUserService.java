@@ -207,68 +207,6 @@ public class NewUserService {
         });
     }
 
-//    public Task<List<Comment>> getCommentOfQRCode(QRCode qrCode) {
-//        String qrCodeId = qrCode.getQRId();
-//        final TaskCompletionSource<List<Comment>> taskCompletionSource = new TaskCompletionSource<>();
-//        qrCodeRef.document(qrCodeId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                if (documentSnapshot.exists()) {
-//                    Map<String, Object> data = documentSnapshot.getData();
-//
-//                    ArrayList<DocumentReference> commentRefsList = (ArrayList<DocumentReference>) data.get("comments");
-//                    ArrayList<Task<Comment>> commentsTasks = new ArrayList<>();
-//
-//                    // Fetch each QR code document
-//                    for (DocumentReference commentDocRef : commentRefsList) {
-//                        Task<Comment> commentTask = commentDocRef.get().continueWith(new Continuation<DocumentSnapshot, Comment>() {
-//                            @Override
-//                            public Comment then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-//                                if (task.isSuccessful() && task.getResult() != null) {
-//                                    DocumentSnapshot document = task.getResult();
-//
-//                                    Comment comment = new Comment();
-//                                    comment.setCommentId(document.getId());
-//                                    comment.setUserId(document.getString("userId"));
-//                                    comment.setContent(document.getString("content"));
-//                                    comment.setCreatedAt(document.getTimestamp("createdAt").toDate());
-//
-//                                    return comment;
-//                                } else {
-//                                    throw new Exception("Error fetching QR code: " + task.getException());
-//                                }
-//                            }
-//                        });
-//                        commentsTasks.add(commentTask);
-//                    }
-//
-//                    // Wait for all QR code tasks to complete
-//                    Task<List<Comment>> allQRCodesTask = Tasks.whenAllSuccess(commentsTasks);
-//                    allQRCodesTask.addOnSuccessListener(new OnSuccessListener<List<Comment>>() {
-//                        @Override
-//                        public void onSuccess(List<Comment> comments) {
-//                            taskCompletionSource.setResult(comments);
-//                        }
-//                    }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Log.d("ERROR: ", e.toString());
-//                            taskCompletionSource.setException(e);
-//                        }
-//                    });
-//                }
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Log.d("ERROR: ", e.toString());
-//                taskCompletionSource.setException(e);
-//            }
-//        });
-//
-//        return taskCompletionSource.getTask();
-//    }
-
     public Task<List<Comment>> getCommentsOfQRCode(QRCode qrCode) {
         String QRId = qrCode.getQRId();
 
@@ -297,7 +235,6 @@ public class NewUserService {
     public void putComment(Comment comment) {
         String commentId = comment.getCommentId();
         commentRef.document(commentId).get().addOnCompleteListener(task -> {
-            Log.d("HIT", "");
             if (task.isSuccessful()) {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 if (documentSnapshot.exists()) {
