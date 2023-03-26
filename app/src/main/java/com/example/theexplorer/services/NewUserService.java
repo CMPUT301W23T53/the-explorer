@@ -216,13 +216,7 @@ public class NewUserService {
             if (task.isSuccessful()) {
                 QuerySnapshot querySnapshot = task.getResult();
                 for (DocumentSnapshot document: querySnapshot.getDocuments()) {
-                    Comment comment = new Comment();
-                    comment.setCommentId(document.getId());
-                    comment.setUserId(document.getString("userId"));
-                    comment.setContent(document.getString("content"));
-                    comment.setQRId(document.getString("QRId"));
-                    comment.setCreatedAt(document.getTimestamp("createdAt").toDate());
-
+                    Comment comment = mapCommentFromFirebase(document);
                     comments.add(comment);
                 }
             } else {
@@ -252,7 +246,6 @@ public class NewUserService {
 
 
     private QRCode mapQRCodeFromFirebase(DocumentSnapshot document) {
-        Map<String, Object> qrData = document.getData();
         QRCode qrCode = new QRCode();
 
         qrCode.setQRId(document.getId());
@@ -268,5 +261,17 @@ public class NewUserService {
         qrCode.setPhotoBytes(photoBytes);
 
         return qrCode;
+    }
+
+    private Comment mapCommentFromFirebase(DocumentSnapshot document) {
+        Comment comment = new Comment();
+
+        comment.setCommentId(document.getId());
+        comment.setUserId(document.getString("userId"));
+        comment.setContent(document.getString("content"));
+        comment.setQRId(document.getString("QRId"));
+        comment.setCreatedAt(document.getTimestamp("createdAt").toDate());
+
+        return comment;
     }
 }
