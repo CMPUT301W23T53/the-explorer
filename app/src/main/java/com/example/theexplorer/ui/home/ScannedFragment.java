@@ -107,7 +107,7 @@ public class ScannedFragment extends AppCompatActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Intent intent = new Intent(ScannedFragment.this, DetailPageOfOneQR.class);
                             startActivity(intent);
-
+                            
 
 
 
