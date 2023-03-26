@@ -65,7 +65,6 @@
             android:label="@string/app_name" />
         <activity android:name="com.example.theexplorer.ui.scan.ZXingScannerScan" />
         <activity android:name="com.example.theexplorer.ui.home.ScoresFragment" />
-        <activity android:name="com.example.theexplorer.ui.home.ScannedFragment" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
