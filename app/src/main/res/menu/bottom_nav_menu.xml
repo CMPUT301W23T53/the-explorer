@@ -3,16 +3,16 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/baseline_home_24"
         android:title="@string/title_home" />
     <item
         android:id="@+id/navigation_scan"
-        android:icon="@drawable/ic_photo_camera_24dp"
+        android:icon="@drawable/baseline_camera_alt_24"
         android:title="@string/title_scan" />
 
     <item
         android:id="@+id/navigation_map"
-        android:icon="@drawable/ic_map_24dp"
+        android:icon="@drawable/baseline_map_24"
         android:title="@string/title_map"/>
 
 </menu>
