@@ -244,6 +244,27 @@ public class NewUserService {
         });
     }
 
+    public Task<Integer> getRankOfUser(User user) {
+        Query query = qrCodeRef.orderBy("QRScore", Query.Direction.DESCENDING);
+        return query.get().continueWith(task -> {
+            List<Integer> allQRScoresSorted = new ArrayList<>();
+            int minUntilNow = Integer.MAX_VALUE;
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                for (DocumentSnapshot document: querySnapshot.getDocuments()) {
+                    int currentScore = document.getLong("QRScore").intValue();
+                    if (currentScore < minUntilNow)  {
+                        allQRScoresSorted.add(currentScore);
+                        minUntilNow = currentScore;
+                    }
+                }
+            } else {
+                Log.e("Error getting rank of user", task.getException().toString());
+            }
+            return allQRScoresSorted.indexOf(user.getHighestQRScore()) + 1;
+        });
+    }
+
 
     private QRCode mapQRCodeFromFirebase(DocumentSnapshot document) {
         QRCode qrCode = new QRCode();
