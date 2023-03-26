@@ -277,7 +277,7 @@ public class NewUserService {
                     documentSnapshot.getReference().set(comment.toMap(), SetOptions.merge());
                 } else {
                     // Create new document
-                    qrCodeRef.add(comment.toMap());
+                    commentRef.add(comment.toMap());
                 }
             } else {
                 Log.d("Error getting documents: ", task.getException().toString());
