@@ -1,6 +1,10 @@
 package com.example.theexplorer.services;
 
+import com.google.firebase.Timestamp;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Comment {
 
@@ -56,5 +60,13 @@ public class Comment {
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("userId", userId);
+        result.put("content", content);
+        result.put("createdAt", new Timestamp(createdAt));
+        return result;
     }
 }

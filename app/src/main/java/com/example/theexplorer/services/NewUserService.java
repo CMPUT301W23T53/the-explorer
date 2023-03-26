@@ -22,12 +22,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 
-import org.checkerframework.checker.units.qual.C;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class NewUserService {
 
@@ -270,32 +267,23 @@ public class NewUserService {
         return taskCompletionSource.getTask();
     }
 
-//    public void putComment(Comment comment) {
-//        String commentId = comment.
-//        qrCodeRef.document(id).get().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                DocumentSnapshot documentSnapshot = task.getResult();
-//                if (documentSnapshot.exists()) {
-//                    // Update existing document
-//                    documentSnapshot.getReference()
-//                            .set(qrCode.toMap(), SetOptions.merge())
-//                            .addOnSuccessListener(listener);
-//                    qrCodeRefs.add(documentSnapshot.getReference());
-//                } else {
-//                    // Create new document
-//                    qrCodeRef.add(qrCode.toMap()).addOnSuccessListener(documentReference -> {
-//                                // Get the ID of the newly created document
-//                                qrCodeRefs.add(documentReference);
-//                                listener.onSuccess(null);
-//                            })
-//                            .addOnFailureListener(e -> {
-//                            });
-//                }
-//            } else {
-//                Log.d("Error getting documents: ", task.getException().toString());
-//            }
-//        });
-//    }
+    public void putComment(Comment comment) {
+        String commentId = comment.getCommentId();
+        commentRef.document(commentId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (documentSnapshot.exists()) {
+                    // Update existing document
+                    documentSnapshot.getReference().set(comment.toMap(), SetOptions.merge());
+                } else {
+                    // Create new document
+                    qrCodeRef.add(comment.toMap());
+                }
+            } else {
+                Log.d("Error getting documents: ", task.getException().toString());
+            }
+        });
+    }
 
 
     private QRCode mapQRCodeFromFirebase(DocumentSnapshot document) {
