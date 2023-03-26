@@ -100,9 +100,17 @@ public class ScannedFragment extends AppCompatActivity {
                     longitudeEditText.setText("Longitude: " + String.valueOf(selectedItem.getLongitude()));
 
                     // Set the positive button of the AlertDialog
-                    builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton("More", new DialogInterface.OnClickListener() {
+
+
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            
+
+
+
+
+                            /*
                             // Get the updated values from the EditText views
                             String updatedId = idEditText.getText().toString();
                             String updatedScore = scoreEditText.getText().toString();
@@ -119,6 +127,7 @@ public class ScannedFragment extends AppCompatActivity {
 
                             // Notify the adapter that the data has changed
                             notifyDataSetChanged();
+                        */
                         }
                     });
 
