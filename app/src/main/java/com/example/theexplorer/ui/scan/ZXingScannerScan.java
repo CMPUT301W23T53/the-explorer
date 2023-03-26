@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,9 +14,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,9 +29,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.theexplorer.MainActivity;
 import com.example.theexplorer.R;
+import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
 import com.example.theexplorer.services.UserService;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
@@ -35,6 +41,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,12 +51,19 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     private ImageView preview;
     Button LocationButton;
     TextView AddressText;
+    EditText editQrName;
     LocationManager locationManager;
     private TextView score;
+    final NewUserService newUserService = new NewUserService();
+    final User[] user = {new User()};
 
     public QRCode qrCode = new QRCode();
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private boolean hideQR = false;
+
+    private Bitmap QRBitmap;
 
 
     /**
@@ -66,6 +80,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         preview = findViewById(R.id.image_preview);
         score = findViewById(R.id.score);
         ImageView photoTaking = findViewById(R.id.imageView_photo);
+        ImageView previewView = findViewById(R.id.image_preview);
         //get address
         AddressText= findViewById(R.id.address_text_view);
         LocationButton = findViewById(R.id.address_button);
@@ -79,32 +94,11 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         });
 
 
-        //creating a testing bit map it can be used when no result is returned
-        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.GRAY);
-        Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
-        paint.setTextSize(50);
-        paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("Image not found", canvas.getWidth() / 2f, canvas.getHeight() / 2f, paint);
 
-        preview.setImageBitmap(bitmap);
-
-        //creatig a defalt image view
-        Bitmap bitmap1 = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888);
-        Canvas canvas1 = new Canvas(bitmap1);
-        canvas1.drawColor(Color.GRAY);
-        Paint paint1 = new Paint();
-        paint1.setColor(Color.WHITE);
-        paint1.setTextSize(30);
-        paint1.setTextAlign(Paint.Align.CENTER);
-        canvas1.drawText("Take a picture", canvas1.getWidth() / 2f, canvas1.getHeight() / 2f, paint);
+        preview.setImageBitmap(notFound());
+        QRBitmap = notFound();
         ImageView imageView = findViewById(R.id.imageView_photo);
-        imageView.setImageBitmap(bitmap1);
-
-
-
+        imageView.setImageBitmap(takePhoto());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 
@@ -125,6 +119,20 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             }
         });
 
+        previewView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(!hideQR) {
+                    previewView.setImageBitmap(makeUpQR());
+                    hideQR = true;
+                }
+                else{
+                    previewView.setImageBitmap(QRBitmap);
+                    hideQR=false;
+                }
+                return true;
+            }
+        });
         photoTaking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,23 +143,43 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 else{
                     //prumpt camera not found
                 }
-
-
             }
         });
 
+        editQrName = findViewById(R.id.qr_name_edit);
+        editQrName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String text = charSequence.toString();
+                qrCode.setQRName(text);
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         // add qr to user
-        UserService userService = new UserService();
         Button add;
         add = findViewById(R.id.add_button);
-        User user = userService.getUser(1);
+        user[0].setUserId("test_nested"); // JUST FOR TESTING
+        newUserService.getUser(user[0].getUserId()).addOnSuccessListener(new OnSuccessListener<User>() {
+            @Override
+            public void onSuccess(User fetchUser) {
+                user[0] = fetchUser;
+                Log.d("USER", user[0].toString());
+            }
+        });
+
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<QRCode> qrCodeList = user.getQRList();
+                List<QRCode> qrCodeList = user[0].getQRList();
                 qrCodeList.add(qrCode);
-                Log.d("QRCODEUPDATED", user.toString());
-                userService.putUser(user);
+                newUserService.putUser(user[0]);
 
 
                 Intent intent = new Intent(ZXingScannerScan.this, MainActivity.class);
@@ -175,18 +203,18 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        qrCode.setQRId("test");
-        byte[] byteArray = {1, 0, 1, 0, 1, 0, 1, 0};
-        qrCode.setPhotoBytes(byteArray);
-        qrCode.setLatitude(53.47218437);
-        qrCode.setLongitude(-113.67184307);
-        qrCode.setQRName("QRTEMP");
-
         //deal with picture taking
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap bitmap = (Bitmap) extras.get("data");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            qrCode.setPhotoBytes(byteArray);
+
+//            Bitmap trietMap = BitmapFactory.decodeByteArray(user[0].getQRList().get(4).getPhotoBytes(), 0, user[0].getQRList().get(4).getPhotoBytes().length);
+//            Log.d("TRIETMAP", trietMap.toString());
 
             ImageView imageView = findViewById(R.id.imageView_photo);
             imageView.setImageBitmap(bitmap);
@@ -199,36 +227,22 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             } else { //on success
                 Toast.makeText(this, "Scan result：" + result.getContents(), Toast.LENGTH_SHORT).show();
                 score.setText(result.getContents());
-                //calculate the score
-                String content = result.getContents();
-                int theScore=0;
-                for (char c : content.toCharArray()){
-                    //place to implement scoring strat
-                    //strat now: each & is 1 each = will have 1 and each / will have 1
-                    if(c == '&' || c == '=' || c == '/'){
-                        theScore++;
-                    }
-                }
+                //calculate and display the score
+                int theScore = calculateScore(result);
                 score.setText("Score = " + Integer.toString(theScore));
 
                 qrCode.setQRScore(theScore);
 
-                //getting the bitmap
+                //getting the bitmap (of qr)
                 Bitmap bitmap = encodeAsBitmap(result.getContents()); //result -> bitmap
                 if (bitmap != null) {
                     preview.setImageBitmap(bitmap); //show in the image view for result preview
+                    QRBitmap = bitmap;
                 }
-
-
-
-
-
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-
-
     }
 
 
@@ -288,12 +302,73 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
             AddressText.setText("Latitude: "+ latitude + "\n" + "Longitude: "+ longitude);
+            qrCode.setLatitude(latitude);
+            qrCode.setLongitude(longitude);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
+    public Bitmap notFound(){
+        //creating a testing bit map it can be used when no result is returned
+        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.GRAY);
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(50);
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("Image not found", canvas.getWidth() / 2f, canvas.getHeight() / 2f, paint);
+        return bitmap;
+    }
 
+    public Bitmap takePhoto(){
+        //creatig a defalt image view
+        Bitmap bitmap1 = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888);
+        Canvas canvas1 = new Canvas(bitmap1);
+        canvas1.drawColor(Color.GRAY);
+        Paint paint1 = new Paint();
+        paint1.setColor(Color.WHITE);
+        paint1.setTextSize(30);
+        paint1.setTextAlign(Paint.Align.CENTER);
+        canvas1.drawText("Take a picture", canvas1.getWidth() / 2f, canvas1.getHeight() / 2f, paint1);
+        return bitmap1;
+    }
+
+    public int calculateScore(IntentResult result){
+        String content = result.getContents();
+        int theScore=0;
+        for (char c : content.toCharArray()){
+            //place to implement scoring strat
+            //strat now: each & is 1 each = will have 1 and each / will have 1
+            if(c == '&' || c == '=' || c == '/'){
+                theScore++;
+            }
+        }
+        return theScore;
+    }
+
+    public Bitmap makeUpQR(){
+        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.GRAY);
+        Paint squarePaint = new Paint();
+        squarePaint.setColor(Color.BLACK);
+        int squareSize = 50;
+        for (int i = 0; i < canvas.getWidth(); i += squareSize) {
+            for (int j = 0; j < canvas.getHeight(); j += squareSize) {
+                if ((i / squareSize + j / squareSize) % 2 == 0) {
+                    canvas.drawRect(i, j, i + squareSize, j + squareSize, squarePaint);
+                }
+            }
+        }
+        Paint textPaint = new Paint();
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextSize(50);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("HIDDEN", canvas.getWidth() / 2f, canvas.getHeight() / 2f, textPaint);
+        return bitmap;
+    }
 
 
 

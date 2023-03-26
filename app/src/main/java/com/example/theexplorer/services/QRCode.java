@@ -6,6 +6,8 @@ package com.example.theexplorer.services;
 
 import android.util.Base64;
 
+import com.google.firebase.firestore.GeoPoint;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,6 +21,14 @@ public class QRCode {
     private String QRName;
     private double latitude;
     private double longitude;
+    public QRCode() {
+        QRId = "temp";
+        photoBytes = new byte[]{};
+        QRScore = 0;
+        QRName = "";
+        latitude = 0;
+        longitude = 0;
+    }
 
     public double getLatitude() {
         return latitude;
@@ -85,8 +95,7 @@ public class QRCode {
         result.put("QRId", QRId);
         result.put("QRName", QRName);
         result.put("QRScore", QRScore);
-        result.put("latitude", latitude);
-        result.put("longitude", longitude);
+        result.put("location", new GeoPoint(latitude, longitude));
         result.put("photoBytes", Base64.encodeToString(photoBytes, Base64.DEFAULT));
         return result;
     }

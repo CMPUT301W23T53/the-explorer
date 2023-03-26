@@ -40,6 +40,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBi_kDNxri_lrm51Z9Xkq-53zN2mPpxYRU" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity
             android:name=".ui.auth.Register"
@@ -62,6 +65,7 @@
             android:label="@string/app_name" />
         <activity android:name="com.example.theexplorer.ui.scan.ZXingScannerScan" />
         <activity android:name="com.example.theexplorer.ui.home.ScoresFragment" />
+        <activity android:name="com.example.theexplorer.ui.home.ScannedFragment" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
