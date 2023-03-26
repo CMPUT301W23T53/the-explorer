@@ -40,7 +40,7 @@ public class User {
     public int getHighestQRScore() {
         int maxScore = 0;
         for (QRCode qrCode: this.getQRList()) {
-            if (qrCode.getQRScore() > maxScore) {
+            if (qrCode.getQRScore() >= maxScore) {
                 maxScore = qrCode.getQRScore();
             }
         }
@@ -56,7 +56,7 @@ public class User {
         int maxScore = 0;
         String maxScoreName = null;
         for (QRCode qrCode: this.getQRList()) {
-            if (qrCode.getQRScore() > maxScore) {
+            if (qrCode.getQRScore() >= maxScore) {
                 maxScore = qrCode.getQRScore();
                 maxScoreName = qrCode.getQRName();
             }
