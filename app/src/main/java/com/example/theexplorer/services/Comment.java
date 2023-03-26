@@ -4,14 +4,24 @@ import java.util.Date;
 
 public class Comment {
 
+    private String commentId;
     private String userId;
     private String content;
     private Date createdAt;
 
     public Comment() {
+        commentId = "";
         userId = "";
         content = "";
         createdAt = new Date();
+    }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
     }
 
     public String getUserId() {
@@ -41,7 +51,8 @@ public class Comment {
     @Override
     public String toString() {
         return "Comment{" +
-                "userId='" + userId + '\'' +
+                "commentId='" + commentId + '\'' +
+                ", userId='" + userId + '\'' +
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
                 '}';

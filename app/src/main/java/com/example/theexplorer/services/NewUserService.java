@@ -22,6 +22,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 
+import org.checkerframework.checker.units.qual.C;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -225,7 +227,13 @@ public class NewUserService {
                             public Comment then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                                 if (task.isSuccessful() && task.getResult() != null) {
                                     DocumentSnapshot document = task.getResult();
-                                    Comment comment = document.toObject(Comment.class);
+
+                                    Comment comment = new Comment();
+                                    comment.setCommentId(document.getId());
+                                    comment.setUserId(document.getString("userId"));
+                                    comment.setContent(document.getString("content"));
+                                    comment.setCreatedAt(document.getTimestamp("createdAt").toDate());
+
                                     return comment;
                                 } else {
                                     throw new Exception("Error fetching QR code: " + task.getException());
@@ -261,6 +269,33 @@ public class NewUserService {
 
         return taskCompletionSource.getTask();
     }
+
+//    public void putComment(Comment comment) {
+//        String commentId = comment.
+//        qrCodeRef.document(id).get().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                DocumentSnapshot documentSnapshot = task.getResult();
+//                if (documentSnapshot.exists()) {
+//                    // Update existing document
+//                    documentSnapshot.getReference()
+//                            .set(qrCode.toMap(), SetOptions.merge())
+//                            .addOnSuccessListener(listener);
+//                    qrCodeRefs.add(documentSnapshot.getReference());
+//                } else {
+//                    // Create new document
+//                    qrCodeRef.add(qrCode.toMap()).addOnSuccessListener(documentReference -> {
+//                                // Get the ID of the newly created document
+//                                qrCodeRefs.add(documentReference);
+//                                listener.onSuccess(null);
+//                            })
+//                            .addOnFailureListener(e -> {
+//                            });
+//                }
+//            } else {
+//                Log.d("Error getting documents: ", task.getException().toString());
+//            }
+//        });
+//    }
 
 
     private QRCode mapQRCodeFromFirebase(DocumentSnapshot document) {
