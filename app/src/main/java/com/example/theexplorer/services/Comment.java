@@ -10,23 +10,14 @@ public class Comment {
 
     private String commentId;
     private String userId;
-    private String QRId;
     private String content;
     private Date createdAt;
 
     public Comment() {
-        commentId = "temp";
+        commentId = "";
         userId = "";
         content = "";
         createdAt = new Date();
-    }
-
-    public String getQRId() {
-        return QRId;
-    }
-
-    public void setQRId(String QRId) {
-        this.QRId = QRId;
     }
 
     public String getCommentId() {
@@ -66,7 +57,6 @@ public class Comment {
         return "Comment{" +
                 "commentId='" + commentId + '\'' +
                 ", userId='" + userId + '\'' +
-                ", QRId='" + QRId + '\'' +
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
@@ -76,7 +66,6 @@ public class Comment {
         HashMap<String, Object> result = new HashMap<>();
         result.put("userId", userId);
         result.put("content", content);
-        result.put("QRId", QRId);
         result.put("createdAt", new Timestamp(createdAt));
         return result;
     }
