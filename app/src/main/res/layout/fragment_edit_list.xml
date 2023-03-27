@@ -4,38 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24dp"
-        android:editable="false"
         android:background="@color/white"
         android:id="@+id/text_id" />
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24dp"
-        android:editable="false"
         android:background="@color/white"
         android:id="@+id/text_score" />
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24dp"
-        android:hint="Edit Name"
         android:id="@+id/text_name" />
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24dp"
-        android:editable="false"
         android:background="@color/white"
         android:id="@+id/text_latitude" />
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24dp"
-        android:editable="false"
         android:background="@color/white"
         android:id="@+id/text_longitude" />
 

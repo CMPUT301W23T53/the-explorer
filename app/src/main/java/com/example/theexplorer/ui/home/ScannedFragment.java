@@ -80,25 +80,24 @@ public class ScannedFragment extends AppCompatActivity {
                     // Create a new AlertDialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(ScannedFragment.this);
                     builder.setTitle("View QR Code Details");
-                    builder.setMessage("Edit the name of the QR Code");
 
                     // Set the custom layout for the AlertDialog
                     View dialogView = getLayoutInflater().inflate(R.layout.fragment_edit_list, null);
                     builder.setView(dialogView);
 
                     // Get the EditText views from the custom layout
-                    EditText idEditText = dialogView.findViewById(R.id.text_id);
-                    EditText scoreEditText = dialogView.findViewById(R.id.text_score);
-                    EditText nameEditText = dialogView.findViewById(R.id.text_name);
-                    EditText latitudeEditText = dialogView.findViewById(R.id.text_latitude);
-                    EditText longitudeEditText = dialogView.findViewById(R.id.text_longitude);
+                    TextView idTextView = dialogView.findViewById(R.id.text_id);
+                    TextView scoreTextView = dialogView.findViewById(R.id.text_score);
+                    TextView nameTextView = dialogView.findViewById(R.id.text_name);
+                    TextView latitudeTextView = dialogView.findViewById(R.id.text_latitude);
+                    TextView longitudeTextView = dialogView.findViewById(R.id.text_longitude);
 
                     // Set the EditText values to the selected QRCode object's id and name
-                    idEditText.setText("ID: " + selectedItem.getQRId());
-                    scoreEditText.setText("Score: " + String.valueOf(selectedItem.getQRScore()));
-                    nameEditText.setText("Name: " + selectedItem.getQRName());
-                    latitudeEditText.setText("Latitude: " + String.valueOf(selectedItem.getLatitude()));
-                    longitudeEditText.setText("Longitude: " + String.valueOf(selectedItem.getLongitude()));
+                    idTextView.setText("ID: " + selectedItem.getQRId());
+                    scoreTextView.setText("Score: " + String.valueOf(selectedItem.getQRScore()));
+                    nameTextView.setText("Name: " + selectedItem.getQRName());
+                    latitudeTextView.setText("Latitude: " + String.valueOf(selectedItem.getLatitude()));
+                    longitudeTextView.setText("Longitude: " + String.valueOf(selectedItem.getLongitude()));
 
                     // Set the positive button of the AlertDialog
                     builder.setPositiveButton("More", new DialogInterface.OnClickListener() {
@@ -110,35 +109,17 @@ public class ScannedFragment extends AppCompatActivity {
                             intent.putExtra("qr_code_key", selectedItem);
                             startActivity(intent);
 
-
-
-
-                            /*
-                            // Get the updated values from the EditText views
-                            String updatedId = idEditText.getText().toString();
-                            String updatedScore = scoreEditText.getText().toString();
-                            String updatedName = nameEditText.getText().toString();
-                            String updatedLatitude = latitudeEditText.getText().toString();
-                            String updatedLongitude = longitudeEditText.getText().toString();
-
-                            // Update the selected QRCode object's id and name
-                            selectedItem.setQRId(updatedId);
-                            selectedItem.setQRScore(Integer.parseInt(updatedScore));
-                            selectedItem.setQRName(updatedName);
-                            selectedItem.setLatitude(Double.parseDouble(updatedLatitude));
-                            selectedItem.setLongitude(Double.parseDouble(updatedLongitude));
-
-                            // Notify the adapter that the data has changed
-                            notifyDataSetChanged();
-                        */
                         }
                     });
 
                     // Set the negative button of the AlertDialog
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // Do nothing
+                            List<QRCode> qrCodeList = user[0].getQRList();
+                            qrCodeList.remove(selectedItem);
+                            newUserService.putUser(user[0]);
+                            notifyDataSetChanged();
                         }
                     });
 
