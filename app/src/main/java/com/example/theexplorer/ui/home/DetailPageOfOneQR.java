@@ -40,7 +40,14 @@ import com.example.theexplorer.services.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import com.example.theexplorer.services.NewUserService;
+import java.util.Collections;
+import java.util.Comparator;
+
+
+
 
 
 public class DetailPageOfOneQR extends AppCompatActivity {
@@ -62,7 +69,31 @@ public class DetailPageOfOneQR extends AppCompatActivity {
         comments = new ArrayList<>();
 
         // Add some sample comments for demonstration purposes
-        comments.add("Great QR code!(test)");
+
+        qrCode.setQRId(qrCode.getQRId());
+        NewUserService newUserService = new NewUserService();
+        newUserService.getCommentsOfQRCode(qrCode).addOnSuccessListener(new OnSuccessListener<List<Comment>>() {
+            @Override
+            public void onSuccess(List<Comment> comments) {
+                Collections.sort(comments, new Comparator<Comment>() {
+                    @Override
+                    public int compare(Comment c1, Comment c2) {
+                        return c2.getCreatedAt().compareTo(c1.getCreatedAt());
+                    }
+                });
+
+                // Convert the List<Comment> to ArrayList<String> and store it in the comments variable
+                ArrayList<String> commentStrings = new ArrayList<>();
+                for (Comment comment : comments) {
+                    commentStrings.add(comment.getContent());
+                }
+
+                // Update the ArrayAdapter with the new comments data
+                commentAdapter.clear();
+                commentAdapter.addAll(commentStrings);
+                commentAdapter.notifyDataSetChanged();
+            }
+        });
 
 
         // Initialize the ArrayAdapter and set it to the ListView
@@ -84,13 +115,34 @@ public class DetailPageOfOneQR extends AppCompatActivity {
             public void onClick(View view) {
                 EditText editText = findViewById(R.id.comment_edit_text);
                 String commentText = editText.getText().toString();
+                if (!commentText.isEmpty()) {
+                    Comment comment = new Comment();
+                    comment.setCreatedAt(new Date());
+                    comment.setQRId(qrCode.getQRId()); // Set it to qrCode.getQRId()
+                    comment.setContent(commentText);
+                    NewUserService newUserService = new NewUserService();
+                    newUserService.putComment(comment);
 
-                Comment comment = new Comment();
-                comment.setQRId(qrCode.get); // Set it to qrCode.getQRId()
-                comment.setContent("test contentttt");
-                newUserService.putComment(comment);
+                    editText.setText(""); // clear EditText
+                /** uncomment this to update comment when upload is successful. ie, we have newUserService.putComment(comment).addOnSuccessListener
+                newUserService.putComment(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Add the new comment to the adapter's data set
+                        commentAdapter.add(commentText);
 
-                editText.setText(""); // 清空 EditText 视图
+                        // Clear the EditText
+                        editText.setText("");
+
+                        // Notify the adapter that the data set has changed
+                        commentAdapter.notifyDataSetChanged();
+                    }
+                });
+                 */
+
+                    commentAdapter.insert(commentText, 0);
+                    commentAdapter.notifyDataSetChanged();
+                }
             }
         });
     }
@@ -101,12 +153,6 @@ public class DetailPageOfOneQR extends AppCompatActivity {
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         return bitmap;
     }
-
-    public void onAddCommentClick(View view) {
-
-
-    }
-
 
 
 }
