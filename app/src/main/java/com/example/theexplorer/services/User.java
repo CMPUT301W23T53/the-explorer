@@ -7,7 +7,7 @@ package com.example.theexplorer.services;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class User implements Comparable<User>{
     private String userId;
     private List<QRCode> QRList;
 
@@ -117,5 +117,10 @@ public class User {
                 "userId=" + userId +
                 ", QRList=" + QRList +
                 '}';
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return Integer.compare(this.getHighestQRScore(), user.getHighestQRScore());
     }
 }
