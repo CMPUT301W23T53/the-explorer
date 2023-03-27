@@ -1,9 +1,17 @@
 package com.example.theexplorer.ui.leaderboard;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.GenericTypeIndicator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Leaderboard {
     final NewUserService userService = new NewUserService();
@@ -13,6 +21,7 @@ public class Leaderboard {
 
     /**
      * Initialize a Leaderboard with default settings.
+     * No user will be focused; will show n top players
      */
     public Leaderboard(){}
 
@@ -32,10 +41,25 @@ public class Leaderboard {
     }
 
     public ArrayList<String> getTopNDescendingUsersAsStrings(){
-        ;
+        assert Leaderboard.class.getMethod("getTopNDescendingUsers");
     }
     public ArrayList<User> getTopNDescendingUsers(){
-        ;
+        ArrayList<User> toReturn = new ArrayList<>();
+        userService.getGameWideHighScoreOfAllPlayers().addOnSuccessListener(new OnSuccessListener<List<User>>() {
+            @Override
+            public void onSuccess(List<User> users) {
+                for(int i =0; i<linesUpperBound; i++){
+                    Log.d("TAG","User: " + users.get(i).getUserId() + " successfully added " +
+                            "to ArrayList.");
+                    toReturn.add(users.get(i));
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("TAG", "Error getting list.");
+            }
+        });
     }
 
     //---------------------------------------------------------------------------------------------
@@ -46,6 +70,8 @@ public class Leaderboard {
 
         /**
          * Create a new Leaderboard object with a current user.
+         * Focuses on the user; if user is beyond line n,
+         * the list will be n+1 long with the last being the user's ranking
          * @param currentUser - the currentUser we want to focus
          */
         public LeaderboardBuilder(String currentUser){
