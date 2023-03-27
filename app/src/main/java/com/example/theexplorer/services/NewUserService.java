@@ -25,6 +25,7 @@ import com.google.firebase.firestore.SetOptions;
 import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +94,7 @@ public class NewUserService {
 
         return taskCompletionSource.getTask();
     }
+
 
     public void putUser(User user) {
         usersRef.document(user.getUserId()).get().addOnCompleteListener(task -> {
@@ -265,6 +267,53 @@ public class NewUserService {
         });
     }
 
+    public Task<List<User>> getGameWideHighScoreOfAllPlayers() {
+        final TaskCompletionSource<List<User>> taskCompletionSource = new TaskCompletionSource<>();
+
+        usersRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                List<Task<User>> userTasks = new ArrayList<>();
+                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                    String userId = document.getId();
+                    Task<User> userTask = getUser(userId).continueWith(task1 -> {
+                        User[] users = new User[1];
+                        if (task1.isSuccessful()) {
+                            users[0] = task1.getResult();
+                        } else {
+                            taskCompletionSource.setException(task1.getException());
+                        }
+                        return users[0];
+                    });
+                    userTasks.add(userTask);
+                }
+
+                Task<List<User>> allUserTasks = Tasks.whenAllSuccess(userTasks);
+                allUserTasks.addOnSuccessListener(new OnSuccessListener<List<User>>() {
+                    @Override
+                    public void onSuccess(List<User> users) {
+                        Collections.sort(users);
+                        taskCompletionSource.setResult(users);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Error getting all users", e.toString());
+                        taskCompletionSource.setException(e);
+                    }
+                });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("Error getting all users", e.toString());
+                taskCompletionSource.setException(e);
+            }
+        });
+
+        return taskCompletionSource.getTask();
+    }
 
     private QRCode mapQRCodeFromFirebase(DocumentSnapshot document) {
         QRCode qrCode = new QRCode();
@@ -274,6 +323,7 @@ public class NewUserService {
         qrCode.setQRScore(document.getLong("QRScore").intValue());
 
         GeoPoint location = document.getGeoPoint("location");
+
         qrCode.setLatitude(location.getLatitude());
         qrCode.setLongitude(location.getLongitude());
 
