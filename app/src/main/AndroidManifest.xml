@@ -25,6 +25,9 @@
         <activity android:name="com.example.theexplorer.ui.home.DetailPageOfOneQR" />
 
         <activity
+            android:name=".ui.leaderboard.LeaderboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.search.SearchActivity"
             android:exported="false">
             <meta-data
