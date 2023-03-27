@@ -11,9 +11,10 @@ import com.google.firebase.firestore.GeoPoint;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map;import android.os.Parcel;
+import android.os.Parcelable;
 
-public class QRCode {
+public class QRCode implements Parcelable{
 
     private String QRId;
     private byte[] photoBytes;
@@ -99,4 +100,43 @@ public class QRCode {
         result.put("photoBytes", Base64.encodeToString(photoBytes, Base64.DEFAULT));
         return result;
     }
+
+
+    //code for parcelabel
+    protected QRCode(Parcel in) {
+        QRId = in.readString();
+        photoBytes = in.createByteArray();
+        QRScore = in.readInt();
+        QRName = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(QRId);
+        dest.writeByteArray(photoBytes);
+        dest.writeInt(QRScore);
+        dest.writeString(QRName);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+    }
+
+    public static final Parcelable.Creator<QRCode> CREATOR = new Parcelable.Creator<QRCode>() {
+        @Override
+        public QRCode createFromParcel(Parcel in) {
+            return new QRCode(in);
+        }
+
+        @Override
+        public QRCode[] newArray(int size) {
+            return new QRCode[size];
+        }
+    };
+
 }
