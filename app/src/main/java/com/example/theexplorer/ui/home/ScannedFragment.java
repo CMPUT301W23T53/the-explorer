@@ -107,6 +107,7 @@ public class ScannedFragment extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Intent intent = new Intent(ScannedFragment.this, DetailPageOfOneQR.class);
+                            intent.putExtra("qr_code_key", selectedItem);
                             startActivity(intent);
 
 
