@@ -63,7 +63,18 @@ public class DetailPageOfOneQR extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_page_of_one_qr);
+        //display info
+        TextView name = findViewById(R.id.qr_name);
+        name.setText("Name: "+qrCode.getQRName());
 
+        TextView id = findViewById(R.id.qr_id);
+        id.setText("ID: "+qrCode.getQRId());
+
+        TextView score = findViewById(R.id.qr_score_for_detail);
+        score.setText("Score: "+qrCode.getQRScore());
+
+        TextView location = findViewById(R.id.qr_location);
+        location.setText("Longitude: "+qrCode.getLongitude()+ "Latitude: "+qrCode.getLatitude());
 
         // Initialize the comments list
         comments = new ArrayList<>();
