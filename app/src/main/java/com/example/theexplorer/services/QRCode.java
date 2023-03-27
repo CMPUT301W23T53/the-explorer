@@ -94,7 +94,7 @@ public class QRCode implements Parcelable{
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("QRId", QRId);
-        result.put("QRName", QRName);
+        result.put("QRName", QRCodeNameGenerator.generateName(QRScore));
         result.put("QRScore", QRScore);
         result.put("location", new GeoPoint(latitude, longitude));
         result.put("photoBytes", Base64.encodeToString(photoBytes, Base64.DEFAULT));
