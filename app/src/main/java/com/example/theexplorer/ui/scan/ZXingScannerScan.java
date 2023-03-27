@@ -345,6 +345,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 theScore++;
             }
         }
+        theScore+=content.length();
         return theScore;
     }
 

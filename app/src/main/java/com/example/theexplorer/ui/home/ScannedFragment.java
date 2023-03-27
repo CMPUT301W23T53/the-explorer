@@ -1,6 +1,7 @@
 package com.example.theexplorer.ui.home;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.theexplorer.R;
+import com.example.theexplorer.services.Comment;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
@@ -75,7 +77,6 @@ public class ScannedFragment extends AppCompatActivity {
                 public void onClick(View view) {
                     // Get the selected QRCode object
                     QRCode selectedItem = getItem(position);
-
                     // Create a new AlertDialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(ScannedFragment.this);
                     builder.setTitle("View QR Code Details");
@@ -100,9 +101,19 @@ public class ScannedFragment extends AppCompatActivity {
                     longitudeEditText.setText("Longitude: " + String.valueOf(selectedItem.getLongitude()));
 
                     // Set the positive button of the AlertDialog
-                    builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton("More", new DialogInterface.OnClickListener() {
+
+
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(ScannedFragment.this, DetailPageOfOneQR.class);
+                            intent.putExtra("qr_code_key", selectedItem);
+                            startActivity(intent);
+
+
+
+
+                            /*
                             // Get the updated values from the EditText views
                             String updatedId = idEditText.getText().toString();
                             String updatedScore = scoreEditText.getText().toString();
@@ -119,6 +130,7 @@ public class ScannedFragment extends AppCompatActivity {
 
                             // Notify the adapter that the data has changed
                             notifyDataSetChanged();
+                        */
                         }
                     });
 
