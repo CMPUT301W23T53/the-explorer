@@ -22,7 +22,9 @@ public class Leaderboard {
      */
     private Leaderboard(LeaderboardBuilder builder){
         this.currentUserID = builder.currentUser;
-        this.linesUpperBound = builder.linesUpperBound;
+        if(builder.linesUpperBound != null){
+            this.linesUpperBound = builder.linesUpperBound;
+        }
     }
 
     public void setLinesUpperBound(int newUpperBound) {
@@ -35,9 +37,11 @@ public class Leaderboard {
     public ArrayList<User> getTopNDescendingUsers(){
         ;
     }
+
+    //---------------------------------------------------------------------------------------------
     public static class LeaderboardBuilder {
 
-        private int linesUpperBound;
+        private Integer linesUpperBound;
         private String currentUser;
 
         /**
