@@ -4,40 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="56dp"
     tools:context=".ui.home.HomeFragment">
 
+
     <TextView
-        android:id="@+id/text_home"
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_margin="10dp"
+        android:text="Hello,"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></TextView>
+
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:columnCount="2"
+        android:padding="5dp"
+        android:rowCount="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
-    <Button
-        android:id="@+id/button_see_scores"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:text="View Statistics"
-        app:layout_constraintBottom_toTopOf="@+id/text_home"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.222" />
+        <Button
+            android:id="@+id/button_see_scores"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_columnWeight="1"
+            android:text="View Statistics" />
 
-    <Button
-        android:id="@+id/button_view_codes"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:text="View Scanned QR Codes"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_see_scores" />
+        <Button
+            android:id="@+id/button_view_codes"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_columnWeight="1"
+            android:text="View Scanned QR Codes" />
+    </GridLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
