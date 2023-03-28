@@ -9,19 +9,17 @@ import com.example.theexplorer.services.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Leaderboard {
     final NewUserService userService = new NewUserService();
-
     private String currentUserID = null;
     private User currentUserInstance;
     private List<User> fullList;
-    private boolean isDescending = true;
+    private boolean scoresDescending = true;
+    // note that this upper bound can +1 if the user is not in the list.
     private int linesUpperBound = 10;
 
 
@@ -29,7 +27,9 @@ public class Leaderboard {
      * Initialize a Leaderboard with default settings.
      * No user will be focused; will show n top players
      */
-    public Leaderboard(){}
+    public Leaderboard(){
+        refreshUserList();
+    }
 
     /**
      * Initialize a new Leaderboard using the associated Builder.
@@ -48,11 +48,18 @@ public class Leaderboard {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.d("TAG","User not found or was not received.");
+                    throw new IllegalArgumentException("Not a user", e);
                 }
             });
         }
-        if(builder.linesUpperBound != null){this.linesUpperBound = builder.linesUpperBound;}
         if(builder.preloadEntireList){refreshUserList();}
+        if(builder.toReverse != null){
+            this.scoresDescending = !builder.toReverse;
+            if(builder.toReverse){
+                Collections.reverse(fullList);
+            }
+        }
+        if(builder.linesUpperBound != null){this.linesUpperBound = builder.linesUpperBound;}
     }
 
     public void setLinesUpperBound(int newUpperBound) {
@@ -78,14 +85,19 @@ public class Leaderboard {
     }
 
     public void setListOrderAsDescending(boolean toDescending){
-        boolean prior = this.isDescending;
-        this.isDescending = toDescending;
-        if(this.isDescending != prior){
+        boolean prior = this.scoresDescending;
+        this.scoresDescending = toDescending;
+        if(this.scoresDescending != prior){
             Collections.reverse(fullList);
         }
     }
-    public boolean getListOrderAsDescending(){
-        return this.isDescending;
+
+    /**
+     * Return whether the list is in descending order, using the scores.
+     * @return - a boolean True if in descending order, False otherwise.
+     */
+    public boolean getScoresDescending(){
+        return this.scoresDescending;
     }
 
 
@@ -106,23 +118,26 @@ public class Leaderboard {
             }
         });
 
-        if(!isDescending){
+        if(!scoresDescending){
             Collections.reverse(fullList);
         }
     }
-    public ArrayList<String> getTopNDescendingUsersAsStrings(){
+
+
+    /*public ArrayList<String> getTopNUsersAsStrings(){
         ArrayList<String> toReturn = new ArrayList<>();
-        for(User user : getTopNDescendingUsers()){
+        for(User user : getTopNUsers()){
             toReturn.add(user.getUserId());
         }
         if (!toReturn.contains(currentUserID)){
-            toReturn.add(currentUserID); // this is problematic
+            toReturn.add(currentUserID);
+            // TODO: Fix this, this is problematic.
         }
         return toReturn;
-    }
-    public ArrayList<User> getTopNDescendingUsers() {
+    }*/
+    public ArrayList<User> getTopNUsers() {
         ArrayList<User> truncatedList = new ArrayList<>(fullList.subList(0, linesUpperBound));
-        if(!truncatedList.contains(currentUserInstance)){
+        if(!truncatedList.contains(currentUserInstance) && currentUserInstance != null){
             truncatedList.add(currentUserInstance);
         }
         return truncatedList;
@@ -134,6 +149,7 @@ public class Leaderboard {
         private Integer linesUpperBound;
         private String currentUser;
         private boolean preloadEntireList;
+        private Boolean toReverse;
 
         /**
          * Create a new Leaderboard object using the associated Builder.
@@ -152,6 +168,9 @@ public class Leaderboard {
          * @return the same LeaderboardBuilder instance
          */
         public LeaderboardBuilder setLinesUpperBound(int upperBound){
+            if(upperBound < 0){
+                throw new IllegalArgumentException();
+            }
             this.linesUpperBound = upperBound;
             return this;
         }
@@ -164,6 +183,18 @@ public class Leaderboard {
          */
         public LeaderboardBuilder initializeEntireUserList(boolean toPreload){
             this.preloadEntireList = toPreload;
+            return this;
+        }
+
+        /**
+         * Set the list order of the Leaderboard.
+         * By default, the list is in descending order; it is from the highest score to the lowest.
+         * Eg. The first user will be the highest.
+         * @param toReverse - boolean True, will cause the *lowest* scoring to be at the top.
+         * @return the same LeaderboardBuilder instance
+         */
+        public LeaderboardBuilder setAscendingScoreOrder(boolean toReverse){
+            this.toReverse = toReverse;
             return this;
         }
 
