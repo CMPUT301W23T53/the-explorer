@@ -114,6 +114,11 @@ public class NewUserService {
                         }
                     });
                 }
+
+                if (updatedCount[0] == 0) {
+                    document.getReference().update("QRList", qrCodeRefs);
+                }
+
             } else {
                 Log.d("Error getting documents: ", task.getException().toString());
             }
