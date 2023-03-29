@@ -6,18 +6,21 @@ import androidx.annotation.NonNull;
 
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Leaderboard {
-    final NewUserService userService = new NewUserService();
+    private boolean debugMode = false;
+    private NewUserService userService = new NewUserService();
     private String currentUserID = null;
     private User currentUserInstance;
-    private List<User> fullList;
+    private List<User> fullList = new ArrayList<User>();
     private boolean scoresDescending = true;
     // note that this upper bound can +1 if the user is not in the list.
     private int linesUpperBound = 10;
@@ -41,18 +44,18 @@ public class Leaderboard {
             userService.getUser(builder.currentUser).addOnSuccessListener(new OnSuccessListener<User>() {
                 @Override
                 public void onSuccess(User user) {
-                    Log.d("TAG","User successfully found.");
+                    Log.d("LEADERBOARD","User successfully found.");
                     currentUserInstance = user;
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.d("TAG","User not found or was not received.");
+                    Log.d("LEADERBOARD","User not found or was not received.");
                     throw new IllegalArgumentException("Not a user", e);
                 }
             });
         }
-        if(builder.preloadEntireList){refreshUserList();}
+        if(builder.preloadEntireList && !builder.debugMode){refreshUserList();}
         if(builder.toReverse != null){
             this.scoresDescending = !builder.toReverse;
             if(builder.toReverse){
@@ -60,10 +63,14 @@ public class Leaderboard {
             }
         }
         if(builder.linesUpperBound != null){this.linesUpperBound = builder.linesUpperBound;}
+        if(builder.debugMode != null){this.debugMode = builder.debugMode;}
     }
 
     public void setLinesUpperBound(int newUpperBound) {
         this.linesUpperBound = newUpperBound;
+    }
+    public void setFullList(List<User> list){
+        this.fullList = list;
     }
 
     /**
@@ -100,7 +107,6 @@ public class Leaderboard {
         return this.scoresDescending;
     }
 
-
     /**
      * Refresh the list using the latest list from Firebase.
      */
@@ -108,9 +114,14 @@ public class Leaderboard {
         userService.getGameWideHighScoreOfAllPlayers().addOnSuccessListener(new OnSuccessListener<List<User>>() {
             @Override
             public void onSuccess(List<User> users) {
-                    Log.d("TAG","List successfully obtained.");
-                    fullList = users;
-                }
+                Log.d("LEADERBOARD","List successfully obtained.");
+                setFullList(users);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("LEADERBOARD", e.toString());
+            }
         });
 
         if(!scoresDescending){
@@ -151,6 +162,7 @@ public class Leaderboard {
         private String currentUser;
         private boolean preloadEntireList;
         private Boolean toReverse;
+        private Boolean debugMode;
 
         /**
          * Create a new Leaderboard object using the associated Builder.
@@ -196,6 +208,11 @@ public class Leaderboard {
          */
         public LeaderboardBuilder setAscendingScoreOrder(boolean toReverse){
             this.toReverse = toReverse;
+            return this;
+        }
+
+        public LeaderboardBuilder setDebugMode(boolean toTest){
+            this.debugMode = toTest;
             return this;
         }
 
