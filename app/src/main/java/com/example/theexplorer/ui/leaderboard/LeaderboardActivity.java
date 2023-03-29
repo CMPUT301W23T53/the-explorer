@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.example.theexplorer.R;
+import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
 
 import java.util.ArrayList;
@@ -96,7 +97,11 @@ public class LeaderboardActivity extends AppCompatActivity {
         refreshLeaderboardView();
     }
 
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @Override
     public void onBackPressed() {
         finish();
@@ -116,16 +121,18 @@ public class LeaderboardActivity extends AppCompatActivity {
         Leaderboard.LeaderboardBuilder builder = new Leaderboard.LeaderboardBuilder()
                 .setLinesUpperBound(10)
                 .initializeEntireUserList(true);
+
         if(userName != null){builder.setUsername(userName);}
 
         leaderboard = builder.build();
+
+        //for debugging purposes
 
         usersDataList = leaderboard.getTopNUsers();
 
         usersList = findViewById(R.id.leaderboard_content);
         usersAdapter = new LeaderboardAdapter(this,usersDataList);
         usersList.setAdapter(usersAdapter);
-
     }
 
     /**
