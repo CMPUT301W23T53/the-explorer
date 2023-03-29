@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/welcome_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"></TextView>
 
     <GridLayout
-        android:id="@+id/gridLayout"
+        android:id="@+id/gridLayout_home_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -29,21 +29,36 @@
         android:rowCount="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/welcome_message">
 
         <Button
             android:id="@+id/button_see_scores"
             android:layout_width="0dp"
             android:layout_height="65dp"
+            android:layout_column="0"
+            android:layout_row="0"
             android:layout_columnWeight="1"
-            android:text="View Statistics" />
+            android:layout_rowWeight="1"
+            android:text="My Statistics" />
 
         <Button
             android:id="@+id/button_view_codes"
             android:layout_width="0dp"
             android:layout_height="65dp"
+            android:layout_column="1"
+            android:layout_row="0"
             android:layout_columnWeight="1"
-            android:text="View Scanned QR Codes" />
+            android:layout_rowWeight="1"
+            android:text="My Scanned QR Codes" />
+        <Button
+            android:id="@+id/button_see_leaderboard"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_column="0"
+            android:layout_row="1"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="2"
+            android:text="Leaderboard"/>
     </GridLayout>
 
 
