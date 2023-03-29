@@ -111,11 +111,6 @@ public class Leaderboard {
                     Log.d("TAG","List successfully obtained.");
                     fullList = users;
                 }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("TAG", "Error getting list.");
-            }
         });
 
         if(!scoresDescending){
@@ -136,7 +131,13 @@ public class Leaderboard {
         return toReturn;
     }*/
     public ArrayList<User> getTopNUsers() {
-        ArrayList<User> truncatedList = new ArrayList<>(fullList.subList(0, linesUpperBound));
+        ArrayList<User> truncatedList;
+        if (fullList.size() < linesUpperBound){
+            truncatedList = new ArrayList<>(fullList);
+        }
+        else{
+            truncatedList = new ArrayList<>(fullList.subList(0, linesUpperBound));
+        }
         if(!truncatedList.contains(currentUserInstance) && currentUserInstance != null){
             truncatedList.add(currentUserInstance);
         }
