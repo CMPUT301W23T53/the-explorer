@@ -23,7 +23,7 @@ public class UserService {
 
     private final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://d6392oa4v7.execute-api.us-east-2.amazonaws.com/default/")
-                .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
             .build();
     private RestService restService = retrofit.create(RestService.class);
     private final int RADIUS_NEARBY_QR = 300;
@@ -111,7 +111,7 @@ public class UserService {
      * @param longitude the longitude of the user's current location
      * @return a List of QRCode objects that are within the RADIUS_NEARBY_QR
      * @throws RuntimeException if there is an error executing the REST API call
-    */
+     */
     public List<QRCode> getNearbyQRCodes(double latitude, double longitude) {
         CompletableFuture<List<QRCode>> nearbyQRCodesFuture = this.getNearbyQRCodeAsync(latitude, longitude);
         List<QRCode> nearbyQRCodes = null;

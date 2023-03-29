@@ -31,9 +31,12 @@ import com.example.theexplorer.MainActivity;
 import com.example.theexplorer.R;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
+import com.example.theexplorer.services.QRCodeNameGenerator;
 import com.example.theexplorer.services.User;
 import com.example.theexplorer.services.UserService;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
@@ -42,6 +45,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -65,6 +69,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
     private Bitmap QRBitmap;
 
+    String userEmail1;
 
     /**
      * create the UI
@@ -82,7 +87,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         ImageView photoTaking = findViewById(R.id.imageView_photo);
         ImageView previewView = findViewById(R.id.image_preview);
         //get address
-        AddressText= findViewById(R.id.address_text_view);
+        AddressText = findViewById(R.id.address_text_view);
         LocationButton = findViewById(R.id.address_button);
         LocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +97,6 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 getLocation();
             }
         });
-
 
 
         preview.setImageBitmap(notFound());
@@ -122,13 +126,12 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         previewView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if(!hideQR) {
+                if (!hideQR) {
                     previewView.setImageBitmap(makeUpQR());
                     hideQR = true;
-                }
-                else{
+                } else {
                     previewView.setImageBitmap(QRBitmap);
-                    hideQR=false;
+                    hideQR = false;
                 }
                 return true;
             }
@@ -139,8 +142,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                }
-                else{
+                } else {
                     //prumpt camera not found
                 }
             }
@@ -152,11 +154,13 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String text = charSequence.toString();
-                qrCode.setQRName(text);
+//                qrCode.setQRName(text);
             }
+
             @Override
             public void afterTextChanged(Editable editable) {
 
@@ -165,12 +169,15 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         // add qr to user
         Button add;
         add = findViewById(R.id.add_button);
-        user[0].setUserId("test_nested"); // JUST FOR TESTING
-        newUserService.getUser(user[0].getUserId()).addOnSuccessListener(new OnSuccessListener<User>() {
+
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        userEmail1 = firebaseUser.getEmail();
+        newUserService.getUser(userEmail1).addOnSuccessListener(new OnSuccessListener<User>() {
             @Override
             public void onSuccess(User fetchUser) {
                 user[0] = fetchUser;
-                Log.d("USER", user[0].toString());
+                Log.e("USER", user[0].toString());
             }
         });
 
@@ -179,8 +186,12 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             public void onClick(View view) {
                 List<QRCode> qrCodeList = user[0].getQRList();
                 qrCodeList.add(qrCode);
-                newUserService.putUser(user[0]);
 
+                User user1 = new User();
+                user1.setUserId(userEmail1);
+                user1.setQRList(qrCodeList);
+
+                newUserService.putUser(user1);
 
                 Intent intent = new Intent(ZXingScannerScan.this, MainActivity.class);
                 startActivity(intent);
@@ -196,6 +207,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
      * handle result of scanning
      * handle result of taking picture
      * interact with database
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -211,7 +223,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
-            qrCode.setPhotoBytes(byteArray);
+            qrCode.setPhotoBytes(convertBytesToList(byteArray));
 
 //            Bitmap trietMap = BitmapFactory.decodeByteArray(user[0].getQRList().get(4).getPhotoBytes(), 0, user[0].getQRList().get(4).getPhotoBytes().length);
 //            Log.d("TRIETMAP", trietMap.toString());
@@ -233,6 +245,9 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
                 qrCode.setQRScore(theScore);
 
+                String qrName = QRCodeNameGenerator.generateName(theScore);
+                qrCode.setQRName(qrName);
+
                 //getting the bitmap (of qr)
                 Bitmap bitmap = encodeAsBitmap(result.getContents()); //result -> bitmap
                 if (bitmap != null) {
@@ -245,15 +260,9 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         }
     }
 
-
-//    public static byte[] bitmapToByteArray(Bitmap bitmap) {
-//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//        return stream.toByteArray();
-//    }
-
     /**
      * a class to convert bit map
+     *
      * @param contents
      * @return
      */
@@ -275,41 +284,44 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
      * <p>
      * This method won't returns anything. When call this function it will try to get system service to get location.
      * And if it has the permission to get the location, it will ask onLocationChanged() to show it.
-     * @return      null
+     *
+     * @return null
      */
     @SuppressLint("MissingPermission")
     private void getLocation() {
         try {
             locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,5,ZXingScannerScan.this);
-        }catch (Exception e){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, ZXingScannerScan.this);
+        } catch (Exception e) {
             e.printStackTrace();
-        }}
+        }
+    }
 
     /**
      * Get the current location
      * <p>
      * This method won't returns anything. When call this function it will get the current location and set the AddressText.
      * AddressText will show the  latitude and longitude for the current location
-     * @param  location  the location for current location
-     * @return  null
+     *
+     * @param location the location for current location
+     * @return null
      */
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(this, ""+location.getLatitude()+","+location.getLongitude(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "" + location.getLatitude() + "," + location.getLongitude(), Toast.LENGTH_SHORT).show();
         try {
             Geocoder geocoder = new Geocoder(this, Locale.getDefault());
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
-            AddressText.setText("Latitude: "+ latitude + "\n" + "Longitude: "+ longitude);
+            AddressText.setText("Latitude: " + latitude + "\n" + "Longitude: " + longitude);
             qrCode.setLatitude(latitude);
             qrCode.setLongitude(longitude);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public Bitmap notFound(){
+    public Bitmap notFound() {
         //creating a testing bit map it can be used when no result is returned
         Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -322,7 +334,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         return bitmap;
     }
 
-    public Bitmap takePhoto(){
+    public Bitmap takePhoto() {
         //creatig a defalt image view
         Bitmap bitmap1 = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888);
         Canvas canvas1 = new Canvas(bitmap1);
@@ -335,21 +347,21 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         return bitmap1;
     }
 
-    public int calculateScore(IntentResult result){
+    public int calculateScore(IntentResult result) {
         String content = result.getContents();
-        int theScore=0;
-        for (char c : content.toCharArray()){
+        int theScore = 0;
+        for (char c : content.toCharArray()) {
             //place to implement scoring strat
             //strat now: each & is 1 each = will have 1 and each / will have 1
-            if(c == '&' || c == '=' || c == '/'){
+            if (c == '&' || c == '=' || c == '/') {
                 theScore++;
             }
         }
-        theScore+=content.length();
+        theScore += content.length();
         return theScore;
     }
 
-    public Bitmap makeUpQR(){
+    public Bitmap makeUpQR() {
         Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawColor(Color.GRAY);
@@ -372,5 +384,12 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
     }
 
 
+    private static ArrayList<Byte> convertBytesToList(byte[] bytes) {
+        final ArrayList<Byte> list = new ArrayList<>();
+        for (byte b : bytes) {
+            list.add(b);
+        }
+        return list;
+    }
 
 }

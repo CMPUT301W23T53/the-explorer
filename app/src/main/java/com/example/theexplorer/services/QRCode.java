@@ -1,5 +1,5 @@
 /**
- Represents a QRCode that can be scanned by the user.
+ * Represents a QRCode that can be scanned by the user.
  */
 
 package com.example.theexplorer.services;
@@ -9,27 +9,60 @@ import android.util.Base64;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;import android.os.Parcel;
+import java.util.Map;
+
+import android.os.Parcel;
 import android.os.Parcelable;
 
-public class QRCode implements Parcelable{
+public class QRCode implements Parcelable {
 
     private String QRId;
-    private byte[] photoBytes;
+    private ArrayList<Byte> photoBytes;
     private int QRScore;
     private String QRName;
     private double latitude;
     private double longitude;
+
     public QRCode() {
         QRId = "temp";
-        photoBytes = new byte[]{};
+        photoBytes = new ArrayList<>();
         QRScore = 0;
         QRName = "";
         latitude = 0;
         longitude = 0;
     }
+
+    protected QRCode(Parcel in) {
+        QRId = in.readString();
+        QRScore = in.readInt();
+        QRName = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(QRId);
+        dest.writeInt(QRScore);
+        dest.writeString(QRName);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+    }
+
+    public static final Creator<QRCode> CREATOR = new Creator<QRCode>() {
+        @Override
+        public QRCode createFromParcel(Parcel in) {
+            return new QRCode(in);
+        }
+
+        @Override
+        public QRCode[] newArray(int size) {
+            return new QRCode[size];
+        }
+    };
 
     public double getLatitude() {
         return latitude;
@@ -63,11 +96,11 @@ public class QRCode implements Parcelable{
         this.QRId = QRId;
     }
 
-    public byte[] getPhotoBytes() {
+    public ArrayList<Byte> getPhotoBytes() {
         return photoBytes;
     }
 
-    public void setPhotoBytes(byte[] photoBytes) {
+    public void setPhotoBytes(ArrayList<Byte> photoBytes) {
         this.photoBytes = photoBytes;
     }
 
@@ -83,7 +116,7 @@ public class QRCode implements Parcelable{
     public String toString() {
         return "QRCode{" +
                 "QRId=" + QRId +
-                ", photoBytes=" + Arrays.toString(photoBytes) +
+                ", photoBytes=" + Arrays.toString(toByteArray(photoBytes)) +
                 ", QRScore=" + QRScore +
                 ", QRName='" + QRName + '\'' +
                 ", latitude=" + latitude +
@@ -97,46 +130,55 @@ public class QRCode implements Parcelable{
         result.put("QRName", QRCodeNameGenerator.generateName(QRScore));
         result.put("QRScore", QRScore);
         result.put("location", new GeoPoint(latitude, longitude));
-        result.put("photoBytes", Base64.encodeToString(photoBytes, Base64.DEFAULT));
+        result.put("photoBytes", Base64.encodeToString(toByteArray(photoBytes), Base64.DEFAULT));
         return result;
     }
 
 
     //code for parcelabel
-    protected QRCode(Parcel in) {
-        QRId = in.readString();
-        photoBytes = in.createByteArray();
-        QRScore = in.readInt();
-        QRName = in.readString();
-        latitude = in.readDouble();
-        longitude = in.readDouble();
-    }
+//    protected QRCode(Parcel in) {
+//        QRId = in.readString();
+//        photoBytes = in.createByteArray();
+//        QRScore = in.readInt();
+//        QRName = in.readString();
+//        latitude = in.readDouble();
+//        longitude = in.readDouble();
+//    }
 
     @Override
     public int describeContents() {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(QRId);
-        dest.writeByteArray(photoBytes);
-        dest.writeInt(QRScore);
-        dest.writeString(QRName);
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
+//    @Override
+//    public void writeToParcel(Parcel dest, int flags) {
+//        dest.writeString(QRId);
+//        dest.writeByteArray(photoBytes);
+//        dest.writeInt(QRScore);
+//        dest.writeString(QRName);
+//        dest.writeDouble(latitude);
+//        dest.writeDouble(longitude);
+//    }
+
+//    public static final Parcelable.Creator<QRCode> CREATOR = new Parcelable.Creator<QRCode>() {
+//        @Override
+//        public QRCode createFromParcel(Parcel in) {
+//            return new QRCode(in);
+//        }
+//
+//        @Override
+//        public QRCode[] newArray(int size) {
+//            return new QRCode[size];
+//        }
+//    };
+
+    public static byte[] toByteArray(ArrayList<Byte> in) {
+        final int n = in.size();
+        byte ret[] = new byte[n];
+        for (int i = 0; i < n; i++) {
+            ret[i] = in.get(i);
+        }
+        return ret;
     }
-
-    public static final Parcelable.Creator<QRCode> CREATOR = new Parcelable.Creator<QRCode>() {
-        @Override
-        public QRCode createFromParcel(Parcel in) {
-            return new QRCode(in);
-        }
-
-        @Override
-        public QRCode[] newArray(int size) {
-            return new QRCode[size];
-        }
-    };
 
 }

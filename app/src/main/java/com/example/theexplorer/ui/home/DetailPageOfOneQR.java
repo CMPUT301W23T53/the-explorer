@@ -15,7 +15,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import java.util.ArrayList;import android.graphics.Bitmap;import android.graphics.BitmapFactory;import android.content.DialogInterface;
+import java.util.ArrayList;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,48 +46,58 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import com.example.theexplorer.services.NewUserService;
+
 import java.util.Collections;
 import java.util.Comparator;
-
-
-
+import java.util.Map;
 
 
 public class DetailPageOfOneQR extends AppCompatActivity {
     private ArrayList<String> comments;
     private ArrayAdapter<String> commentAdapter;
+    String qrId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Get the selected QRCode object
-        Intent intent = getIntent();
-        QRCode qrCode = intent.getParcelableExtra("qr_code_key");
+        Map<String, Object> qrCode = (Map) getIntent().getSerializableExtra("qr_code_key");
+
+//        Intent intent = getIntent();
+//        QRCode qrCode = intent.getParcelableExtra("qr_code_key");
 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_page_of_one_qr);
         //display info
         TextView name = findViewById(R.id.qr_name);
-        name.setText("Name: "+qrCode.getQRName());
+        name.setText("Name: " + (String) qrCode.get("qrname"));
 
         TextView id = findViewById(R.id.qr_id);
-        id.setText("ID: "+qrCode.getQRId());
+        id.setText("ID: " + (String) qrCode.get("qrid"));
 
         TextView score = findViewById(R.id.qr_score_for_detail);
-        score.setText("Score: "+qrCode.getQRScore());
+        score.setText("Score: " + (long) qrCode.get("qrscore"));
 
         TextView location = findViewById(R.id.qr_location);
-        location.setText("Longitude: "+qrCode.getLongitude()+ "Latitude: "+qrCode.getLatitude());
+
+        if (qrCode.get("latitude") instanceof Double) {
+            location.setText("Longitude: " + (double) qrCode.get("latitude") + "Latitude: " + (double) qrCode.get("longitude"));
+        } else {
+            location.setText("Longitude: " + (long) qrCode.get("latitude") + "Latitude: " + (long) qrCode.get("longitude"));
+        }
+
+
 
         // Initialize the comments list
         comments = new ArrayList<>();
 
         // Add some sample comments for demonstration purposes
+        qrId = (String) qrCode.get("qrid");
 
-        qrCode.setQRId(qrCode.getQRId());
         NewUserService newUserService = new NewUserService();
-        newUserService.getCommentsOfQRCode(qrCode).addOnSuccessListener(new OnSuccessListener<List<Comment>>() {
+        newUserService.getCommentsOfQRCode(qrId).addOnSuccessListener(new OnSuccessListener<List<Comment>>() {
             @Override
             public void onSuccess(List<Comment> comments) {
                 Collections.sort(comments, new Comparator<Comment>() {
@@ -114,8 +128,11 @@ public class DetailPageOfOneQR extends AppCompatActivity {
 
         //set preview
         ImageView photoShow = findViewById(R.id.image_view_photo);
-        Bitmap photoBitmap = convertByteToBitmap(qrCode.getPhotoBytes());
-        if(photoBitmap!=null && photoBitmap.getWidth()!=0 && photoBitmap.getHeight()!=0){
+
+        ArrayList<Byte> photoBytes = (ArrayList<Byte>) qrCode.get("photoBytes");
+
+        Bitmap photoBitmap = convertByteToBitmap(toByteArray(photoBytes));
+        if (photoBitmap != null && photoBitmap.getWidth() != 0 && photoBitmap.getHeight() != 0) {
             photoShow.setVisibility(View.VISIBLE);
             photoShow.setImageBitmap(photoBitmap);
         }
@@ -129,27 +146,26 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                 if (!commentText.isEmpty()) {
                     Comment comment = new Comment();
                     comment.setCreatedAt(new Date());
-                    comment.setQRId(qrCode.getQRId()); // Set it to qrCode.getQRId()
+                    comment.setQRId(qrId); // Set it to qrCode.getQRId()
                     comment.setContent(commentText);
                     NewUserService newUserService = new NewUserService();
                     newUserService.putComment(comment);
 
                     editText.setText(""); // clear EditText
-                /** uncomment this to update comment when upload is successful. ie, we have newUserService.putComment(comment).addOnSuccessListener
-                newUserService.putComment(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Add the new comment to the adapter's data set
-                        commentAdapter.add(commentText);
+                    /** uncomment this to update comment when upload is successful. ie, we have newUserService.putComment(comment).addOnSuccessListener
+                     newUserService.putComment(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override public void onSuccess(Void aVoid) {
+                    // Add the new comment to the adapter's data set
+                    commentAdapter.add(commentText);
 
-                        // Clear the EditText
-                        editText.setText("");
+                    // Clear the EditText
+                    editText.setText("");
 
-                        // Notify the adapter that the data set has changed
-                        commentAdapter.notifyDataSetChanged();
+                    // Notify the adapter that the data set has changed
+                    commentAdapter.notifyDataSetChanged();
                     }
-                });
-                 */
+                    });
+                     */
 
                     commentAdapter.insert(commentText, 0);
                     commentAdapter.notifyDataSetChanged();
@@ -159,10 +175,18 @@ public class DetailPageOfOneQR extends AppCompatActivity {
     }
 
 
-
     public Bitmap convertByteToBitmap(byte[] bytes) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         return bitmap;
+    }
+
+    public static byte[] toByteArray(ArrayList<Byte> in) {
+        final int n = in.size();
+        byte ret[] = new byte[n];
+        for (int i = 0; i < n; i++) {
+            ret[i] = in.get(i);
+        }
+        return ret;
     }
 
 
