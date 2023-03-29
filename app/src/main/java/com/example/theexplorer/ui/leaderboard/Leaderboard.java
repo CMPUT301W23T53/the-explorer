@@ -55,7 +55,7 @@ public class Leaderboard {
                 }
             });
         }
-        if(builder.preloadEntireList && !builder.debugMode){refreshUserList();}
+        if(builder.preloadEntireList){refreshUserList();}
         if(builder.toReverse != null){
             this.scoresDescending = !builder.toReverse;
             if(builder.toReverse){
@@ -90,6 +90,10 @@ public class Leaderboard {
         }
         return ranking;
     }
+
+    /**
+     * For debugging purposes.
+     */
 
     public void setListOrderAsDescending(boolean toDescending){
         boolean prior = this.scoresDescending;
