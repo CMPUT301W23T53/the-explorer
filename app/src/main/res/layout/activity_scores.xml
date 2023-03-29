@@ -10,6 +10,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="Highest Score:"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -17,6 +18,7 @@
         android:id="@+id/highest_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,6 +26,7 @@
         android:id="@+id/high_score_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/show_highest"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,6 +35,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="Lowest Score:"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/show_highest" />
 
@@ -39,6 +43,7 @@
         android:id="@+id/lowest_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/highest_score" />
 
@@ -46,6 +51,7 @@
         android:id="@+id/low_score_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/show_lowest"
         app:layout_constraintTop_toBottomOf="@+id/high_score_name" />
 
@@ -54,6 +60,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="Total Scanned:"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/show_lowest" />
 
@@ -61,6 +68,7 @@
         android:id="@+id/total_scanned"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lowest_score" />
 
@@ -69,6 +77,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="Total Score:"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/show_total" />
 
@@ -76,6 +85,7 @@
         android:id="@+id/score_sum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/total_scanned" />
 
@@ -83,10 +93,22 @@
         android:id="@+id/scanned_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/s_sum" />
+
+    <TextView
+        android:id="@+id/no_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Codes Scanned"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
