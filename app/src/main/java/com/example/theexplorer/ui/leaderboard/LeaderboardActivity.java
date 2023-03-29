@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
 import com.example.theexplorer.R;
 import com.example.theexplorer.services.User;
@@ -29,14 +28,17 @@ public class LeaderboardActivity extends AppCompatActivity {
     private ArrayAdapter<String> userScopeAdapter;
     private ArrayAdapter<String> listFilterAdapter;
     private ListView usersList;
+    private String userName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
         Toolbar toolbar = findViewById(R.id.leaderboard_toolbar);
-
-        String userName = String.valueOf(getIntent().getStringExtra("username"));
+        if(getIntent().hasExtra("username")){
+             userName = String.valueOf(getIntent().getStringExtra("username"));
+        }
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
@@ -47,16 +49,14 @@ public class LeaderboardActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+
         initializeLeaderboard(userName);
         initializeSpinners();
 
         final SwipeRefreshLayout pullToRefresh = findViewById(R.id.list_view_pull_to_refresh);
-        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshLeaderboardView();
-                pullToRefresh.setRefreshing(false);
-            }
+        pullToRefresh.setOnRefreshListener(() -> {
+            refreshLeaderboardView();
+            pullToRefresh.setRefreshing(false);
         });
 
 
@@ -66,7 +66,7 @@ public class LeaderboardActivity extends AppCompatActivity {
     public void onStart(){
         super.onStart();
 
-        if(leaderboard.getListOrderAsDescending()){
+        if(leaderboard.getScoresDescending()){
             listFilter.setSelection(0);
         }
         else{
@@ -104,7 +104,7 @@ public class LeaderboardActivity extends AppCompatActivity {
 
     private void refreshLeaderboardView(){
         leaderboard.refreshUserList();
-        usersDataList = leaderboard.getTopNDescendingUsers();
+        usersDataList = leaderboard.getTopNUsers();
         usersAdapter.notifyDataSetChanged();
     }
 
@@ -120,9 +120,12 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         leaderboard = builder.build();
 
+        usersDataList = leaderboard.getTopNUsers();
+
         usersList = findViewById(R.id.leaderboard_content);
         usersAdapter = new LeaderboardAdapter(this,usersDataList);
         usersList.setAdapter(usersAdapter);
+
     }
 
     /**
