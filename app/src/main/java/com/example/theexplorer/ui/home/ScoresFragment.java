@@ -36,12 +36,22 @@ public class ScoresFragment extends AppCompatActivity {
                 user[0] = fetchUser;
 
                 TextView highestScoreTextView = (TextView) findViewById(R.id.highest_score);
-                highestScoreTextView.setText(String.valueOf(user[0].getHighestQRScore()));
+                if (user[0].getHighestQRScore() == -1) {
+                    highestScoreTextView.setText("No codes scanned");
+                } else {
+                    highestScoreTextView.setText(String.valueOf(user[0].getHighestQRScore()));
+                }
+
                 TextView highName = (TextView) findViewById(R.id.high_score_name);
                 highName.setText(user[0].getHighestQRScoreName());
 
-                TextView low = findViewById(R.id.lowest_score);
-                low.setText(String.valueOf(user[0].getLowestQRScore()));
+                TextView lowestScoreTextView = findViewById(R.id.lowest_score);
+                if (user[0].getLowestQRScore() == Integer.MAX_VALUE) {
+                    lowestScoreTextView.setText("No codes scanned");
+                } else {
+                    lowestScoreTextView.setText(String.valueOf(user[0].getLowestQRScore()));
+                }
+
                 TextView lowName = findViewById(R.id.low_score_name);
                 lowName.setText(user[0].getLowestQRScoreName());
 
