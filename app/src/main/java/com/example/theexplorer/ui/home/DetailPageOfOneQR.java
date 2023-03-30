@@ -53,6 +53,7 @@ import java.util.Comparator;
 public class DetailPageOfOneQR extends AppCompatActivity {
     private ArrayList<String> comments;
     private ArrayAdapter<String> commentAdapter;
+    private User user = new User();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +97,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                 // Convert the List<Comment> to ArrayList<String> and store it in the comments variable
                 ArrayList<String> commentStrings = new ArrayList<>();
                 for (Comment comment : comments) {
-                    commentStrings.add(comment.getContent());
+                    commentStrings.add(comment.getContent() + " - " + comment.getUserId());
                 }
 
                 // Update the ArrayAdapter with the new comments data
@@ -128,6 +129,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                 String commentText = editText.getText().toString();
                 if (!commentText.isEmpty()) {
                     Comment comment = new Comment();
+                    comment.setUserId(user.getUserId());
                     comment.setCreatedAt(new Date());
                     comment.setQRId(qrCode.getQRId()); // Set it to qrCode.getQRId()
                     comment.setContent(commentText);
@@ -151,7 +153,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                 });
                  */
 
-                    commentAdapter.insert(commentText, 0);
+                    commentAdapter.insert(commentText + " - " + comment.getUserId(), 0);
                     commentAdapter.notifyDataSetChanged();
                 }
             }
