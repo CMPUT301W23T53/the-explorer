@@ -13,7 +13,7 @@ public class User implements Comparable<User>{
 
     public User() {
         userId = "";
-        QRList = new ArrayList<>();
+        QRList = new ArrayList<QRCode>();
     }
 
     public String getUserId() {
@@ -38,7 +38,7 @@ public class User implements Comparable<User>{
      * @return the highest QR score
      */
     public int getHighestQRScore() {
-        int maxScore = 0;
+        int maxScore = -1;
         for (QRCode qrCode: this.getQRList()) {
             if (qrCode.getQRScore() >= maxScore) {
                 maxScore = qrCode.getQRScore();
