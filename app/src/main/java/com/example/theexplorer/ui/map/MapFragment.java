@@ -72,7 +72,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             double currentLat = lastLocation.latitude;
             double currentLong = lastLocation.longitude;
             NewUserService newUserService = new NewUserService();
-            newUserService.getNearbyQRCodes(currentLat, currentLong, 300).addOnSuccessListener(new OnSuccessListener<List<QRCode>>() {
+            newUserService.getNearbyQRCodes(currentLat, currentLong, 0.3).addOnSuccessListener(new OnSuccessListener<List<QRCode>>() {
                 @Override
                 public void onSuccess(List<QRCode> qrCodes) {
                     for (QRCode qrCode : qrCodes) {

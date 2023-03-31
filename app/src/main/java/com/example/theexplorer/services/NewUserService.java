@@ -72,7 +72,9 @@ public class NewUserService {
                         public void onSuccess(List<QRCode> qrCodes) {
                             User user = new User();
                             user.setUserId(userId);
-                            user.setQRList(qrCodes);
+                            if (qrCodes.size() != 0) {
+                                user.setQRList(qrCodes);
+                            }
                             taskCompletionSource.setResult(user);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
