@@ -24,6 +24,7 @@ import com.google.firebase.firestore.SetOptions;
 
 import org.checkerframework.checker.units.qual.A;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,13 +33,64 @@ import java.util.Map;
 public class NewUserService {
 
     final FirebaseFirestore database = FirebaseFirestore.getInstance();
-    final CollectionReference usersRef = database.collection("user_data");
+    final CollectionReference usersRef = database.collection("user_data2");
 
-    final CollectionReference qrCodeRef = database.collection("qrcodes");
+    final CollectionReference qrCodeRef = database.collection("qrcodes2");
 
-    final CollectionReference commentRef = database.collection("comments");
+    final CollectionReference commentRef = database.collection("comments2");
+
+    public Task<List<User>> getAllUsers() {
+        final TaskCompletionSource<List<User>> taskCompletionSource = new TaskCompletionSource<>();
+
+        usersRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                List<Task<User>> userTasks = new ArrayList<>();
+
+                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                    String userId = document.getId();
+                    Task<User> userTask = getUser(userId).continueWith(task1 -> {
+                        User[] users = new User[1];
+                        if (task1.isSuccessful()) {
+                            users[0] = task1.getResult();
+                        } else {
+                            taskCompletionSource.setException(task1.getException());
+                        }
+                        return users[0];
+                    });
+                    userTasks.add(userTask);
+                }
+
+                Task<List<User>> allUserTasks = Tasks.whenAllSuccess(userTasks);
+                allUserTasks.addOnSuccessListener(new OnSuccessListener<List<User>>() {
+                    @Override
+                    public void onSuccess(List<User> users) {
+//                        Collections.sort(users);
+                        taskCompletionSource.setResult(users);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Error getting all users", e.toString());
+                        taskCompletionSource.setException(e);
+                    }
+                });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("Error getting all users", e.toString());
+                taskCompletionSource.setException(e);
+            }
+        });
+
+        return taskCompletionSource.getTask();
+    }
 
     public Task<User> getUser(String userId) {
+        User user = new User();
+
         final TaskCompletionSource<User> taskCompletionSource = new TaskCompletionSource<>();
         usersRef.document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -46,44 +98,13 @@ public class NewUserService {
                 if (documentSnapshot.exists()) {
                     Map<String, Object> data = documentSnapshot.getData();
 
-                    ArrayList<DocumentReference> qrCodeRefs = (ArrayList<DocumentReference>) data.get("QRList");
-                    ArrayList<Task<QRCode>> qrCodeTasks = new ArrayList<>();
+                    ArrayList<QRCode> qrCodeList = (ArrayList<QRCode>) data.get("qrlist");
+                    String userId = (String) data.get("userId");
 
-                    // Fetch each QR code document
-                    for (DocumentReference qrCodeRef : qrCodeRefs) {
-                        Task<QRCode> qrCodeTask = qrCodeRef.get().continueWith(new Continuation<DocumentSnapshot, QRCode>() {
-                            @Override
-                            public QRCode then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                                if (task.isSuccessful() && task.getResult() != null) {
-                                    DocumentSnapshot document = task.getResult();
-                                    return mapQRCodeFromFirebase(document);
-                                } else {
-                                    throw new Exception("Error fetching QR code: " + task.getException());
-                                }
-                            }
-                        });
-                        qrCodeTasks.add(qrCodeTask);
-                    }
+                    user.setUserId(userId);
+                    user.setQRList(qrCodeList);
 
-                    // Wait for all QR code tasks to complete
-                    Task<List<QRCode>> allQRCodesTask = Tasks.whenAllSuccess(qrCodeTasks);
-                    allQRCodesTask.addOnSuccessListener(new OnSuccessListener<List<QRCode>>() {
-                        @Override
-                        public void onSuccess(List<QRCode> qrCodes) {
-                            User user = new User();
-                            user.setUserId(userId);
-                            if (qrCodes.size() != 0) {
-                                user.setQRList(qrCodes);
-                            }
-                            taskCompletionSource.setResult(user);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("ERROR: ", e.toString());
-                            taskCompletionSource.setException(e);
-                        }
-                    });
+                    taskCompletionSource.setResult(user);
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -97,35 +118,83 @@ public class NewUserService {
         return taskCompletionSource.getTask();
     }
 
-
     public void putUser(User user) {
         usersRef.document(user.getUserId()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                DocumentSnapshot document =  task.getResult();
-                List<DocumentReference> qrCodeRefs = new ArrayList<>();
-                int qrCodeCount = user.getQRList().size();
-                final int[] updatedCount = {0};
-                for (QRCode qrCode : user.getQRList()) {
-                    putQRCode(qrCodeRefs, qrCode, new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            updatedCount[0]++;
-                            if (updatedCount[0] == qrCodeCount) {
-                                document.getReference().update("QRList", qrCodeRefs);
+                DocumentSnapshot document = task.getResult();
+
+                document.getReference().set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+
+                        List<DocumentReference> qrCodeRefs = new ArrayList<>();
+                        for (int i = 0; i < user.getQRList().size(); i++) {
+                            if (user.getQRList().get(i) instanceof QRCode) {
+
+                                String qrID = user.getQRList().get(i).getQRId();
+                                QRCode qrCode = user.getQRList().get(i);
+
+                                qrCodeRef.document(qrID).get().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot documentSnapshot = task.getResult();
+                                        if (documentSnapshot.exists()) {
+                                            // Update existing document
+                                            documentSnapshot.getReference().set(qrCode.toMap(), SetOptions.merge());
+                                            qrCodeRefs.add(documentSnapshot.getReference());
+                                        } else {
+                                            // Create new document
+                                            qrCodeRef.add(qrCode.toMap()).addOnSuccessListener(documentReference -> {
+                                                // Get the ID of the newly created document
+                                                qrCodeRefs.add(documentReference);
+                                            }).addOnFailureListener(e -> {
+                                            });
+                                        }
+                                    } else {
+                                        Log.d("Error getting documents: ", task.getException().toString());
+                                    }
+                                });
+                            } else {
+                                Map<String, Object> qrCodeList1 = (Map<String, Object>) user.getQRList().get(i);
+
+                                String qrID = (String) qrCodeList1.get("qrid");
+
+                                qrCodeRef.document(qrID).get().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot documentSnapshot = task.getResult();
+                                        if (documentSnapshot.exists()) {
+                                            // Update existing document
+                                            documentSnapshot.getReference().set(qrCodeList1, SetOptions.merge());
+                                            qrCodeRefs.add(documentSnapshot.getReference());
+                                        } else {
+                                            // Create new document
+                                            qrCodeRef.add(qrCodeList1).addOnSuccessListener(documentReference -> {
+                                                // Get the ID of the newly created document
+                                                qrCodeRefs.add(documentReference);
+
+                                            }).addOnFailureListener(e -> {
+                                            });
+                                        }
+                                    } else {
+                                        Log.d("Error getting documents: ", task.getException().toString());
+                                    }
+                                });
                             }
                         }
-                    });
-                }
 
-                if (updatedCount[0] == 0) {
-                    document.getReference().update("QRList", qrCodeRefs);
-                }
-
+                        Log.e("-***-***-***-", "onSuccess: ");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("-***-***-***-", "onFailure: " + e);
+                    }
+                });
             } else {
                 Log.d("Error getting documents: ", task.getException().toString());
             }
         });
     }
+
 
     private void putQRCode(List<DocumentReference> qrCodeRefs, QRCode qrCode, OnSuccessListener<Void> listener) {
         String id = qrCode.getQRId() != null ? qrCode.getQRId() : "NULL";
@@ -134,19 +203,16 @@ public class NewUserService {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 if (documentSnapshot.exists()) {
                     // Update existing document
-                    documentSnapshot.getReference()
-                            .set(qrCode.toMap(), SetOptions.merge())
-                            .addOnSuccessListener(listener);
+                    documentSnapshot.getReference().set(qrCode.toMap(), SetOptions.merge()).addOnSuccessListener(listener);
                     qrCodeRefs.add(documentSnapshot.getReference());
                 } else {
                     // Create new document
                     qrCodeRef.add(qrCode.toMap()).addOnSuccessListener(documentReference -> {
-                                // Get the ID of the newly created document
-                                qrCodeRefs.add(documentReference);
-                                listener.onSuccess(null);
-                            })
-                            .addOnFailureListener(e -> {
-                            });
+                        // Get the ID of the newly created document
+                        qrCodeRefs.add(documentReference);
+                        listener.onSuccess(null);
+                    }).addOnFailureListener(e -> {
+                    });
                 }
             } else {
                 Log.d("Error getting documents: ", task.getException().toString());
@@ -154,39 +220,35 @@ public class NewUserService {
         });
     }
 
-    public Task<List<User>> getUsersWithMatchingQRCodeScore(QRCode qrCode) {
+    public Task<List<User>> getUsersWithMatchingQRCodeScore(int qrScore) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         TaskCompletionSource<List<User>> taskCompletionSource = new TaskCompletionSource<>();
 
         // Query all QRCode documents with the specified attribute
-        qrCodeRef.whereEqualTo("QRScore", qrCode.getQRScore())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        List<DocumentReference> matchingQRCodeRefs = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            matchingQRCodeRefs.add(document.getReference());
+        qrCodeRef.whereEqualTo("QRScore", qrScore).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<DocumentReference> matchingQRCodeRefs = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    matchingQRCodeRefs.add(document.getReference());
+                }
+                // Query all User documents that have a QRList containing references to the matching QRCode documents
+                usersRef.whereArrayContainsAny("QRList", matchingQRCodeRefs).get().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        List<User> matchingUsers = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task1.getResult()) {
+                            User user = new User();
+                            user.setUserId(document.getId());
+                            matchingUsers.add(user);
                         }
-                        // Query all User documents that have a QRList containing references to the matching QRCode documents
-                        usersRef.whereArrayContainsAny("QRList", matchingQRCodeRefs)
-                                .get()
-                                .addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        List<User> matchingUsers = new ArrayList<>();
-                                        for (QueryDocumentSnapshot document : task1.getResult()) {
-                                            User user = new User();
-                                            user.setUserId(document.getId());
-                                            matchingUsers.add(user);
-                                        }
-                                        taskCompletionSource.setResult(matchingUsers);
-                                    } else {
-                                        taskCompletionSource.setException(task1.getException());
-                                    }
-                                });
+                        taskCompletionSource.setResult(matchingUsers);
                     } else {
-                        taskCompletionSource.setException(task.getException());
+                        taskCompletionSource.setException(task1.getException());
                     }
                 });
+            } else {
+                taskCompletionSource.setException(task.getException());
+            }
+        });
 
         return taskCompletionSource.getTask();
     }
@@ -205,7 +267,7 @@ public class NewUserService {
             List<QRCode> qrCodes = new ArrayList<>();
             if (task.isSuccessful()) {
                 QuerySnapshot querySnapshot = task.getResult();
-                for (DocumentSnapshot documentSnapshot: querySnapshot.getDocuments()) {
+                for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
                     QRCode qrCode = mapQRCodeFromFirebase(documentSnapshot);
                     qrCodes.add(qrCode);
                 }
@@ -216,15 +278,15 @@ public class NewUserService {
         });
     }
 
-    public Task<List<Comment>> getCommentsOfQRCode(QRCode qrCode) {
-        String QRId = qrCode.getQRId();
+    public Task<List<Comment>> getCommentsOfQRCode(String QRId) {
+//        String QRId = qrCode.getQRId();
 
         Query query = commentRef.whereEqualTo("QRId", QRId);
         return query.get().continueWith(task -> {
             List<Comment> comments = new ArrayList<>();
             if (task.isSuccessful()) {
                 QuerySnapshot querySnapshot = task.getResult();
-                for (DocumentSnapshot document: querySnapshot.getDocuments()) {
+                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                     Comment comment = mapCommentFromFirebase(document);
                     comments.add(comment);
                 }
@@ -260,9 +322,9 @@ public class NewUserService {
             int minUntilNow = Integer.MAX_VALUE;
             if (task.isSuccessful()) {
                 QuerySnapshot querySnapshot = task.getResult();
-                for (DocumentSnapshot document: querySnapshot.getDocuments()) {
+                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                     int currentScore = document.getLong("QRScore").intValue();
-                    if (currentScore < minUntilNow)  {
+                    if (currentScore < minUntilNow) {
                         allQRScoresSorted.add(currentScore);
                         minUntilNow = currentScore;
                     }
@@ -270,8 +332,23 @@ public class NewUserService {
             } else {
                 Log.e("Error getting rank of user", task.getException().toString());
             }
-            return allQRScoresSorted.indexOf(user.getHighestQRScore()) + 1;
+//            return allQRScoresSorted.indexOf(user.getHighestQRScore()) + 1;
+            return allQRScoresSorted.indexOf(getHighestQRScore(user.getQRList())) + 1;
         });
+    }
+
+    public long getHighestQRScore(List<QRCode> arrayQRCode) {
+        long maxScore = 0;
+
+        for (int i = 0; i < arrayQRCode.size(); i++) {
+            Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(i);
+
+            long score = (long) qrCode.get("qrscore");
+            if (score >= maxScore) {
+                maxScore = score;
+            }
+        }
+        return maxScore;
     }
 
     public Task<List<User>> getGameWideHighScoreOfAllPlayers() {
@@ -299,7 +376,6 @@ public class NewUserService {
                 allUserTasks.addOnSuccessListener(new OnSuccessListener<List<User>>() {
                     @Override
                     public void onSuccess(List<User> users) {
-                        Collections.sort(users);
                         taskCompletionSource.setResult(users);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -336,7 +412,10 @@ public class NewUserService {
 
         String photoBytesString = document.getString("photoBytes");
         byte[] photoBytes = Base64.decode(photoBytesString, Base64.DEFAULT);
-        qrCode.setPhotoBytes(photoBytes);
+
+        double[] doubleArray = toDoubleArray(photoBytes);
+
+        qrCode.setPhotoBytes(convertDoubleToList(doubleArray));
 
         return qrCode;
     }
@@ -351,5 +430,23 @@ public class NewUserService {
         comment.setCreatedAt(document.getTimestamp("createdAt").toDate());
 
         return comment;
+    }
+
+
+    public static double[] toDoubleArray(byte[] byteArray) {
+        int times = Double.SIZE / Byte.SIZE;
+        double[] doubles = new double[byteArray.length / times];
+        for (int i = 0; i < doubles.length; i++) {
+            doubles[i] = ByteBuffer.wrap(byteArray, i * times, times).getDouble();
+        }
+        return doubles;
+    }
+
+    private static ArrayList<Double> convertDoubleToList(double[] bytes) {
+        final ArrayList<Double> list = new ArrayList<>();
+        for (double b : bytes) {
+            list.add(b);
+        }
+        return list;
     }
 }
