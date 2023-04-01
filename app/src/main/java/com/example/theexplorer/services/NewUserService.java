@@ -1,11 +1,13 @@
+/**
+
+ The NewUserService class provides methods to interact with Firestore database to get and put user data.
+ The class also interacts with 'qrcodes2' and 'comments2' collections in Firestore.
+ */
 package com.example.theexplorer.services;
 
 import android.util.Base64;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -20,13 +22,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-
-
-import org.checkerframework.checker.units.qual.A;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +36,11 @@ public class NewUserService {
 
     final CollectionReference commentRef = database.collection("comments2");
 
+    /**
+     * Returns a Task that retrieves all user data from the Firestore database and returns a list of Users
+     *
+     * @return a Task that retrieves all user data from the Firestore database and returns a list of Users
+     */
     public Task<List<User>> getAllUsers() {
         final TaskCompletionSource<List<User>> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -65,7 +67,6 @@ public class NewUserService {
                 allUserTasks.addOnSuccessListener(new OnSuccessListener<List<User>>() {
                     @Override
                     public void onSuccess(List<User> users) {
-//                        Collections.sort(users);
                         taskCompletionSource.setResult(users);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -88,6 +89,12 @@ public class NewUserService {
         return taskCompletionSource.getTask();
     }
 
+    /**
+     * Returns a Task that retrieves user data from the Firestore database for a given userId and returns a User
+     *
+     * @param userId a String representing the userId to retrieve data for
+     * @return a Task that retrieves user data from the Firestore database for a given userId and returns a User
+     */
     public Task<User> getUser(String userId) {
         User user = new User();
 
@@ -118,6 +125,12 @@ public class NewUserService {
         return taskCompletionSource.getTask();
     }
 
+    /**
+     * Adds or updates a user in Firestore database.
+     *
+     * @param user the user to be added or updated.
+     * @throws NullPointerException if user is null.
+     */
     public void putUser(User user) {
         usersRef.document(user.getUserId()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -195,7 +208,13 @@ public class NewUserService {
         });
     }
 
-
+    /**
+     * Updates or creates a QR code in the Firestore database.
+     *
+     * @param qrCodeRefs List of DocumentReference objects representing the updated or newly created QR codes.
+     * @param qrCode QRCode object to update or create.
+     * @param listener OnSuccessListener to be called when the operation succeeds.
+     */
     private void putQRCode(List<DocumentReference> qrCodeRefs, QRCode qrCode, OnSuccessListener<Void> listener) {
         String id = qrCode.getQRId() != null ? qrCode.getQRId() : "NULL";
         qrCodeRef.document(id).get().addOnCompleteListener(task -> {
@@ -220,6 +239,12 @@ public class NewUserService {
         });
     }
 
+    /**
+     * Gets a list of all users that have at least one QRCode in their QRList with the specified QRScore.
+     *
+     * @param qrScore The QRScore to match against.
+     * @return A task that resolves with a list of matching User objects.
+     */
     public Task<List<User>> getUsersWithMatchingQRCodeScore(int qrScore) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         TaskCompletionSource<List<User>> taskCompletionSource = new TaskCompletionSource<>();
@@ -253,6 +278,14 @@ public class NewUserService {
         return taskCompletionSource.getTask();
     }
 
+    /**
+     * Retrieves a list of QR codes located within a specified radius of a given latitude and longitude.
+     *
+     * @param currentLat the latitude of the current location
+     * @param currentLong the longitude of the current location
+     * @param radius the search radius in kilometers
+     * @return a {@code Task} that resolves to a list of {@code QRCode} objects that are within the specified radius of the given location
+     */
     public Task<List<QRCode>> getNearbyQRCodes(double currentLat, double currentLong, double radius) {
         double latMin = currentLat - (radius / 111.12);
         double longMin = currentLong - (radius / 111.12 * Math.cos(currentLat));
@@ -278,9 +311,13 @@ public class NewUserService {
         });
     }
 
+    /**
+     * Retrieves a list of comments associated with the QR code identified by the specified QR ID.
+     *
+     * @param QRId the ID of the QR code to retrieve comments for
+     * @return a Task that will complete with a List of Comment objects associated with the specified QR code ID
+     */
     public Task<List<Comment>> getCommentsOfQRCode(String QRId) {
-//        String QRId = qrCode.getQRId();
-
         Query query = commentRef.whereEqualTo("QRId", QRId);
         return query.get().continueWith(task -> {
             List<Comment> comments = new ArrayList<>();
@@ -297,6 +334,11 @@ public class NewUserService {
         });
     }
 
+    /**
+     * Adds or updates a comment in the Firestore database.
+     *
+     * @param comment The Comment object to be added or updated.
+     */
     public void putComment(Comment comment) {
         String commentId = comment.getCommentId();
         commentRef.document(commentId).get().addOnCompleteListener(task -> {
@@ -315,6 +357,12 @@ public class NewUserService {
         });
     }
 
+    /**
+     * Gets the rank of the specified user based on their QR scores compared to other users.
+     *
+     * @param user the user to get the rank for
+     * @return a Task that asynchronously returns the rank as an integer
+     */
     public Task<Integer> getRankOfUser(User user) {
         Query query = qrCodeRef.orderBy("QRScore", Query.Direction.DESCENDING);
         return query.get().continueWith(task -> {
@@ -332,10 +380,16 @@ public class NewUserService {
             } else {
                 Log.e("Error getting rank of user", task.getException().toString());
             }
-//            return allQRScoresSorted.indexOf(user.getHighestQRScore()) + 1;
             return allQRScoresSorted.indexOf(getHighestQRScore(user.getQRList())) + 1;
         });
     }
+
+    /**
+     * Calculates the highest QR score from a given list of QR codes.
+     *
+     * @param arrayQRCode a list of QR codes.
+     * @return the highest QR score in the list.
+     */
 
     public long getHighestQRScore(List<QRCode> arrayQRCode) {
         long maxScore = 0;
@@ -351,6 +405,13 @@ public class NewUserService {
         return maxScore;
     }
 
+    /**
+     * Returns a task that retrieves the game-wide high score of all players. This task retrieves all
+     * users from the usersRef and then retrieves the highest score of all users. The result of this
+     * task is a list of all users sorted by their highest score in descending order.
+     *
+     * @return a task that retrieves the game-wide high score of all players
+     */
     public Task<List<User>> getGameWideHighScoreOfAllPlayers() {
         final TaskCompletionSource<List<User>> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -398,6 +459,12 @@ public class NewUserService {
         return taskCompletionSource.getTask();
     }
 
+    /**
+     * Maps a Firestore DocumentSnapshot to a QRCode object.
+     *
+     * @param document the DocumentSnapshot to map
+     * @return the mapped QRCode object
+     */
     private QRCode mapQRCodeFromFirebase(DocumentSnapshot document) {
         QRCode qrCode = new QRCode();
 
@@ -420,6 +487,12 @@ public class NewUserService {
         return qrCode;
     }
 
+    /**
+     * Maps a {@link DocumentSnapshot} object from Firebase to a {@link Comment} object.
+     *
+     * @param document the {@link DocumentSnapshot} object to map to a {@link Comment} object.
+     * @return a {@link Comment} object mapped from the {@link DocumentSnapshot} object.
+     */
     private Comment mapCommentFromFirebase(DocumentSnapshot document) {
         Comment comment = new Comment();
 
