@@ -172,7 +172,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             public void onClick(View view) {
                 List<QRCode> qrCodeList = user[0].getQRList();
 
-                if (qrCode.getQRName() == null) {
+                if (qrCode.getQRId() != "temp") {
                     qrCodeList.add(qrCode);
                 }
 
