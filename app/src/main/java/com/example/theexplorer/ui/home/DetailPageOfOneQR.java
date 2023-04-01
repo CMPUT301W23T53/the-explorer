@@ -133,7 +133,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                 // Convert the List<Comment> to ArrayList<String> and store it in the comments variable
                 ArrayList<String> commentStrings = new ArrayList<>();
                 for (Comment comment : comments) {
-                    commentStrings.add(comment.getContent());
+                    commentStrings.add(comment.getContent() +" - " + "waiting function to get user id");
                 }
 
                 // Update the ArrayAdapter with the new comments data
@@ -176,6 +176,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                     comment.setCreatedAt(new Date());
                     comment.setQRId(qrId); // Set it to qrCode.getQRId()
                     comment.setContent(commentText);
+                    comment.setUserId("waiting function to get user id");
                     NewUserService newUserService = new NewUserService();
                     newUserService.putComment(comment);
 
@@ -195,7 +196,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                     });
                      */
 
-                    commentAdapter.insert(commentText, 0);
+                    commentAdapter.insert(commentText+" - "+"waiting function to get user id", 0);
                     commentAdapter.notifyDataSetChanged();
                 }
             }
