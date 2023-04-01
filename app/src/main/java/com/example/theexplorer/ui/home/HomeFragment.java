@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.theexplorer.databinding.FragmentHomeBinding;
+import com.example.theexplorer.ui.leaderboard.LeaderboardActivity;
 
 public class HomeFragment extends Fragment {
 
@@ -26,8 +27,6 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         Button seeScoresButton = binding.buttonSeeScores;
         seeScoresButton.setOnClickListener(new View.OnClickListener() {
@@ -43,6 +42,17 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ScannedFragment.class);
+                startActivity(intent);
+            }
+        });
+
+        Button leaderboardButton = binding.buttonSeeLeaderboard;
+        leaderboardButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Bundle bundle = new Bundle();
+
+                Intent intent = new Intent(getActivity(), LeaderboardActivity.class);
                 startActivity(intent);
             }
         });
