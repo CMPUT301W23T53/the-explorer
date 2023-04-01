@@ -23,14 +23,23 @@ import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ScannedFragment extends AppCompatActivity {
     ListView scannedListView;
     final NewUserService newUserService = new NewUserService();
     final User[] user = {new User()};
+    String userEmail1;
+
+    FirebaseFirestore firebaseFirestore;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,28 +47,35 @@ public class ScannedFragment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanned);
 
-        user[0].setUserId("test_nested"); // JUST FOR TESTING
-        newUserService.getUser(user[0].getUserId()).addOnSuccessListener(new OnSuccessListener<User>() {
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
+        scannedListView = (ListView) findViewById(R.id.listview_scanned);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        userEmail1 = firebaseUser.getEmail();
+
+        newUserService.getUser(userEmail1).addOnSuccessListener(new OnSuccessListener<User>() {
             @Override
             public void onSuccess(User fetchUser) {
                 user[0] = fetchUser;
-                Log.d("USER", user[0].toString());
+                if (user[0] != null) {
+                    List<QRCode> arrayQRCode = user[0].getQRList();
 
-                scannedListView = (ListView) findViewById(R.id.listview_scanned);
-                List<QRCode> arrayQRCode = user[0].getQRList();
-                Log.d("GETQRLIST", user[0].getQRList().toString());
-
-                MyListAdapter adapter = new MyListAdapter(arrayQRCode);
-                scannedListView.setAdapter(adapter);
+                    MyListAdapter adapter = new MyListAdapter(arrayQRCode);
+                    scannedListView.setAdapter(adapter);
+                }
             }
         });
 
     }
+
     private class MyListAdapter extends ArrayAdapter<QRCode> {
+
+        List<QRCode> items;
 
         public MyListAdapter(List<QRCode> items) {
             super(ScannedFragment.this, 0, items);
+            this.items = items;
         }
 
         @Override
@@ -68,15 +84,15 @@ public class ScannedFragment extends AppCompatActivity {
                 convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, null);
             }
 
-            QRCode item = getItem(position);
+            Map<String, Object> qrCodeList1 = (Map<String, Object>) items.get(position);
             TextView text1 = (TextView) convertView.findViewById(android.R.id.text1);
-            text1.setText(item.getQRName());
+            text1.setText((String) qrCodeList1.get("qrname"));
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     // Get the selected QRCode object
-                    QRCode selectedItem = getItem(position);
+                    Map<String, Object> selectedItem = (Map<String, Object>) items.get(position);
                     // Create a new AlertDialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(ScannedFragment.this);
                     builder.setTitle("View QR Code Details");
@@ -91,13 +107,24 @@ public class ScannedFragment extends AppCompatActivity {
                     TextView nameTextView = dialogView.findViewById(R.id.text_name);
                     TextView latitudeTextView = dialogView.findViewById(R.id.text_latitude);
                     TextView longitudeTextView = dialogView.findViewById(R.id.text_longitude);
+                    ListView usersListView = dialogView.findViewById(R.id.listview_users);
 
                     // Set the EditText values to the selected QRCode object's id and name
-                    idTextView.setText("ID: " + selectedItem.getQRId());
-                    scoreTextView.setText("Score: " + String.valueOf(selectedItem.getQRScore()));
-                    nameTextView.setText("Name: " + selectedItem.getQRName());
-                    latitudeTextView.setText("Latitude: " + String.valueOf(selectedItem.getLatitude()));
-                    longitudeTextView.setText("Longitude: " + String.valueOf(selectedItem.getLongitude()));
+                    idTextView.setText("ID: " + (String) qrCodeList1.get("qrid"));
+                    scoreTextView.setText("Score: " + (long) qrCodeList1.get("qrscore"));
+                    nameTextView.setText("Name: " + (String) qrCodeList1.get("qrname"));
+
+
+                    if (qrCodeList1.get("latitude") instanceof Double) {
+                        latitudeTextView.setText("Latitude: " + (double) qrCodeList1.get("latitude"));
+                    } else {
+                        latitudeTextView.setText("Latitude: " + (long) qrCodeList1.get("latitude"));
+                    }
+                    if (qrCodeList1.get("longitude") instanceof Double) {
+                        longitudeTextView.setText("Longitude: " + (double) qrCodeList1.get("longitude"));
+                    } else {
+                        longitudeTextView.setText("Longitude: " + (long) qrCodeList1.get("longitude"));
+                    }
 
                     // Set the positive button of the AlertDialog
                     builder.setPositiveButton("More", new DialogInterface.OnClickListener() {
@@ -106,7 +133,7 @@ public class ScannedFragment extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Intent intent = new Intent(ScannedFragment.this, DetailPageOfOneQR.class);
-                            intent.putExtra("qr_code_key", selectedItem);
+                            intent.putExtra("qr_code_key", (Serializable) selectedItem);
                             startActivity(intent);
 
                         }
@@ -125,8 +152,70 @@ public class ScannedFragment extends AppCompatActivity {
 
                     // Show the AlertDialog
                     builder.show();
+
+                    long score = (long) qrCodeList1.get("qrscore");
+                    ArrayList<String> userIDlist = new ArrayList<>();
+                    ArrayList<String> userIDlist1 = new ArrayList<>();
+
+                    newUserService.getAllUsers().addOnSuccessListener(new OnSuccessListener<List<User>>() {
+                        @Override
+                        public void onSuccess(List<User> users) {
+
+                            for (int i = 0; i < users.size(); i++) {
+                                for (int j = 0; j < users.get(i).getQRList().size(); j++) {
+                                    Map<String, Object> selectedItem = (Map<String, Object>) users.get(i).getQRList().get(j);
+
+                                    long score1 = (long) selectedItem.get("qrscore");
+                                    if (score1 == score) {
+                                        userIDlist.add(users.get(i).getUserId());
+                                        break;
+                                    }
+                                }
+                            }
+
+                            firebaseFirestore.collection("Users").whereIn("email", userIDlist)
+                                    .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            if (!queryDocumentSnapshots.isEmpty()) {
+                                                for (int i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
+                                                    String userName = (String) queryDocumentSnapshots.getDocuments().get(i).get("userName");
+                                                    userIDlist1.add(userName);
+                                                }
+                                                UsersListAdapter adapter = new UsersListAdapter(userIDlist1);
+                                                usersListView.setAdapter(adapter);
+                                            }
+                                        }
+                                    });
+
+                        }
+                    });
+
                 }
             });
+
+            return convertView;
+        }
+    }
+
+    private class UsersListAdapter extends ArrayAdapter<String> {
+
+        List<String> items;
+
+        public UsersListAdapter(List<String> items) {
+            super(ScannedFragment.this, 0, items);
+            this.items = items;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, null);
+            }
+
+            TextView text1 = (TextView) convertView.findViewById(android.R.id.text1);
+            text1.setText(items.get(position));
+
 
             return convertView;
         }
