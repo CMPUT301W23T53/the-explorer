@@ -364,6 +364,15 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             if (c == '&' || c == '=' || c == '/') {
                 theScore++;
             }
+            for(int i=48; i<57;i++){
+                if(c == (char)i){
+                    theScore+=(i-48);
+                }
+            }
+            if (c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z') {
+                theScore += (int) c;
+            }
+
         }
         theScore += content.length();
         return theScore;
