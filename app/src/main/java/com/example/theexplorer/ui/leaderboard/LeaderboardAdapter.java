@@ -11,36 +11,35 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.theexplorer.R;
-import com.example.theexplorer.services.User;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class LeaderboardAdapter extends ArrayAdapter<User> {
+public class LeaderboardAdapter extends ArrayAdapter<RankingTuple> {
 
-    private ArrayList<User> truncatedUsers;
     private Context context;
-    public LeaderboardAdapter(@NonNull Context context, ArrayList<User> content) {
-        super(context, 0,content);
-        this.truncatedUsers = content;
-        this.context = context;
+    public LeaderboardAdapter(@NonNull Context context, ArrayList<RankingTuple> content) {
+        super(context, 0, content);
+
+        //this.truncatedUsers = content;
+        //this.context = context;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
+        View view;
 
-        if(view == null){
-            view = LayoutInflater.from(context).inflate(R.layout.adapter_leaderboard_content, parent,false);
+        if(convertView == null){
+            view = LayoutInflater.from(getContext()).inflate(R.layout.adapter_leaderboard_content, parent,false);
+        }else{
+            view = convertView;
         }
-        User user = truncatedUsers.get(position);
+
         TextView ranking = view.findViewById(R.id.leaderboard_ranking);
         TextView userName = view.findViewById(R.id.leaderboard_username);
 
-        ranking.setText(String.valueOf(position));
-        userName.setText(user.getUserId());
+        ranking.setText(String.valueOf(getItem(position).getValue()));
+        userName.setText(getItem(position).getId());
         return view;
-
     }
 }
