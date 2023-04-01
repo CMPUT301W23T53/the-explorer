@@ -152,24 +152,6 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             }
         });
 
-        editQrName = findViewById(R.id.qr_name_edit);
-        editQrName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String text = charSequence.toString();
-//                qrCode.setQRName(text);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
         // add qr to user
         Button add;
         add = findViewById(R.id.add_button);
