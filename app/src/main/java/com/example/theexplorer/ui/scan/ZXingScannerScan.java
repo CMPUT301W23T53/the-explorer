@@ -287,19 +287,22 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         return bitmap;
     }
 
-    /**
-     * Trying to get the system services and request to update Location
-     * <p>
-     * This method won't returns anything. When call this function it will try to get system service to get location.
-     * And if it has the permission to get the location, it will ask onLocationChanged() to show it.
-     *
-     * @return null
-     */
+    // Trying to get the system services and request to update Location
     @SuppressLint("MissingPermission")
     private void getLocation() {
         try {
             locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, ZXingScannerScan.this);
+            Location lastLocationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location lastLocationNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            if (lastLocationGPS != null) {
+                onLocationChanged(lastLocationGPS);
+            } else if (lastLocationNetwork != null) {
+                onLocationChanged(lastLocationNetwork);
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, ZXingScannerScan.this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, ZXingScannerScan.this);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

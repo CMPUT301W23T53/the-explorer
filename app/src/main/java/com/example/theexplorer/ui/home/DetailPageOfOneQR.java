@@ -85,9 +85,9 @@ public class DetailPageOfOneQR extends AppCompatActivity {
         TextView location = findViewById(R.id.qr_location);
 
         if (qrCode.get("latitude") instanceof Double) {
-            location.setText("Longitude: " + (double) qrCode.get("latitude") + "Latitude: " + (double) qrCode.get("longitude"));
+            location.setText("Longitude: " + (double) qrCode.get("latitude") + " Latitude: " + (double) qrCode.get("longitude"));
         } else {
-            location.setText("Longitude: " + (long) qrCode.get("latitude") + "Latitude: " + (long) qrCode.get("longitude"));
+            location.setText("Longitude: " + (long) qrCode.get("latitude") + " Latitude: " + (long) qrCode.get("longitude"));
         }
 
         // visual representation starting here
