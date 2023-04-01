@@ -112,6 +112,28 @@ public class DetailPageOfOneQR extends AppCompatActivity {
             visRepBot.setText("========");
         }
 
+        // visual representation starting here
+        if (((String) qrCode.get("qrname")).contains("cool")) {
+            TextView visRepEyes = findViewById(R.id.vis_rep_eyes);
+            visRepEyes.setText("|  .     .  |");
+        }
+        if (((String) qrCode.get("qrname")).contains("Wolf")) {
+            TextView visRepEyes = findViewById(R.id.vis_rep_eyes);
+            visRepEyes.setText("|  +     +  |");
+        }
+        if (((String) qrCode.get("qrname")).contains("Sunday")) {
+            TextView visRepMouth = findViewById(R.id.vis_rep_mouth);
+            visRepMouth.setText("|     n     |");
+        }
+        if (((String) qrCode.get("qrname")).contains("Large")) {
+            TextView visRepTop = findViewById(R.id.vis_rep_top);
+            visRepTop.setText("========");
+        }
+        if (((String) qrCode.get("qrname")).contains("Tiny")) {
+            TextView visRepBot = findViewById(R.id.vis_rep_bot);
+            visRepBot.setText("========");
+        }
+
 
         // Initialize the comments list
         comments = new ArrayList<>();
