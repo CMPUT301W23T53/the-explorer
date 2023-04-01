@@ -304,17 +304,12 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
      */
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(this, "" + location.getLatitude() + "," + location.getLongitude(), Toast.LENGTH_SHORT).show();
-        try {
-            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-            AddressText.setText("Latitude: " + latitude + "\n" + "Longitude: " + longitude);
-            qrCode.setLatitude(latitude);
-            qrCode.setLongitude(longitude);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        AddressText.setText("Latitude: " + latitude + "\n" + "Longitude: " + longitude);
+        qrCode.setLatitude(latitude);
+        qrCode.setLongitude(longitude);
+
     }
 
     public Bitmap notFound() {

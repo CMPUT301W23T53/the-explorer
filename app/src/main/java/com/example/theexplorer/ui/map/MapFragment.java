@@ -77,7 +77,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 public void onSuccess(List<QRCode> qrCodes) {
                     for (QRCode qrCode : qrCodes) {
                         LatLng nearby = new LatLng(qrCode.getLatitude(), qrCode.getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(nearby));
+                        //mMap.addMarker(new MarkerOptions().position(nearby));
+                        mMap.addMarker(new MarkerOptions().position(nearby).title(qrCode.getQRName()));
                     }
                 }
             });
