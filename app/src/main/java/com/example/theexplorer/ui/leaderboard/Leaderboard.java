@@ -17,13 +17,11 @@ import java.util.List;
 
 public class Leaderboard {
     private boolean debugMode = false;
-    private NewUserService userService = new NewUserService();
-    private String currentUserID = null;
-    private User currentUserInstance;
-    private List<User> fullList = new ArrayList<User>();
+    private final NewUserService userService = new NewUserService();
+    private ArrayList<RankingTuple> fullList = new ArrayList<>();
     private boolean scoresDescending = true;
     // note that this upper bound can +1 if the user is not in the list.
-    private int linesUpperBound = 10;
+    private int linesUpperBound = 50;
 
 
     /**
@@ -39,22 +37,7 @@ public class Leaderboard {
      * Please see Builder constructor for more details.
      */
     private Leaderboard(LeaderboardBuilder builder){
-        if(this.currentUserID != null){
-            this.currentUserID = builder.currentUser;
-            userService.getUser(builder.currentUser).addOnSuccessListener(new OnSuccessListener<User>() {
-                @Override
-                public void onSuccess(User user) {
-                    Log.d("LEADERBOARD","User successfully found.");
-                    currentUserInstance = user;
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d("LEADERBOARD","User not found or was not received.");
-                    throw new IllegalArgumentException("Not a user", e);
-                }
-            });
-        }
+
         if(builder.preloadEntireList){refreshUserList();}
         if(builder.toReverse != null){
             this.scoresDescending = !builder.toReverse;
@@ -63,37 +46,37 @@ public class Leaderboard {
             }
         }
         if(builder.linesUpperBound != null){this.linesUpperBound = builder.linesUpperBound;}
-        if(builder.debugMode != null){this.debugMode = builder.debugMode;}
     }
 
     public void setLinesUpperBound(int newUpperBound) {
         this.linesUpperBound = newUpperBound;
     }
-    public void setFullList(List<User> list){
-        this.fullList = list;
-    }
+
 
     /**
      * Get the ranking of the user.
      * @param userString - the user ID to find.
-     * @return ranking - an Integer
+     * @return ranking - an integer
      */
     public int getRanking(String userString){
-        int ranking = -1;
-        int index = 1;
-        for(User userToFind : fullList){
-            if (userToFind.getUserId().equals(userString)){
-                ranking = index;
-                break;
+        final int[] ranking = {0};
+        userService.getUser(userString).addOnSuccessListener(new OnSuccessListener<User>() {
+            @Override
+            public void onSuccess(User user) {
+                userService.getRankOfUser(user).addOnSuccessListener(new OnSuccessListener<Integer>() {
+                    @Override
+                    public void onSuccess(Integer integer) {
+                        ranking[0] = integer;
+                    }
+                });
             }
-            index++;
-        }
-        return ranking;
-    }
+        });
+        return ranking[0];
 
-    /**
-     * For debugging purposes.
-     */
+    }
+    public ArrayList<RankingTuple> getFullList(){
+        return this.fullList;
+    }
 
     public void setListOrderAsDescending(boolean toDescending){
         boolean prior = this.scoresDescending;
@@ -115,17 +98,17 @@ public class Leaderboard {
      * Refresh the list using the latest list from Firebase.
      */
     public void refreshUserList(){
-        userService.getGameWideHighScoreOfAllPlayers().addOnSuccessListener(new OnSuccessListener<List<User>>() {
-            @Override
-            public void onSuccess(List<User> users) {
+        userService.getGameWideHighScoreOfAllPlayers().addOnCompleteListener(task -> {
+            task.addOnSuccessListener(users -> {
                 Log.d("LEADERBOARD","List successfully obtained.");
-                setFullList(users);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("LEADERBOARD", e.toString());
-            }
+                int i = 1;
+                for(User user: users) {
+                    fullList.add(new RankingTuple(user.getUserId(),i));
+                    if (i > linesUpperBound) {
+                        break;
+                    }
+                }
+            });
         });
 
         if(!scoresDescending){
@@ -134,31 +117,6 @@ public class Leaderboard {
     }
 
 
-    /*public ArrayList<String> getTopNUsersAsStrings(){
-        ArrayList<String> toReturn = new ArrayList<>();
-        for(User user : getTopNUsers()){
-            toReturn.add(user.getUserId());
-        }
-        if (!toReturn.contains(currentUserID)){
-            toReturn.add(currentUserID);
-            // TODO: Fix this, this is problematic.
-        }
-        return toReturn;
-    }*/
-    public ArrayList<User> getTopNUsers() {
-        ArrayList<User> truncatedList;
-        if (fullList.size() < linesUpperBound){
-            truncatedList = new ArrayList<>(fullList);
-        }
-        else{
-            truncatedList = new ArrayList<>(fullList.subList(0, linesUpperBound));
-        }
-        if(!truncatedList.contains(currentUserInstance) && currentUserInstance != null){
-            truncatedList.add(currentUserInstance);
-        }
-        return truncatedList;
-    }
-
     //---------------------------------------------------------------------------------------------
     public static class LeaderboardBuilder {
 
@@ -166,7 +124,6 @@ public class Leaderboard {
         private String currentUser;
         private boolean preloadEntireList;
         private Boolean toReverse;
-        private Boolean debugMode;
 
         /**
          * Create a new Leaderboard object using the associated Builder.
@@ -175,10 +132,7 @@ public class Leaderboard {
         }
 
 
-        public LeaderboardBuilder setUsername(String username){
-            this.currentUser = username;
-            return this;
-        }
+
         /**
          * Modify the default lines upper bound.
          * @param upperBound - max lines to display
@@ -198,7 +152,7 @@ public class Leaderboard {
          * @param toPreload - boolean True or False
          * @return the same LeaderboardBuilder instance
          */
-        public LeaderboardBuilder initializeEntireUserList(boolean toPreload){
+        public LeaderboardBuilder initializeAtBuild(boolean toPreload){
             this.preloadEntireList = toPreload;
             return this;
         }
@@ -215,10 +169,6 @@ public class Leaderboard {
             return this;
         }
 
-        public LeaderboardBuilder setDebugMode(boolean toTest){
-            this.debugMode = toTest;
-            return this;
-        }
 
         /**
          * Return a Leaderboard object with the specified changes.
