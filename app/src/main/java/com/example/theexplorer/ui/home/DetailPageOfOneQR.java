@@ -43,6 +43,7 @@ import com.example.theexplorer.services.Comment;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
+import com.example.theexplorer.services.WhiteTextArrayAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -167,7 +168,9 @@ public class DetailPageOfOneQR extends AppCompatActivity {
 
 
         // Initialize the ArrayAdapter and set it to the ListView
-        commentAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, comments);
+        commentAdapter = new WhiteTextArrayAdapter(this, android.R.layout.simple_list_item_1, comments);
+
+
         ListView commentListView = findViewById(R.id.comment_list_view);
         commentListView.setAdapter(commentAdapter);
 
