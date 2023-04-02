@@ -1,4 +1,4 @@
-# QRHunter App
+# THE EXPLORER 
 # Overview
 QRHunter is a mobile application that allows users to hunt for QR codes that score points. The app scores QR codes based on certain properties such as repeated nibbles or bytes, and the user with the most points at the end of a game wins. Users can compete with each other for the highest-scoring QR codes, the most QR codes, the highest sum of QR codes, or the highest-scoring QR codes in a region.
 
