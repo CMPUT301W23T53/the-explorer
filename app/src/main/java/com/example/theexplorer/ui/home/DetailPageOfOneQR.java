@@ -1,12 +1,7 @@
 package com.example.theexplorer.ui.home;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.theexplorer.R;
-import com.example.theexplorer.services.QRCode;
-
-import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -15,44 +10,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.theexplorer.R;
 import com.example.theexplorer.services.Comment;
 import com.example.theexplorer.services.NewUserService;
-import com.example.theexplorer.services.QRCode;
-import com.example.theexplorer.services.User;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import com.example.theexplorer.services.NewUserService;
-
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -60,14 +34,15 @@ public class DetailPageOfOneQR extends AppCompatActivity {
     private ArrayList<String> comments;
     private ArrayAdapter<String> commentAdapter;
     String qrId;
+    String userId;
+    NewUserService userService = new NewUserService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Get the selected QRCode object
         Map<String, Object> qrCode = (Map) getIntent().getSerializableExtra("qr_code_key");
 
-//        Intent intent = getIntent();
-//        QRCode qrCode = intent.getParcelableExtra("qr_code_key");
+        userId = getIntent().getStringExtra("userId");
 
 
         super.onCreate(savedInstanceState);
@@ -155,7 +130,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                 // Convert the List<Comment> to ArrayList<String> and store it in the comments variable
                 ArrayList<String> commentStrings = new ArrayList<>();
                 for (Comment comment : comments) {
-                    commentStrings.add(comment.getContent() +" - " + "waiting function to get user id");
+                    commentStrings.add(comment.getContent() + " - " + comment.getUserId());
                 }
 
                 // Update the ArrayAdapter with the new comments data
@@ -198,11 +173,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                     comment.setCreatedAt(new Date());
                     comment.setQRId(qrId); // Set it to qrCode.getQRId()
                     comment.setContent(commentText);
-                    comment.setUserId("waiting function to get user id");
-                    NewUserService newUserService = new NewUserService();
-                    newUserService.putComment(comment);
 
-                    editText.setText(""); // clear EditText
                     /** uncomment this to update comment when upload is successful. ie, we have newUserService.putComment(comment).addOnSuccessListener
                      newUserService.putComment(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override public void onSuccess(Void aVoid) {
@@ -218,8 +189,22 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                     });
                      */
 
-                    commentAdapter.insert(commentText+" - "+"waiting function to get user id", 0);
-                    commentAdapter.notifyDataSetChanged();
+                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String userEmail1 = firebaseUser.getEmail();
+
+                    userService.getNameFromEmail(userEmail1).addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String userName) {
+                            comment.setUserId(userName);
+                            NewUserService newUserService = new NewUserService();
+                            newUserService.putComment(comment);
+
+                            editText.setText("");
+
+                            commentAdapter.insert(commentText + " - " + userName, 0);
+                            commentAdapter.notifyDataSetChanged();
+                        }
+                    });
                 }
             }
         });

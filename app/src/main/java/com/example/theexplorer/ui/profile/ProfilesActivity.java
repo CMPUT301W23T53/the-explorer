@@ -128,7 +128,7 @@ public class ProfilesActivity extends AppCompatActivity {
                                 Log.e("-*-*-*-*-*-", "onComplete: ..." + email);
 
 
-                                getQrCodes(email);
+                                getQrCodes(userName1,email);
 
                             }
                         } else {
@@ -148,15 +148,16 @@ public class ProfilesActivity extends AppCompatActivity {
      Retrieves the QR codes associated with the given user email and displays them on the user interface.
      @param email the email of the user whose QR codes will be retrieved and displayed
      */
-    private void getQrCodes(String email) {
+    private void getQrCodes(String userName1, String email) {
         newUserService.getUser(email).addOnSuccessListener(new OnSuccessListener<User>() {
             @Override
             public void onSuccess(User fetchUser) {
                 user[0] = fetchUser;
                 if (user[0] != null) {
                     List<QRCode> arrayQRCode = user[0].getQRList();
+                    String userId = user[0].getUserId();
 
-                    MyListAdapter adapter = new MyListAdapter(arrayQRCode);
+                    MyListAdapter adapter = new MyListAdapter(userName1,arrayQRCode);
                     scannedListView.setAdapter(adapter);
                 }
             }
@@ -182,10 +183,12 @@ public class ProfilesActivity extends AppCompatActivity {
     private class MyListAdapter extends ArrayAdapter<QRCode> {
 
         List<QRCode> items;
+        String userId;
 
-        public MyListAdapter(List<QRCode> items) {
+        public MyListAdapter(String userId, List<QRCode> items) {
             super(ProfilesActivity.this, 0, items);
             this.items = items;
+            this.userId = userId;
         }
 
         /**
@@ -250,6 +253,7 @@ public class ProfilesActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Intent intent = new Intent(ProfilesActivity.this, DetailPageOfOneQR.class);
                             intent.putExtra("qr_code_key", (Serializable) selectedItem);
+                            intent.putExtra("userId", userId);
                             startActivity(intent);
 
                         }
