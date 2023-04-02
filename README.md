@@ -1,6 +1,6 @@
-# QRHunter App
+# THE EXPLORER 
 # Overview
-QRHunter is a mobile application that allows users to hunt for QR codes that score points. The app scores QR codes based on certain properties such as repeated nibbles or bytes, and the user with the most points at the end of a game wins. Users can compete with each other for the highest-scoring QR codes, the most QR codes, the highest sum of QR codes, or the highest-scoring QR codes in a region.
+The Explorer is a mobile application that allows users to hunt for QR codes that score points. The app scores QR codes based on certain properties such as repeated nibbles or bytes, and the user with the most points at the end of a game wins. Users can compete with each other for the highest-scoring QR codes, the most QR codes, the highest sum of QR codes, or the highest-scoring QR codes in a region.
 
 # Features
  + Scan QR codes to earn points
@@ -10,7 +10,7 @@ QRHunter is a mobile application that allows users to hunt for QR codes that sco
  + View a map of nearby QR codes that other users have scanned
 
 # Usage
-1. Open the QRHunter app.
+1. Open the The Explorer app.
 2. Scan a QR code or barcode to earn points.
 3. Take a photo and record geolocation of the scanned QR code or barcode.
 4. Score is added to your total points.
@@ -19,15 +19,17 @@ QRHunter is a mobile application that allows users to hunt for QR codes that sco
 7. Head to nearby QR codes to earn more points.
 
 # Development
-The QRHunter app was developed using Java and the Android SDK. The app uses Firebase for authentication, storage, and database. The app uses the Google Maps API to display a map of nearby QR codes that other users have scanned. The app is designed to be flexible enough to allow developers to extend or migrate it.
+The Explorer app was developed using Java and the Android SDK. The app uses Firebase for authentication, storage, and database. The app uses the Google Maps API to display a map of nearby QR codes that other users have scanned. The app is designed to be flexible enough to allow developers to extend or migrate it.
 
 # Contributors
-+ sashreek s-mag
-+ huutriet phamhuutriet
-+ sluo2 Er1c-luo
-+ rosario2 andrew-rosario
-+ luofan1 157123gf
-+ gchiang1 gchiang56
+|     Name           |CCID|
+|----------------|-------------------------------|
+|Sashreek  Magan|`sashreek`            |
+|Gordon Chiang|`gchiang1`            |
+|Luofan Peng|`luofan1`|
+|Triet Pham|`huutriet`|
+|Shilong Luo|`sluo2`|
+|Andrew Rosario|`rosario2`|
 
 # License
-The QRHunter app is licensed under the MIT License. See the LICENSE file for more information.
+The Explorer app is distributed under the Apache 2.0 License. See the LICENSE file for more information.
