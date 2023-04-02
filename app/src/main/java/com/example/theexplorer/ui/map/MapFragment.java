@@ -2,13 +2,11 @@ package com.example.theexplorer.ui.map;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import com.example.theexplorer.databinding.FragmentMapBinding;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
-import com.example.theexplorer.services.UserService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -46,6 +43,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
 
+
+    /**
+     * Inflates the map fragment layout and initializes the GoogleMap object.
+     *
+     * @param inflater           the LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container          the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState the saved state of the fragment.
+     * @return the root view of the fragment.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentMapBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -58,6 +64,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return root;
     }
 
+    /**
+     * Handles the initialization of the GoogleMap object and the display of nearby QR codes on the map.
+     *
+     * @param googleMap the GoogleMap object used for displaying the map.
+     */
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -90,7 +101,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-
+    /**
+     * Creates a LocationRequest with specified interval and accuracy, sets the created LocationRequest to locationRequest variable.
+     * The interval between location updates is set to 10000 milliseconds and fastest interval to 5000 milliseconds.
+     * The priority is set to high accuracy to provide the most accurate location possible.
+     */
     private void createLocationRequest() {
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(10000);
@@ -98,6 +113,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
+    /**
+     * Sets up a LocationCallback to handle location updates.
+     * When a new location is received, the function will convert the location to a LatLng object, save it as last location,
+     * animate the camera to the new location on the map, and remove location updates.
+     * @throws SecurityException if ACCESS_FINE_LOCATION or ACCESS_COARSE_LOCATION permission is not granted
+     */
     private void setLocationCallback() {
         locationCallback = new LocationCallback() {
             @Override

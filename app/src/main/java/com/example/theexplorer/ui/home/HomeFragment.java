@@ -1,3 +1,8 @@
+/**
+ * A fragment representing the home screen of the app, which allows users to view their scores,
+ * view their scanned codes, and view the leaderboard.
+ */
+
 package com.example.theexplorer.ui.home;
 
 import android.content.Intent;
@@ -19,6 +24,15 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
 
+
+    /**
+     * Inflates the layout for this fragment, sets up the button click listeners, and returns the root view.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate views in the fragment
+     * @param container The parent view that the fragment UI should be attached to
+     * @param savedInstanceState The previously saved state of the fragment, or null if this is a new instance
+     * @return The root view of the inflated layout
+     */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
@@ -61,6 +75,9 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Nullifies the binding instance when the fragment is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -26,6 +26,14 @@ public class LeaderboardAdapter extends ArrayAdapter<RankingTuple> {
         //this.context = context;
     }
 
+    /**
+     * Returns a View that displays the data at the specified position in the list.
+     *
+     * @param position    the position of the item within the adapter's data set
+     * @param convertView the old view to reuse, if possible
+     * @param parent      the parent that this view will eventually be attached to
+     * @return            a View that displays the data at the specified position in the list
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
