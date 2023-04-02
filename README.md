@@ -19,7 +19,7 @@ The Explorer is a mobile application that allows users to hunt for QR codes that
 7. Head to nearby QR codes to earn more points.
 
 # Development
-The The Explorer app was developed using Java and the Android SDK. The app uses Firebase for authentication, storage, and database. The app uses the Google Maps API to display a map of nearby QR codes that other users have scanned. The app is designed to be flexible enough to allow developers to extend or migrate it.
+The Explorer app was developed using Java and the Android SDK. The app uses Firebase for authentication, storage, and database. The app uses the Google Maps API to display a map of nearby QR codes that other users have scanned. The app is designed to be flexible enough to allow developers to extend or migrate it.
 
 # Contributors
 + sashreek s-mag
@@ -30,4 +30,4 @@ The The Explorer app was developed using Java and the Android SDK. The app uses 
 + gchiang1 gchiang56
 
 # License
-The QRHunter app is licensed under the MIT License. See the LICENSE file for more information.
+The The Explorer app is licensed under the MIT License. See the LICENSE file for more information.
