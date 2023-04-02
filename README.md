@@ -30,4 +30,4 @@ The Explorer app was developed using Java and the Android SDK. The app uses Fire
 + gchiang1 gchiang56
 
 # License
-The The Explorer app is licensed under the MIT License. See the LICENSE file for more information.
+The Explorer app is licensed under the MIT License. See the LICENSE file for more information.
