@@ -69,6 +69,16 @@ public class ScoresFragment extends AppCompatActivity {
 
                     TextView sumValue = findViewById(R.id.score_sum);
                     sumValue.setText(String.valueOf(getSumQRScores(arrayQRCode)));
+
+                    TextView playerRanking = findViewById(R.id.player_ranking);
+                    newUserService.getRankOfUser(user[0]).addOnSuccessListener(new OnSuccessListener<Integer>() {
+                        @Override
+                        public void onSuccess(Integer rank) {
+                            playerRanking.setText("Code Ranking: " + String.valueOf(rank));
+                            Log.d("RANK", String.valueOf(rank));
+                        }
+                    });
+
                 }
 
 
