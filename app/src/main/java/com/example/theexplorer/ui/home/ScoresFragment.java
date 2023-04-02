@@ -47,14 +47,22 @@ public class ScoresFragment extends AppCompatActivity {
                     List<QRCode> arrayQRCode = user[0].getQRList();
 
                     TextView highestScoreTextView = (TextView) findViewById(R.id.highest_score);
-                    highestScoreTextView.setText(String.valueOf(getHighestQRScore(arrayQRCode)));
-                    TextView highName = (TextView) findViewById(R.id.high_score_name);
-                    highName.setText(getHighestQRScoreName(arrayQRCode));
+                    if (getHighestQRScore(arrayQRCode) == -1) {
+                        highestScoreTextView.setText("No codes scanned");
+                    } else {
+                        highestScoreTextView.setText(String.valueOf(getHighestQRScore(arrayQRCode)));
+                        TextView highName = (TextView) findViewById(R.id.high_score_name);
+                        highName.setText(getHighestQRScoreName(arrayQRCode));
+                    }
 
                     TextView low = findViewById(R.id.lowest_score);
-                    low.setText(String.valueOf(getLowestQRScore(arrayQRCode)));
-                    TextView lowName = findViewById(R.id.low_score_name);
-                    lowName.setText(getLowestQRScoreName(arrayQRCode));
+                    if (getLowestQRScore(arrayQRCode) == Integer.MAX_VALUE) {
+                        low.setText("No codes scanned");
+                    } else {
+                        low.setText(String.valueOf(getLowestQRScore(arrayQRCode)));
+                        TextView lowName = findViewById(R.id.low_score_name);
+                        lowName.setText(getLowestQRScoreName(arrayQRCode));
+                    }
 
                     TextView total = findViewById(R.id.total_scanned);
                     total.setText(String.valueOf(arrayQRCode.size()));
@@ -75,7 +83,7 @@ public class ScoresFragment extends AppCompatActivity {
      * @return the highest QR score
      */
     public long getHighestQRScore(List<QRCode> arrayQRCode) {
-        long maxScore = 0;
+        long maxScore = -1;
 
         for (int i = 0; i < arrayQRCode.size(); i++) {
             Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(i);
