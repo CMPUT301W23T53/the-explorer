@@ -22,12 +22,14 @@ The Explorer is a mobile application that allows users to hunt for QR codes that
 The Explorer app was developed using Java and the Android SDK. The app uses Firebase for authentication, storage, and database. The app uses the Google Maps API to display a map of nearby QR codes that other users have scanned. The app is designed to be flexible enough to allow developers to extend or migrate it.
 
 # Contributors
-+ sashreek s-mag
-+ huutriet phamhuutriet
-+ sluo2 Er1c-luo
-+ rosario2 andrew-rosario
-+ luofan1 157123gf
-+ gchiang1 gchiang56
+|     Name           |CCID|
+|----------------|-------------------------------|
+|Sashreek  Magan|`sashreek`            |
+|Gordon Chiang|`gchiang1`            |
+|Luofan Peng|`luofan1`|
+|Triet Pham|`huutriet`|
+|Shilong Luo|`sluo2`|
+|Andrew Rosario|`rosario2`|
 
 # License
 The Explorer app is licensed under the MIT License. See the LICENSE file for more information.
