@@ -95,20 +95,20 @@ public class ProfilesActivity extends AppCompatActivity {
         progressDialog.setMessage("Please wait");
         progressDialog.setCancelable(false);
 
-        String userName = getIntent().getStringExtra("userName");
-        checkUser(userName);
+        String userName1 = getIntent().getStringExtra("userName1");
+        checkUser(userName1);
     }
 
-    private void checkUser(String userName) {
-        showUserData(userName);
+    private void checkUser(String userName1) {
+        showUserData(userName1);
     }
 
     /**
      Retrieves the user data based on the provided username and displays it on the user interface.
-     @param userName the username of the user whose data will be retrieved and displayed
+     @param userName1 the username of the user whose data will be retrieved and displayed
      */
-    private void showUserData(String userName) {
-        firebaseFirestore.collection("Users").whereEqualTo("userName", userName).get()
+    private void showUserData(String userName1) {
+        firebaseFirestore.collection("Users").whereEqualTo("userName", userName1).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -119,12 +119,10 @@ public class ProfilesActivity extends AppCompatActivity {
                                 email = document.getString("email");
                                 name = document.getString("name");
                                 photo = document.getString("photo");
-                                ProfilesActivity.this.userName = document.getString("userName");
-
+                                userName = document.getString("userName");
                                 txtemail.setText(email);
                                 tvName.setText(name);
-                                etUserName.setText(ProfilesActivity.this.userName);
-
+                                etUserName.setText(userName);
                                 Glide.with(ProfilesActivity.this).load(photo).error(R.drawable.ic_baseline_person_24).into(img);
 
                                 Log.e("-*-*-*-*-*-", "onComplete: ..." + email);
