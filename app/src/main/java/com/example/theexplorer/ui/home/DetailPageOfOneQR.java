@@ -1,3 +1,12 @@
+/**
+ * The DetailPageOfOneQR activity displays the details of a selected QR code including its ID, name, score and location.
+ * It also displays a visual representation of the QR code's name using ASCII art.
+ * The comments for the QR code are retrieved from Firebase and displayed in a ListView.
+ * Users can add comments to the QR code using an EditText and a Button.
+ * The activity extends AppCompatActivity and implements the onCreate method to create the activity.
+ * It also initializes the comments ArrayList, commentAdapter ArrayAdapter and other variables used in the activity.
+ */
+
 package com.example.theexplorer.ui.home;
 
 import android.graphics.Bitmap;
@@ -161,6 +170,10 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                 photoShow.setImageBitmap(bitmap1);
             }
         }
+
+        /**
+         * Add Comment button logic. When add, we send the qrcode data to Firebase
+         */
 
         Button addComment = findViewById(R.id.add_comment_button);
         addComment.setOnClickListener(new View.OnClickListener() {

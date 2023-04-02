@@ -2,8 +2,6 @@ package com.example.theexplorer.ui.home;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +10,6 @@ import com.example.theexplorer.R;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
-import com.example.theexplorer.services.UserService;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

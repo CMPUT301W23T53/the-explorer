@@ -1,3 +1,9 @@
+/**
+ * The Comment class represents a comment of a QR Code. It contains
+ * the comment's ID, user's id that commented this,
+ * qr id of the qr code it contained, and createdAt for the date
+ */
+
 package com.example.theexplorer.services;
 
 import com.google.firebase.Timestamp;
