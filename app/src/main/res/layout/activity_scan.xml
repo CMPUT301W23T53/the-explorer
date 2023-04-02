@@ -1,62 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#1A1A1A">
 
     <ImageView
         android:id="@+id/image_preview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <Button
         android:id="@+id/scan_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/image_preview"
-        android:layout_centerHorizontal="true"
-        android:text="Scan Again" />
+        android:background="@drawable/rounded_button"
+        android:text="Scan Again"
+        android:textColor="@color/white"
+        android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_preview" />
 
     <TextView
         android:id="@+id/address_text_view"
-        android:layout_width="210dp"
-        android:layout_height="44dp"
-        android:layout_below="@+id/scan_button"
-        android:text="User Address" />
+        android:layout_width="414dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="22dp"
+        android:text="User Address"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/imageView_photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address_button"
+        app:layout_constraintVertical_bias="0.191" />
 
     <Button
         android:id="@+id/address_button"
         android:layout_width="123dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/scan_button"
-        android:layout_marginStart="72dp"
-        android:layout_toEndOf="@+id/address_text_view"
-        android:text="Locate" />
+        android:layout_marginTop="22dp"
+        android:background="@drawable/rounded_button"
+        android:text="Locate"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/score" />
 
     <TextView
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/address_button"
-        android:text="Score=" />
+        android:layout_marginTop="22dp"
+        android:text="Score="
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scan_button" />
 
     <ImageView
         android:id="@+id/imageView_photo"
         android:layout_width="320dp"
         android:layout_height="240dp"
-        android:layout_below="@+id/score"
-        android:layout_centerHorizontal="true"
-         />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address_button" />
 
     <Button
         android:id="@+id/add_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView_photo"
-        android:layout_centerHorizontal="true"
-        android:text="Add" />
+        android:background="@drawable/rounded_button"
+        android:text="Add"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_photo" />
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
