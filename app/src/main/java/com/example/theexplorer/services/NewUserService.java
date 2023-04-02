@@ -364,14 +364,14 @@ public class NewUserService {
      * @return a Task that asynchronously returns the rank as an integer
      */
     public Task<Integer> getRankOfUser(User user) {
-        Query query = qrCodeRef.orderBy("QRScore", Query.Direction.DESCENDING);
+        Query query = qrCodeRef.orderBy("qrscore", Query.Direction.DESCENDING);
         return query.get().continueWith(task -> {
             List<Integer> allQRScoresSorted = new ArrayList<>();
             int minUntilNow = Integer.MAX_VALUE;
             if (task.isSuccessful()) {
                 QuerySnapshot querySnapshot = task.getResult();
                 for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                    int currentScore = document.getLong("QRScore").intValue();
+                    int currentScore = document.getLong("qrscore").intValue();
                     if (currentScore < minUntilNow) {
                         allQRScoresSorted.add(currentScore);
                         minUntilNow = currentScore;
@@ -380,7 +380,7 @@ public class NewUserService {
             } else {
                 Log.e("Error getting rank of user", task.getException().toString());
             }
-            return allQRScoresSorted.indexOf(getHighestQRScore(user.getQRList())) + 1;
+            return allQRScoresSorted.indexOf((int) getHighestQRScore(user.getQRList())) + 1;
         });
     }
 
