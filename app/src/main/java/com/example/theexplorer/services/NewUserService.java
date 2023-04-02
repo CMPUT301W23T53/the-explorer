@@ -8,6 +8,8 @@ package com.example.theexplorer.services;
 import android.util.Base64;
 import android.util.Log;
 import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +37,8 @@ public class NewUserService {
     final CollectionReference qrCodeRef = database.collection("qrcodes2");
 
     final CollectionReference commentRef = database.collection("comments2");
+
+    final CollectionReference userListRef = database.collection("Users");
 
     /**
      * Returns a Task that retrieves all user data from the Firestore database and returns a list of Users
@@ -521,5 +525,60 @@ public class NewUserService {
             list.add(b);
         }
         return list;
+    }
+
+    public Task<String> getNameFromEmail(String email) {
+
+        final String[] userName = new String[1];
+        final TaskCompletionSource<String> taskCompletionSource = new TaskCompletionSource<>();
+
+        userListRef.whereEqualTo("email", email).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            if (task.getResult().getDocuments() != null) {
+                                if (task.getResult().getDocuments().size() > 0) {
+                                    Log.e("0000.0...0000", "onComplete: " + task.getResult().getDocuments().get(0).get("userName"));
+                                    userName[0] = (String) task.getResult().getDocuments().get(0).get("userName");
+
+                                    taskCompletionSource.setResult(userName[0]);
+                                }
+                            }
+
+
+                        } else {
+                            Log.e("-*-*-*-*-*-*-", "Error getting documents: ", task.getException());
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("-*-*-*-*-*-*-", "Error getting documents: " + e);
+                        taskCompletionSource.setException(e);
+                    }
+                });
+
+
+        return taskCompletionSource.getTask();
+    }
+
+    public void deleteQrcodeByID(String qrID) {
+        qrCodeRef.whereEqualTo("QRId", qrID).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<DocumentReference> matchingQRCodeRefs = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    matchingQRCodeRefs.add(document.getReference());
+
+                    Log.e("--00--00--00--", "deleteQrcodeByID: " + document.getId());
+
+                    qrCodeRef.document(document.getId()).delete();
+                }
+
+            }
+        });
+
     }
 }

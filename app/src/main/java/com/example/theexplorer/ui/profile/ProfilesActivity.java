@@ -95,20 +95,20 @@ public class ProfilesActivity extends AppCompatActivity {
         progressDialog.setMessage("Please wait");
         progressDialog.setCancelable(false);
 
-        String userName = getIntent().getStringExtra("userName");
-        checkUser(userName);
+        String userName1 = getIntent().getStringExtra("userName1");
+        checkUser(userName1);
     }
 
-    private void checkUser(String userName) {
-        showUserData(userName);
+    private void checkUser(String userName1) {
+        showUserData(userName1);
     }
 
     /**
      Retrieves the user data based on the provided username and displays it on the user interface.
-     @param userName the username of the user whose data will be retrieved and displayed
+     @param userName1 the username of the user whose data will be retrieved and displayed
      */
-    private void showUserData(String userName) {
-        firebaseFirestore.collection("Users").whereEqualTo("userName", userName).get()
+    private void showUserData(String userName1) {
+        firebaseFirestore.collection("Users").whereEqualTo("userName", userName1).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -119,18 +119,16 @@ public class ProfilesActivity extends AppCompatActivity {
                                 email = document.getString("email");
                                 name = document.getString("name");
                                 photo = document.getString("photo");
-                                ProfilesActivity.this.userName = document.getString("userName");
-
+                                userName = document.getString("userName");
                                 txtemail.setText(email);
                                 tvName.setText(name);
-                                etUserName.setText(ProfilesActivity.this.userName);
-
+                                etUserName.setText(userName);
                                 Glide.with(ProfilesActivity.this).load(photo).error(R.drawable.ic_baseline_person_24).into(img);
 
                                 Log.e("-*-*-*-*-*-", "onComplete: ..." + email);
 
 
-                                getQrCodes(email);
+                                getQrCodes(userName1,email);
 
                             }
                         } else {
@@ -150,15 +148,16 @@ public class ProfilesActivity extends AppCompatActivity {
      Retrieves the QR codes associated with the given user email and displays them on the user interface.
      @param email the email of the user whose QR codes will be retrieved and displayed
      */
-    private void getQrCodes(String email) {
+    private void getQrCodes(String userName1, String email) {
         newUserService.getUser(email).addOnSuccessListener(new OnSuccessListener<User>() {
             @Override
             public void onSuccess(User fetchUser) {
                 user[0] = fetchUser;
                 if (user[0] != null) {
                     List<QRCode> arrayQRCode = user[0].getQRList();
+                    String userId = user[0].getUserId();
 
-                    MyListAdapter adapter = new MyListAdapter(arrayQRCode);
+                    MyListAdapter adapter = new MyListAdapter(userName1,arrayQRCode);
                     scannedListView.setAdapter(adapter);
                 }
             }
@@ -184,10 +183,12 @@ public class ProfilesActivity extends AppCompatActivity {
     private class MyListAdapter extends ArrayAdapter<QRCode> {
 
         List<QRCode> items;
+        String userId;
 
-        public MyListAdapter(List<QRCode> items) {
+        public MyListAdapter(String userId, List<QRCode> items) {
             super(ProfilesActivity.this, 0, items);
             this.items = items;
+            this.userId = userId;
         }
 
         /**
@@ -252,6 +253,7 @@ public class ProfilesActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Intent intent = new Intent(ProfilesActivity.this, DetailPageOfOneQR.class);
                             intent.putExtra("qr_code_key", (Serializable) selectedItem);
+                            intent.putExtra("userId", userId);
                             startActivity(intent);
 
                         }
