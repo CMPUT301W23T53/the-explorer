@@ -1,16 +1,12 @@
 package com.example.theexplorer;
 
 import android.view.LayoutInflater;
-
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.example.theexplorer.databinding.FragmentMapBinding;
 import com.example.theexplorer.ui.map.MapFragment;
 import com.google.android.gms.maps.GoogleMap;
-
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
