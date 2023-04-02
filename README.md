@@ -32,4 +32,4 @@ The Explorer app was developed using Java and the Android SDK. The app uses Fire
 |Andrew Rosario|`rosario2`|
 
 # License
-The Explorer app is licensed under the MIT License. See the LICENSE file for more information.
+The Explorer app is distributed under the Apache 2.0 License. See the LICENSE file for more information.
