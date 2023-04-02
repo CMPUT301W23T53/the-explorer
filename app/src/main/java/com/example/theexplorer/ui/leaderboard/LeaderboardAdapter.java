@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.theexplorer.R;
+import com.example.theexplorer.services.NewUserService;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
@@ -38,8 +40,14 @@ public class LeaderboardAdapter extends ArrayAdapter<RankingTuple> {
         TextView ranking = view.findViewById(R.id.leaderboard_ranking);
         TextView userName = view.findViewById(R.id.leaderboard_username);
 
-        ranking.setText(String.valueOf(getItem(position).getValue()));
-        userName.setText(getItem(position).getId());
+        NewUserService userService = new NewUserService();
+        userService.getNameFromEmail(getItem(position).getId()).addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                ranking.setText(String.valueOf(getItem(position).getValue()));
+                userName.setText(s);
+            }
+        });
         return view;
     }
 }
