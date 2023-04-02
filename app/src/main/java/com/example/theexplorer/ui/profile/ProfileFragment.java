@@ -30,7 +30,6 @@ import com.bumptech.glide.Glide;
 import com.example.theexplorer.R;
 import com.example.theexplorer.databinding.FragmentProfileBinding;
 import com.example.theexplorer.ui.auth.LogIn;
-import com.example.theexplorer.ui.auth.Register;
 import com.example.theexplorer.ui.auth.UserModel;
 import com.example.theexplorer.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -53,6 +52,10 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ This class represents the Profile Fragment which displays the user's data and allows them to edit their profile and
+ upload a profile picture.
+ */
 public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
@@ -79,6 +82,13 @@ public class ProfileFragment extends Fragment {
     CircleImageView img1;
     EditText etUserName1;
 
+    /**
+     This method inflates the layout for the Profile Fragment and initializes its views.
+     @param inflater The LayoutInflater object that can be used to inflate views in the fragment.
+     @param container The parent view that the fragment's UI should be attached to.
+     @param savedInstanceState A Bundle object containing the activity's previously saved state.
+     @return The View for the Profile Fragment's UI.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -102,6 +112,12 @@ public class ProfileFragment extends Fragment {
         return root;
     }
 
+    /**
+     This method initializes the views and adds click listeners to the edit photo, save, and edit buttons. It also
+     checks if the user is authenticated and retrieves their data from Firestore.
+     @param view The View returned by onCreateView().
+     @param savedInstanceState A Bundle object containing the activity's previously saved state.
+     */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -214,6 +230,15 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    /**
+     * Updates the user's data in Firestore with the provided parameters. If the username already exists,
+     * it will show a toast message indicating so. Otherwise, it updates the user data and displays a success message.
+     *
+     * @param photo    The photo URL to be updated for the user.
+     * @param userName The new user name to be updated for the user.
+     * @param name     The user's name.
+     * @param email    The user's email.
+     */
     private void updateDataFirestore(String photo, String userName, String name, String email) {
 
         firebaseFirestore.collection("Users").whereNotEqualTo("email", userEmail1).get()
@@ -270,6 +295,9 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    /**
+     * Uploads the selected image to Firebase Storage and updates the user's photo URL in Firestore.
+     */
     private void uploadImageFirebase() {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference().child("images");
@@ -321,7 +349,9 @@ public class ProfileFragment extends Fragment {
 
     }
 
-
+    /**
+     * Checks the user's authentication state and shows the user's data if they are signed in.
+     */
     private void checkUser() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -331,6 +361,11 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    /**
+     * Retrieves the user's data from Firestore based on the provided email and displays it in the UI.
+     *
+     * @param email1 The user's email.
+     */
     private void showUserData(String email1) {
         firebaseFirestore.collection("Users").whereEqualTo("email", email1).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -368,13 +403,22 @@ public class ProfileFragment extends Fragment {
 
     }
 
-
+    /**
+     * Called when the fragment is no longer in use. This is the final commit to remove the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
 
+    /**
+     * Called when an activity launched by this fragment exits. Handles the result of the image selection from the gallery.
+     *
+     * @param requestCode The integer request code originally supplied to startActivityForResult().
+     * @param resultCode  The integer result code returned by the child activity through its setResult().
+     * @param data        An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -404,6 +448,13 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    /**
+     * Handles the result of the permission request, proceeding with the image selection if all permissions are granted.
+     *
+     * @param requestCode  The request code passed in requestPermissions().
+     * @param permissions  The requested permissions.
+     * @param grantResults The grant results for the corresponding permissions which is either PERMISSION_GRANTED or PERMISSION_DENIED.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -423,6 +474,9 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Checks and requests necessary permissions to access the user's media storage.
+     */
     private void checkAndRequestPermission() {
         String[] appPermission = new String[0];
         if (android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.TIRAMISU) {
@@ -447,6 +501,9 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Launches an intent to select an image from the user's gallery.
+     */
     private void selectImage() {
         Intent intent = new Intent();
         intent.setType("image/*");

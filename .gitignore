@@ -44,8 +44,6 @@ captures/
 .idea/assetWizardSettings.xml
 .idea/dictionaries
 .idea/libraries
-.idea/deploymentTargetDropDown.xml
-
 # Android Studio 3 in .gitignore file.
 .idea/caches
 .idea/modules.xml
@@ -57,7 +55,7 @@ captures/
 #*.jks
 #*.keystore
 
-# External native build folder generated in Android Studio 2.2 and laterw
+# External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
 .cxx/
 
@@ -85,13 +83,3 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
-.idea/misc.xml
-
-# OS-generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db

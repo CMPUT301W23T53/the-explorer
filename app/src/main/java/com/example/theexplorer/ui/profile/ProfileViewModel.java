@@ -25,7 +25,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
 
+ ProfileViewModel is an activity that displays the profile information of the currently
+ logged-in user. It shows the user's email, name, and profile image. Users can also
+ log out from their account using the options menu.
+ */
 public class ProfileViewModel extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     TextView txtemail,txtname;
@@ -34,15 +39,26 @@ public class ProfileViewModel extends AppCompatActivity {
 
     private final MutableLiveData<String> mText;
 
+    /**
+     Constructor for ProfileViewModel, initializes the LiveData object.
+     */
     public ProfileViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is the Profile fragment");
     }
 
+    /**
+     Returns the LiveData object containing the text.
+     @return LiveData<String> the LiveData object containing the text
+     */
     public LiveData<String> getText() {
         return mText;
     }
 
+    /**
+     Initializes the activity, setting up the user interface and displaying the user's profile.
+     @param savedInstanceState a Bundle containing the activity's previously frozen state, if there was one
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +78,9 @@ public class ProfileViewModel extends AppCompatActivity {
         checkUser();
     }
 
+    /**
+     Checks the user's authentication state and retrieves their profile information.
+     */
     private void checkUser()
     {
         GoogleSignInAccount account= GoogleSignIn.getLastSignedInAccount(this);
@@ -89,6 +108,12 @@ public class ProfileViewModel extends AppCompatActivity {
         }
 
     }
+
+    /**
+     Inflate the options menu for the activity.
+     @param menu the options menu in which you place your items
+     @return boolean true if the menu should be displayed; false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -96,6 +121,11 @@ public class ProfileViewModel extends AppCompatActivity {
         return true;
     }
 
+    /**
+     Handles the options item selected event.
+     @param item the selected menu item
+     @return boolean true if the event was handled, false otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

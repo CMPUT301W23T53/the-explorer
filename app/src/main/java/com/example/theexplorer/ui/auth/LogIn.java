@@ -1,10 +1,6 @@
 package com.example.theexplorer.ui.auth;
 
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,10 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.theexplorer.MainActivity;
 import com.example.theexplorer.R;
-import com.example.theexplorer.ui.profile.ProfileFragment;
-import com.example.theexplorer.ui.profile.ProfilesActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -39,18 +37,40 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+
+ LogIn activity class is responsible for managing the login process for the application.
+ It allows users to sign in using their email and password, reset their password and also
+ sign in using their Google accounts.
+ Upon successful authentication, the user is redirected to the MainActivity.
+ */
 public class LogIn extends AppCompatActivity {
 
-    FirebaseAuth firebaseAuth;
+    //UI components
     TextInputLayout pass, email1;
     Button loginBtn;
     TextView forgotpassword, register;
     ProgressDialog progressDialog;
-    public String Pass, Email;
     ImageView google;
+
+    //User credentials
+    public String Pass, Email;
+
+    //Google Sign-In components
     GoogleSignInClient googleSignInClient;
+
+    //Firebase components
+    FirebaseAuth firebaseAuth;
     FirebaseFirestore firebaseFirestore;
 
+    /**
+     * Called when the activity is starting.
+     * Initialize the activity and sets up click listeners for buttons.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     *                           shut down then this Bundle contains the data it most recently
+     *                           supplied in onSaveInstanceState(Bundle). Note: Otherwise it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,6 +196,16 @@ public class LogIn extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called when an activity you launched exits, giving you the requestCode you started it with,
+     * the resultCode it returned, and any additional data from it.
+     *
+     * @param requestCode The integer request code originally supplied to startActivityForResult(),
+     *                    allowing you to identify who this result came from.
+     * @param resultCode  The integer result code returned by the child activity through its setResult().
+     * @param data        An Intent, which can return result data to the caller (various data can be
+     *                    attached to Intent "extras").
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -192,6 +222,11 @@ public class LogIn extends AppCompatActivity {
         }
     }
 
+    /**
+     * Authenticate the user using Google account credentials.
+     *
+     * @param acct GoogleSignInAccount object containing the user's Google account credentials.
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -214,9 +249,6 @@ public class LogIn extends AppCompatActivity {
                     Log.d("GOOGLE_SIGN_IN_TAG", "onSuccess: Account Created...email");
                     Toast.makeText(LogIn.this, "Account Created...in" + email + name, Toast.LENGTH_SHORT).show();
 
-
-//                    String[] userNameFromEmail = email.split("@");
-//                    String userName = userNameFromEmail[0];
 
                     firebaseFirestore.collection("Users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
@@ -302,9 +334,6 @@ public class LogIn extends AppCompatActivity {
 
                     Toast.makeText(LogIn.this, "Existing user... \n" + email + name, Toast.LENGTH_SHORT).show();
                 }
-//                        startActivity(new Intent(Register.this, ProfileViewModel.class));
-//                startActivity(new Intent(Register.this, ProfilesActivity.class));
-//                finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -315,6 +344,9 @@ public class LogIn extends AppCompatActivity {
         });
     }
 
+    /**
+     * Check if the user is already logged in, and if so, redirect to MainActivity.
+     */
     private void checkUser() {
 
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -330,6 +362,11 @@ public class LogIn extends AppCompatActivity {
         }
     }
 
+    /**
+     * Validate the password entered by the user.
+     *
+     * @return true if the password is valid, otherwise false.
+     */
     boolean PasswordValidate() {
         Pass = pass.getEditText().toString().trim();
         if (Pass.isEmpty()) {
@@ -341,8 +378,13 @@ public class LogIn extends AppCompatActivity {
         } else {
             return true;
         }
-    }//end PasswordValidate
+    }
 
+    /**
+     * Validate the email entered by the user.
+     *
+     * @return true if the email is valid, otherwise false.
+     */
     boolean EmailValidate() {
 
         Email = email1.getEditText().toString().trim();
@@ -352,5 +394,5 @@ public class LogIn extends AppCompatActivity {
         } else {
             return true;
         }
-    }//end EmailValidate
+    }
 }
