@@ -3,10 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/your_scanned_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="20dp"
+        android:text="Your Scanned Codes"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_button"
+        android:textSize="24dp" />
+
     <ListView
         android:id="@+id/listview_scanned"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:textColor="@color/white"
+        android:layout_below="@+id/your_scanned_title" />
+
 
 
 </RelativeLayout>
