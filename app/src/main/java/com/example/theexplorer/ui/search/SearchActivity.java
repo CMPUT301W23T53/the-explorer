@@ -1,41 +1,50 @@
 package com.example.theexplorer.ui.search;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.theexplorer.R;
-import com.example.theexplorer.ui.auth.LogIn;
-import com.example.theexplorer.ui.auth.Register;
-import com.example.theexplorer.ui.auth.UserModel;
 import com.example.theexplorer.ui.profile.ProfilesActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+
+ SearchActivity is an activity that allows the user to search for other users by their username.
+ It provides functionality for performing the search and handling the result of the search.
+ Users can initiate the search by clicking the search button or pressing the enter key.
+ */
 public class SearchActivity extends AppCompatActivity {
 
+    // UI components
     EditText etSearch;
     ImageView ivSearch;
     ImageView ivBack;
+
+    // Firebase Firestore instance
     FirebaseFirestore firebaseFirestore;
+
+    // Progress dialog to show during search
     ProgressDialog progressDialog;
 
+    /**
+     Initializes the activity, setting up the user interface and event listeners.
+
+     @param savedInstanceState a Bundle containing the activity's previously frozen state, if there was one
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +86,11 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     Performs a search for a user with the specified username.
+     If a user is found, it navigates to the ProfilesActivity for that user.
+     If the user is not found or an error occurs, an appropriate message is displayed.
+     */
     private void performSearch() {
         String searchData = etSearch.getText().toString();
 

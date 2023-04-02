@@ -1,9 +1,5 @@
 package com.example.theexplorer.ui.auth;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +10,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.theexplorer.MainActivity;
 import com.example.theexplorer.R;
-import com.example.theexplorer.ui.profile.ProfilesActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -33,13 +31,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ The Register class is an Activity class responsible for handling user registration
+ using Firebase and Google Sign-In. It includes the necessary callbacks and methods
+ to register a new user or sign in an existing user.
+ */
 public class Register extends AppCompatActivity {
 
     ProgressDialog progressDialog;
@@ -52,6 +53,11 @@ public class Register extends AppCompatActivity {
     public String Name, Pass, Email;
     String userid;
 
+    /**
+     * The onCreate method initializes the UI components, Firebase instances,
+     * and sets up click listeners for buttons.
+     * @param savedInstanceState Saved instance state bundle
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,26 +66,6 @@ public class Register extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         firebaseFirestore = FirebaseFirestore.getInstance();
-
-
-//        firebaseFirestore.collection("User").document().get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                if (documentSnapshot.exists()) {
-//                    Log.e("-*-*-*-*-*-*-", "onSuccess: "+documentSnapshot );
-//                }
-//            }
-//        }).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                Log.e("-*-*-*-*-*", "onFailure: "+documentSnapshot );
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Log.e("-*-*-*-*-*", "onFailure: "+e );
-//            }
-//        });
 
 
         checkUser();
@@ -199,6 +185,12 @@ public class Register extends AppCompatActivity {
         });
     }
 
+    /**
+     * The onActivityResult method handles the result from Google Sign-In Intent.
+     * @param requestCode Request code
+     * @param resultCode Result code
+     * @param data Intent data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -215,6 +207,12 @@ public class Register extends AppCompatActivity {
         }
     }
 
+    /**
+     * The firebaseAuthWithGoogle method signs in the user using Google Sign-In
+     * and Firebase authentication. It also adds the user's details to Firestore
+     * if it's a new user.
+     * @param acct GoogleSignInAccount object
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -237,9 +235,6 @@ public class Register extends AppCompatActivity {
                     Log.d("GOOGLE_SIGN_IN_TAG", "onSuccess: Account Created...email");
                     Toast.makeText(Register.this, "Account Created...in" + email + name, Toast.LENGTH_SHORT).show();
 
-
-//                    String[] userNameFromEmail = email.split("@");
-//                    String userName = userNameFromEmail[0];
 
                     firebaseFirestore.collection("Users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
@@ -325,9 +320,6 @@ public class Register extends AppCompatActivity {
 
                     Toast.makeText(Register.this, "Existing user... \n" + email + name, Toast.LENGTH_SHORT).show();
                 }
-//                        startActivity(new Intent(Register.this, ProfileViewModel.class));
-//                startActivity(new Intent(Register.this, ProfilesActivity.class));
-//                finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -338,6 +330,10 @@ public class Register extends AppCompatActivity {
         });
     }
 
+    /**
+     * The checkUser method checks if the user is already signed in.
+     * If so, it redirects the user to MainActivity.
+     */
     private void checkUser() {
 
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -346,8 +342,6 @@ public class Register extends AppCompatActivity {
 
             Log.d("GOOGLE_SIGN_IN_TAG", "checkUser: Already logged in");
 
-//            startActivity(new Intent(this, ProfileViewModel.class));
-//            startActivity(new Intent(Register.this, ProfilesActivity.class));
             startActivity(new Intent(Register.this, MainActivity.class));
 
             finish();

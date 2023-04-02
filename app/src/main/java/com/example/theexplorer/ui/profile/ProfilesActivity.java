@@ -1,10 +1,5 @@
 package com.example.theexplorer.ui.profile;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,27 +10,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.theexplorer.R;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
-import com.example.theexplorer.ui.auth.Register;
 import com.example.theexplorer.ui.home.DetailPageOfOneQR;
-import com.example.theexplorer.ui.home.ScannedFragment;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -47,6 +40,10 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ ProfilesActivity is an activity that displays the profile of a user, including their email,
+ name, username, and a list of QR codes they have scanned.
+ */
 public class ProfilesActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
@@ -71,6 +68,10 @@ public class ProfilesActivity extends AppCompatActivity {
     final NewUserService newUserService = new NewUserService();
     final User[] user = {new User()};
 
+    /**
+     Initializes the activity, setting up the user interface and displaying the user's profile.
+     @param savedInstanceState a Bundle containing the activity's previously frozen state, if there was one
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,16 +95,20 @@ public class ProfilesActivity extends AppCompatActivity {
         progressDialog.setMessage("Please wait");
         progressDialog.setCancelable(false);
 
-        String userName1 = getIntent().getStringExtra("userName1");
-        checkUser(userName1);
+        String userName = getIntent().getStringExtra("userName");
+        checkUser(userName);
     }
 
-    private void checkUser(String userName1) {
-        showUserData(userName1);
+    private void checkUser(String userName) {
+        showUserData(userName);
     }
 
-    private void showUserData(String userName1) {
-        firebaseFirestore.collection("Users").whereEqualTo("userName", userName1).get()
+    /**
+     Retrieves the user data based on the provided username and displays it on the user interface.
+     @param userName the username of the user whose data will be retrieved and displayed
+     */
+    private void showUserData(String userName) {
+        firebaseFirestore.collection("Users").whereEqualTo("userName", userName).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -114,11 +119,11 @@ public class ProfilesActivity extends AppCompatActivity {
                                 email = document.getString("email");
                                 name = document.getString("name");
                                 photo = document.getString("photo");
-                                userName = document.getString("userName");
+                                ProfilesActivity.this.userName = document.getString("userName");
 
                                 txtemail.setText(email);
                                 tvName.setText(name);
-                                etUserName.setText(userName);
+                                etUserName.setText(ProfilesActivity.this.userName);
 
                                 Glide.with(ProfilesActivity.this).load(photo).error(R.drawable.ic_baseline_person_24).into(img);
 
@@ -141,6 +146,10 @@ public class ProfilesActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     Retrieves the QR codes associated with the given user email and displays them on the user interface.
+     @param email the email of the user whose QR codes will be retrieved and displayed
+     */
     private void getQrCodes(String email) {
         newUserService.getUser(email).addOnSuccessListener(new OnSuccessListener<User>() {
             @Override
@@ -156,6 +165,11 @@ public class ProfilesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     Handles the options item selected event.
+     @param menuItem the selected menu item
+     @return boolean true if the event was handled, false otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
@@ -164,6 +178,9 @@ public class ProfilesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(menuItem);
     }
 
+    /**
+     Custom ArrayAdapter for displaying the list of scanned QR codes in the ListView.
+     */
     private class MyListAdapter extends ArrayAdapter<QRCode> {
 
         List<QRCode> items;
@@ -173,15 +190,22 @@ public class ProfilesActivity extends AppCompatActivity {
             this.items = items;
         }
 
+        /**
+         Returns the view for the list item at the specified position.
+         @param position the position of the list item in the list
+         @param convertView the old view to reuse, if possible
+         @param parent the parent that this view will eventually be attached to
+         @return View the view for the list item at the specified position
+         */
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, null);
             }
 
-            Map<String, Object> qrCodeList1 = (Map<String, Object>) items.get(position);
+            Map<String, Object> qrCodeList = (Map<String, Object>) items.get(position);
             TextView text1 = (TextView) convertView.findViewById(android.R.id.text1);
-            text1.setText((String) qrCodeList1.get("qrname"));
+            text1.setText((String) qrCodeList.get("qrname"));
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -204,20 +228,20 @@ public class ProfilesActivity extends AppCompatActivity {
                     TextView longitudeTextView = dialogView.findViewById(R.id.text_longitude);
 
                     // Set the EditText values to the selected QRCode object's id and name
-                    idTextView.setText("ID: " + (String) qrCodeList1.get("qrid"));
-                    scoreTextView.setText("Score: " + (long) qrCodeList1.get("qrscore"));
-                    nameTextView.setText("Name: " + (String) qrCodeList1.get("qrname"));
+                    idTextView.setText("ID: " + (String) qrCodeList.get("qrid"));
+                    scoreTextView.setText("Score: " + (long) qrCodeList.get("qrscore"));
+                    nameTextView.setText("Name: " + (String) qrCodeList.get("qrname"));
 
 
-                    if (qrCodeList1.get("latitude") instanceof Double) {
-                        latitudeTextView.setText("Latitude: " + (double) qrCodeList1.get("latitude"));
+                    if (qrCodeList.get("latitude") instanceof Double) {
+                        latitudeTextView.setText("Latitude: " + (double) qrCodeList.get("latitude"));
                     } else {
-                        latitudeTextView.setText("Latitude: " + (long) qrCodeList1.get("latitude"));
+                        latitudeTextView.setText("Latitude: " + (long) qrCodeList.get("latitude"));
                     }
-                    if (qrCodeList1.get("longitude") instanceof Double) {
-                        longitudeTextView.setText("Longitude: " + (double) qrCodeList1.get("longitude"));
+                    if (qrCodeList.get("longitude") instanceof Double) {
+                        longitudeTextView.setText("Longitude: " + (double) qrCodeList.get("longitude"));
                     } else {
-                        longitudeTextView.setText("Longitude: " + (long) qrCodeList1.get("longitude"));
+                        longitudeTextView.setText("Longitude: " + (long) qrCodeList.get("longitude"));
                     }
 
                     // Set the positive button of the AlertDialog
