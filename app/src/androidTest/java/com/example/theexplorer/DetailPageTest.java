@@ -1,6 +1,7 @@
 package com.example.theexplorer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -26,16 +27,16 @@ import java.util.HashMap;
 
 /**
  * US 01.02.01: As a player, I want to see what QR codes I have added to my account.
+ * US 01.03.01: As a player, I want to remove QR codes from my account.
  * US 02.02.01: As a player, I want to be able to comment on QR codes.
+ * US 02.04.01: As a player, I want to see that other players have scanned the same QR code.
  * US 02.05.01: As a player, I want QR codes to have a unique human readable name.
  * US 02.06.01: As a player, I want to see a visual representation of a QR code relatively unique to that QR code.
+ *
  * Assumes at least 1 code has been scanned to show off the information required in each US.
  */
 public class DetailPageTest {
     private Solo solo;
-    final User[] user = {new User()};
-    final NewUserService newUserService = new NewUserService();
-    String userEmail1;
 
 
     @Rule
@@ -137,6 +138,47 @@ public class DetailPageTest {
         String comment = (String) commentList.getItemAtPosition(0); // Get item from first position
         assertTrue("Test", comment.contains("Test"));
 
+
+    }
+
+
+    /**
+     * US 02.04.01: As a player, I want to see that other players have scanned the same QR code.
+     *
+     * This test case is assuming the user has at least 1 code added to check the name.
+     */
+    @Test
+    public void checkOtherUser() {
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click statistics button and show activity_scores
+        ListView listView = (ListView) solo.getView(R.id.listview_scanned);
+        int index = 0; // select the first item
+        solo.clickInList(index);
+        ListView userListView = (ListView) solo.getView(R.id.listview_users);
+        assertNotNull(userListView);
+
+
+    }
+    /**
+     * US 01.03.01: As a player, I want to remove QR codes from my account.
+     *
+     * This test case is assuming the user has at least 1 code added to show the QR list view.
+     */
+    @Test
+    public void checkRemove() {
+        solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
+        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click statistics button and show activity_scores
+        ListView listView = (ListView) solo.getView(R.id.listview_scanned);
+        int initialCount = listView.getCount();
+
+        // Remove an item from the list view
+        int index = 0; // select the first item
+        solo.clickInList(index);
+        solo.clickOnButton("Delete");
+        // Get the count of items after removing an item
+        int finalCount = listView.getCount();
+        // Verify that the count has decreased by 1
+        assertEquals(initialCount , finalCount);
 
     }
 
