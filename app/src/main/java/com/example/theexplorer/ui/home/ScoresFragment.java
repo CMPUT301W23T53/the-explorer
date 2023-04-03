@@ -71,8 +71,12 @@ public class ScoresFragment extends AppCompatActivity {
                     newUserService.getRankOfUser(user[0]).addOnSuccessListener(new OnSuccessListener<Integer>() {
                         @Override
                         public void onSuccess(Integer rank) {
-                            playerRanking.setText("Code Ranking: " + String.valueOf(rank));
-                            Log.d("RANK", String.valueOf(rank));
+                            if (user[0].getQRList().size() == 0) {
+                                playerRanking.setText("");
+                            } else {
+                                playerRanking.setText("Code Ranking: " + String.valueOf(rank));
+                                Log.d("RANK", String.valueOf(rank));
+                            }
                         }
                     });
 
