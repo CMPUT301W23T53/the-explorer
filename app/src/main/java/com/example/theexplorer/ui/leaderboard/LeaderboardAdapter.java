@@ -1,6 +1,7 @@
 package com.example.theexplorer.ui.leaderboard;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +17,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
-public class LeaderboardAdapter extends ArrayAdapter<RankingTuple> {
+public class LeaderboardAdapter extends ArrayAdapter<RankingData> {
 
     private Context context;
-    public LeaderboardAdapter(@NonNull Context context, ArrayList<RankingTuple> content) {
+    public LeaderboardAdapter(@NonNull Context context, ArrayList<RankingData> content) {
         super(context, 0, content);
 
         //this.truncatedUsers = content;
@@ -45,16 +46,22 @@ public class LeaderboardAdapter extends ArrayAdapter<RankingTuple> {
             view = convertView;
         }
 
+        RankingData data = getItem(position);
         TextView ranking = view.findViewById(R.id.leaderboard_ranking);
-        TextView userName = view.findViewById(R.id.leaderboard_username);
+        TextView title = view.findViewById(R.id.leaderboard_title);
+        TextView subtitle = view.findViewById(R.id.leaderboard_subtitle);
+
+        ranking.setText(String.valueOf(data.getRanking()));
+
 
         NewUserService userService = new NewUserService();
-        userService.getNameFromEmail(getItem(position).getId()).addOnSuccessListener(new OnSuccessListener<String>() {
-            @Override
-            public void onSuccess(String s) {
-                ranking.setText(String.valueOf(getItem(position).getValue()));
-                userName.setText(s);
+        userService.getNameFromEmail(data.getUserID()).addOnSuccessListener(s -> {
+            String fin = s;
+            if(data.getIsQRCode()){
+                fin += System.lineSeparator() + "Score: " + data.getValue();
             }
+            title.setText(fin);
+            subtitle.setText(data.getSubtitle());
         });
         return view;
     }
