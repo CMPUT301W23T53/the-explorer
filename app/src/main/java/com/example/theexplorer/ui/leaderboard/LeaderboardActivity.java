@@ -75,7 +75,9 @@ public class LeaderboardActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(i == 1 && scoresDescending || i== 0 && !scoresDescending){
                     scoresDescending = !scoresDescending;
-                    refreshLeaderboardView();
+                    Collections.reverse(usersDataList);
+                    usersAdapter.notifyDataSetChanged();
+                    //refreshLeaderboardView();
                 }
             }
             @Override
@@ -89,6 +91,10 @@ public class LeaderboardActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if((i == 1 && totalScoreMode) || (i == 0 && !totalScoreMode)){
                     totalScoreMode = !totalScoreMode;
+                    listFilter.setSelection(0);
+                    if(!scoresDescending){
+                        scoresDescending = !scoresDescending;
+                    }
                     refreshLeaderboardView();
                 }
             }
