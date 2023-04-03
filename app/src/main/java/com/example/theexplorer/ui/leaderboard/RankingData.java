@@ -1,34 +1,24 @@
 package com.example.theexplorer.ui.leaderboard;
 
-import com.example.theexplorer.services.User;
-
 public class RankingData implements Comparable<RankingData>{
-    private String title;
+    private String userID;
     private String subtitle;
     private long value;
-    private User userReference;
-    private int listPosition;
-    private String id;
+    private boolean isQRCode;
 
-    public RankingData(String id, long value, User userReference){
-        this.id = id;
-        //this.ranking = ranking;
-        //this.title = title;
-        //this.subtitle = subtitle;
+    public RankingData(String userID, String subtitle, long value, boolean isQRCode){
+        this.userID = userID;
+        this.subtitle = subtitle;
         this.value = value;
-        this.userReference = userReference;
+        this.isQRCode = isQRCode;
     }
 
-    //public String getTitle(){return title;}
-    //public String getSubtitle() {return subtitle;}
+    public String getSubtitle() {return subtitle;}
     public long getValue() {
         return value;
     }
-    public String getId(){return id;}
-
-    public User getUserReference(){ return userReference;}
-    //public int getListPosition(){return listPosition;}
-
+    public String getUserID(){return userID;}
+    public boolean getIsQRCode(){return isQRCode;}
     @Override
     public int compareTo(RankingData rankingData) {
         if(this.value > rankingData.value){return 1;}
