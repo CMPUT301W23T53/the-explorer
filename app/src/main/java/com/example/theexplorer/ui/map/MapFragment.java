@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.theexplorer.databinding.FragmentMapBinding;
 import com.example.theexplorer.services.NewUserService;
+import com.example.theexplorer.services.OnQRCodeDeletedListener;
 import com.example.theexplorer.services.QRCode;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -27,14 +28,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import android.app.Activity;
 
+import java.util.HashMap;
 import java.util.List;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, OnQRCodeDeletedListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private FragmentMapBinding binding;
@@ -42,6 +45,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    private HashMap<String, Marker> markersMap = new HashMap<>();
 
 
     /**
@@ -88,8 +92,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 public void onSuccess(List<QRCode> qrCodes) {
                     for (QRCode qrCode : qrCodes) {
                         LatLng nearby = new LatLng(qrCode.getLatitude(), qrCode.getLongitude());
-                        //mMap.addMarker(new MarkerOptions().position(nearby));
-                        mMap.addMarker(new MarkerOptions().position(nearby).title(qrCode.getQRName()));
+                        Marker marker = mMap.addMarker(new MarkerOptions().position(nearby).title(qrCode.getQRName()));
+                        markersMap.put(qrCode.getQRId(), marker);
                     }
                 }
             });
@@ -139,6 +143,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             return;
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+    }
+
+    @Override
+    public void onQRCodeDeleted(String qrID) {
+        Marker marker = markersMap.get(qrID);
+        if (marker != null) {
+            marker.remove();
+            markersMap.remove(qrID);
+        }
     }
 
     @Override

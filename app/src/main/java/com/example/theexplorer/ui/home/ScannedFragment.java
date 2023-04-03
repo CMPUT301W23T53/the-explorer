@@ -170,8 +170,10 @@ public class ScannedFragment extends AppCompatActivity {
                     builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            String qrId = (String) selectedItem.get("qrid");
                             List<QRCode> qrCodeList = user[0].getQRList();
                             qrCodeList.remove(selectedItem);
+                            newUserService.deleteQrcodeByID(qrId);
                             newUserService.putUser(user[0]);
                             notifyDataSetChanged();
                         }
