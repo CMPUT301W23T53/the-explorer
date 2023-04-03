@@ -142,15 +142,16 @@ public class LeaderboardActivity extends AppCompatActivity {
                     for (int j = 0; j < arrayQRCode.size(); j++) {
                         Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
 
+
                         String name = (String) qrCode.get("qrname");
-                        Log.d("L", name);
+                        Log.d("L", qrCode.keySet().toString());
 
                         Long score = (Long) qrCode.get("qrscore");
                         String id = (String) qrCode.get("qrid");
                         Log.d("L",(String) qrCode.get("qrid"));
-                        if(!uniqueQRCodes.contains(id)){
+                        if(!uniqueQRCodes.contains(name)){
                             usersDataList.add(new RankingData(user.getUserId(),name,score,true,null));
-                            uniqueQRCodes.add(id);
+                            uniqueQRCodes.add(name);
                         }
                     }
                 }
