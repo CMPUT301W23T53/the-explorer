@@ -34,15 +34,13 @@
         android:layout_width="414dp"
         android:layout_height="75dp"
         android:layout_marginTop="22dp"
+        android:gravity="center"
         android:text="User Address"
         android:textColor="@color/white"
         android:textSize="24dp"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/imageView_photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address_button"
-        app:layout_constraintVertical_bias="0.191" />
+        app:layout_constraintTop_toBottomOf="@+id/address_button" />
 
     <Button
         android:id="@+id/address_button"
@@ -73,10 +71,9 @@
         android:id="@+id/imageView_photo"
         android:layout_width="320dp"
         android:layout_height="240dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address_button" />
+        app:layout_constraintTop_toBottomOf="@+id/address_text_view" />
 
     <Button
         android:id="@+id/add_button"
