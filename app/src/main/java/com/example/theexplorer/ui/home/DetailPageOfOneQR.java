@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.theexplorer.R;
 import com.example.theexplorer.services.Comment;
 import com.example.theexplorer.services.NewUserService;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -152,6 +153,8 @@ public class DetailPageOfOneQR extends AppCompatActivity {
 
         // Initialize the ArrayAdapter and set it to the ListView
         commentAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, comments);
+
+
         ListView commentListView = findViewById(R.id.comment_list_view);
         commentListView.setAdapter(commentAdapter);
 

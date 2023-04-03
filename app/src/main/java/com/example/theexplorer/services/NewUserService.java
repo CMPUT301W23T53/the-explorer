@@ -40,6 +40,8 @@ public class NewUserService {
 
     final CollectionReference userListRef = database.collection("Users");
 
+    private OnQRCodeDeletedListener listener;
+
     /**
      * Returns a Task that retrieves all user data from the Firestore database and returns a list of Users
      *
@@ -575,7 +577,11 @@ public class NewUserService {
                     Log.e("--00--00--00--", "deleteQrcodeByID: " + document.getId());
 
                     qrCodeRef.document(document.getId()).delete();
+                // Notify the listener that the QR code has been deleted
+                if (listener != null) {
+                    listener.onQRCodeDeleted(qrID);
                 }
+            }
 
             }
         });

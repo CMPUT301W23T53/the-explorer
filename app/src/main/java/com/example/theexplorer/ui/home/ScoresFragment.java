@@ -47,7 +47,7 @@ public class ScoresFragment extends AppCompatActivity {
                     if (getHighestQRScore(arrayQRCode) == -1) {
                         highestScoreTextView.setText("No codes scanned");
                     } else {
-                        highestScoreTextView.setText(String.valueOf(getHighestQRScore(arrayQRCode)));
+                        highestScoreTextView.setText("Score: " + String.valueOf(getHighestQRScore(arrayQRCode)));
                         TextView highName = (TextView) findViewById(R.id.high_score_name);
                         highName.setText(getHighestQRScoreName(arrayQRCode));
                     }
@@ -56,7 +56,7 @@ public class ScoresFragment extends AppCompatActivity {
                     if (getLowestQRScore(arrayQRCode) == Integer.MAX_VALUE) {
                         low.setText("No codes scanned");
                     } else {
-                        low.setText(String.valueOf(getLowestQRScore(arrayQRCode)));
+                        low.setText("Score: " + String.valueOf(getLowestQRScore(arrayQRCode)));
                         TextView lowName = findViewById(R.id.low_score_name);
                         lowName.setText(getLowestQRScoreName(arrayQRCode));
                     }

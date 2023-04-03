@@ -22,7 +22,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TheExplorer"
         tools:targetApi="31">
-        <activity android:name="com.example.theexplorer.ui.home.DetailPageOfOneQR" />
+        <activity android:name="com.example.theexplorer.ui.home.DetailPageOfOneQR"
+            android:windowSoftInputMode="adjustPan"/>
 
         <activity
             android:name=".ui.leaderboard.LeaderboardActivity"
@@ -61,6 +62,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.profile.ProfileViewModel"
             android:exported="false" />
