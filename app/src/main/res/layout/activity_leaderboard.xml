@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 
+
     <LinearLayout
         android:id="@+id/leaderboard_spinner_layout"
         android:layout_width="match_parent"
@@ -31,12 +32,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
-
-<!--        <androidx.appcompat.widget.AppCompatSpinner-->
-<!--            android:id="@+id/spinner_filter"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1" />-->
     </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
