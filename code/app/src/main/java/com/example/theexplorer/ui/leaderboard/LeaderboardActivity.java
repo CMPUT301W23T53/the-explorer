@@ -1,5 +1,11 @@
 package com.example.theexplorer.ui.leaderboard;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,14 +15,14 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.example.theexplorer.R;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
+import com.example.theexplorer.ui.profile.ProfilesActivity;
+import com.example.theexplorer.ui.search.SearchActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,10 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * LeaderboardActivity is an activity that displays a leaderboard of users
- * based on either their total score or highest individual QR code score.
- */
 public class LeaderboardActivity extends AppCompatActivity {
 
     //private Leaderboard leaderboard;
@@ -86,7 +88,16 @@ public class LeaderboardActivity extends AppCompatActivity {
                 ;
             }
         });
+
+        usersList.setOnItemClickListener((adapterView, view, i, l) -> {
+            Intent goToUser = new Intent(LeaderboardActivity.this, ProfilesActivity.class);
+            userService.getNameFromEmail(usersDataList.get(i).getUserID()).addOnSuccessListener(s -> {
+                goToUser.putExtra("userName1", s);
+                startActivity(goToUser);
+            }).addOnFailureListener(e -> Toast.makeText(LeaderboardActivity.this,"Network error. Please try again.", Toast.LENGTH_SHORT).show());
+        });
     }
+
 
 
     @Override
@@ -107,46 +118,41 @@ public class LeaderboardActivity extends AppCompatActivity {
         userService.getGameWideHighScoreOfAllPlayers().addOnSuccessListener(users -> {
             Log.d("LEADERBOARD", "List successfully obtained.");
             int i = 1;
-            if(totalScoreMode){
-                for (User user : users) {
-                    long sum = 0;
-                    List<QRCode> arrayQRCode = user.getQRList();
-                    for (int j = 0; j < arrayQRCode.size(); j++) {
-                        Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
-                        long score = (long) qrCode.get("qrscore");
+
+            for (User user : users) {
+                long sum = 0;
+                List<QRCode> arrayQRCode = user.getQRList();
+                Long score = 0L;
+                String name = "";
+
+                for (int j = 0; j < arrayQRCode.size(); j++) {
+                    Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
+                    if(totalScoreMode) {
+                        score = (long) qrCode.get("qrscore");
                         sum += score;
                     }
-                    usersDataList.add(new RankingData(user.getUserId(),String.valueOf(sum),sum,false, null));
-                    i++;
-                    if (i > linesUpperBound) {
-                        break;
-                    }
-                }
-            }
-            else {
-                ArrayList<String> uniqueQRCodes = new ArrayList<>();
-                for (User user : users) {
-                    List<QRCode> arrayQRCode = user.getQRList();
-                    Long score = Long.valueOf(0);
-                    String name = "";
-                    for (int j = 0; j < arrayQRCode.size(); j++) {
-                        Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
+                    else{
                         Long scoreToCompare = (Long) qrCode.get("qrscore");
-
                         if(scoreToCompare >= score){
                             score = scoreToCompare;
                             name = (String) qrCode.get("qrname");
                         }
                     }
-                    if(score > 0){
-                        usersDataList.add(new RankingData(user.getUserId(),name,score,true,null));
-                    }
-                    i++;
-                    if(i > linesUpperBound){
-                        break;
+                }
+                if(totalScoreMode) {
+                    usersDataList.add(new RankingData(user.getUserId(), String.valueOf(sum), sum, false));
+                } else {
+                    if(score > 0) {
+                        usersDataList.add(new RankingData(user.getUserId(), name, score, true));
                     }
                 }
+                i++;
+                if (i > linesUpperBound) {
+                    break;
+                }
             }
+
+
             Collections.sort(usersDataList);
             i = 1;
 
@@ -185,5 +191,4 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         scoreType.setAdapter(scoreTypeAdapter);
     }
-
 }
