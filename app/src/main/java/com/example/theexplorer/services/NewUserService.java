@@ -386,7 +386,11 @@ public class NewUserService {
             } else {
                 Log.e("Error getting rank of user", task.getException().toString());
             }
-            return allQRScoresSorted.indexOf((int) getHighestQRScore(user.getQRList())) + 1;
+            if ((allQRScoresSorted.indexOf((int) getHighestQRScore(user.getQRList())) + 1) == 0) {
+                return 1;
+            } else {
+                return allQRScoresSorted.indexOf((int) getHighestQRScore(user.getQRList())) + 1;
+            }
         });
     }
 
