@@ -106,14 +106,9 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 
-        //IntentIntegrator
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE); //QR
-        integrator.setPrompt("Scanning");
-        integrator.setCameraId(0); //SELECT Camera
-        integrator.setBeepEnabled(false);
+        scanQRcode();
 
-        integrator.initiateScan(); //start scanning
+
 
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,6 +179,17 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         });
 
 
+    }
+
+    public void scanQRcode() {
+        //IntentIntegrator
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE); //QR
+        integrator.setPrompt("Scanning");
+        integrator.setCameraId(0); //SELECT Camera
+        integrator.setBeepEnabled(false);
+
+        integrator.initiateScan(); //start scanning
     }
 
 
@@ -270,7 +276,11 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
     // Trying to get the system services and request to update Location
     @SuppressLint("MissingPermission")
-    private void getLocation() {
+    public String getLocation() {
+        double latitude = 0;
+        double longitude = 0;
+        String latLong = "";
+
         try {
             locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
             Location lastLocationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -278,8 +288,18 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
             if (lastLocationGPS != null) {
                 onLocationChanged(lastLocationGPS);
+
+                latitude = lastLocationGPS.getLatitude();
+                longitude = lastLocationGPS.getLongitude();
+
+                latLong = "Latitude : " + latitude + " Longitude : " + longitude;
             } else if (lastLocationNetwork != null) {
                 onLocationChanged(lastLocationNetwork);
+
+                latitude = lastLocationNetwork.getLatitude();
+                longitude = lastLocationNetwork.getLongitude();
+
+                latLong = "Latitude : " + latitude + " Longitude : " + longitude;
             } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, ZXingScannerScan.this);
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, ZXingScannerScan.this);
@@ -287,6 +307,8 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return latLong;
     }
 
     /**
@@ -310,6 +332,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
     /**
      * Generates a bitmap that displays "Image not found" message for testing purposes.
+     *
      * @return a bitmap that displays "Image not found" message.
      */
     public Bitmap notFound() {
@@ -327,6 +350,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
     /**
      * Generates a default image view that displays "Take a picture" message.
+     *
      * @return a bitmap that displays "Take a picture" message.
      */
     public Bitmap takePhoto() {
@@ -346,6 +370,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
      * Calculates a score for the given QR code content based on a predefined strategy.
      * Currently, each '&' is counted as 1, each '=' is counted as 1, and each '/' is counted as 1.
      * In addition, each digit is counted based on its value, and each letter is counted based on its ASCII value.
+     *
      * @param result the IntentResult object that contains the QR code content.
      * @return an integer value representing the calculated score.
      */
@@ -358,9 +383,9 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
             if (c == '&' || c == '=' || c == '/') {
                 theScore++;
             }
-            for(int i=48; i<57;i++){
-                if(c == (char)i){
-                    theScore+=(i-48);
+            for (int i = 48; i < 57; i++) {
+                if (c == (char) i) {
+                    theScore += (i - 48);
                 }
             }
             if (c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z') {
@@ -374,6 +399,7 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
     /**
      * Generates a bitmap of a black and white checkerboard pattern with the text "HIDDEN" in the center.
+     *
      * @return a bitmap of a black and white checkerboard pattern with the text "HIDDEN" in the center.
      */
     public Bitmap makeUpQR() {

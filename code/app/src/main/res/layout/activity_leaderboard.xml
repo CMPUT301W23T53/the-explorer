@@ -11,7 +11,7 @@
         android:id="@+id/leaderboard_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="#1A1A1A"
         android:elevation="4dp"
         android:theme="@style/Theme.Toolbar"
         app:layout_constraintTop_toTopOf="parent"

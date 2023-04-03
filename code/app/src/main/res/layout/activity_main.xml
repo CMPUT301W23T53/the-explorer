@@ -36,6 +36,7 @@
         android:foregroundTint="#FFFFFF"
         android:keepScreenOn="false"
         android:visibility="visible"
+        app:itemIconSize="40dp"
         app:itemIconTint="@color/white"
         app:itemTextColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
