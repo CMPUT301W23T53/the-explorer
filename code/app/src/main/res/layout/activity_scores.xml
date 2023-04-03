@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/show_highest"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
         android:background="@drawable/rounded_button"
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,12 +43,13 @@
 
     <TextView
         android:id="@+id/show_lowest"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
         android:background="@drawable/rounded_button"
         android:gravity="center"
         android:text="Lowest Score"
+        android:textColor="#FFFFFF"
         android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,12 +78,13 @@
 
     <TextView
         android:id="@+id/show_total"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
         android:background="@drawable/rounded_button"
         android:gravity="center"
         android:text="Total Scanned"
+        android:textColor="#FFFFFF"
         android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,25 +95,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
-        android:textSize="20dp"
         android:text="0"
+        android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/show_total" />
 
     <TextView
         android:id="@+id/s_sum"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
         android:background="@drawable/rounded_button"
         android:gravity="center"
         android:text="Total Score"
+        android:textColor="#FFFFFF"
         android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lowest_score" />
-    0<TextView
+    0
+
+    <TextView
         android:id="@+id/score_sum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

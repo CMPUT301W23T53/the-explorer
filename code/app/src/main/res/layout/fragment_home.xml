@@ -14,7 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:textSize="40dp"
+        android:textSize="34sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></TextView>
@@ -22,36 +23,65 @@
 
     <Button
         android:id="@+id/button_see_scores"
-        android:layout_width="0dp"
+        android:layout_width="220dp"
         android:layout_height="65dp"
         android:layout_margin="20dp"
         android:background="@drawable/rounded_button"
+        android:fontFamily="@font/inter_thin"
         android:text="My Statistics"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/welcome_message" />
 
     <Button
         android:id="@+id/button_view_codes"
-        android:layout_width="0dp"
+        android:layout_width="220dp"
         android:layout_height="65dp"
         android:layout_margin="20dp"
+        android:layout_marginTop="128dp"
         android:background="@drawable/rounded_button"
+        android:fontFamily="@font/inter_thin"
         android:text="My Scanned QR Codes"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_see_scores" />
 
     <Button
         android:id="@+id/button_see_leaderboard"
-        android:layout_width="0dp"
+        android:layout_width="220dp"
         android:layout_height="65dp"
         android:layout_margin="20dp"
         android:background="@drawable/rounded_button"
+        android:fontFamily="@font/inter_thin"
         android:text="Leaderboard"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_view_codes"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="308dp"
+        android:layout_height="83dp"
+        android:ems="10"
+        android:fontFamily="@font/inter_thin"
+        android:inputType="textPersonName"
+        android:text="The Explorer"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_view_codes" />
+        app:layout_constraintTop_toBottomOf="@+id/button_see_leaderboard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

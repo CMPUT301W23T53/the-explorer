@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment {
         userService.getNameFromEmail(userEmail1).addOnSuccessListener(new OnSuccessListener<String>() {
             @Override
             public void onSuccess(String userName) {
-                nameUser.setText("Hello " + userName + "!");
+                nameUser.setText("Hello, " + System.lineSeparator() + userName + "!");
             }
         });
 
