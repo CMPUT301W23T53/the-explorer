@@ -1,5 +1,6 @@
 package com.example.theexplorer.ui.leaderboard;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -17,6 +18,7 @@ import com.example.theexplorer.R;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
+import com.google.android.gms.tasks.OnFailureListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +29,7 @@ import java.util.Map;
 public class LeaderboardActivity extends AppCompatActivity {
 
     //private Leaderboard leaderboard;
-    private ArrayList<RankingTuple> usersDataList = new ArrayList<>();
+    private ArrayList<RankingData> usersDataList = new ArrayList<>();
     private LeaderboardAdapter usersAdapter;
 
     private Spinner listFilter;
@@ -37,20 +39,13 @@ public class LeaderboardActivity extends AppCompatActivity {
     private final NewUserService userService = new NewUserService();
     private boolean scoresDescending = true;
     private boolean totalScoreMode = true;
-    // note that this upper bound can +1 if the user is not in the list.
     private int linesUpperBound = 50;
 
-    /**
-     * Initializes the Leaderboard activity, including the ListView, Spinner, and associated components.
-     * Sets up the pull-to-refresh functionality and Spinner listeners.
-     * @param savedInstanceState The saved instance state of the activity.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
         Toolbar toolbar = findViewById(R.id.leaderboard_toolbar);
-
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null){
@@ -63,10 +58,6 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         initializeLeaderboard();
         initializeSpinners();
-
-
-
-
     }
 
     @Override
@@ -96,7 +87,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         scoreType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i == 1 && totalScoreMode == true || i == 0 && totalScoreMode == false){
+                if((i == 1 && totalScoreMode) || (i == 0 && !totalScoreMode)){
                     totalScoreMode = !totalScoreMode;
                     refreshLeaderboardView();
                 }
@@ -120,6 +111,9 @@ public class LeaderboardActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Refresh the Leaderboard dataset and push changes to ListView.
+     */
     private void refreshLeaderboardView(){
         usersDataList.clear();
         userService.getGameWideHighScoreOfAllPlayers().addOnSuccessListener(users -> {
@@ -127,7 +121,14 @@ public class LeaderboardActivity extends AppCompatActivity {
             int i = 1;
             if(totalScoreMode){
                 for (User user : users) {
-                    usersDataList.add(new RankingTuple(user.getUserId(),i));
+                    long sum = 0;
+                    List<QRCode> arrayQRCode = user.getQRList();
+                    for (int j = 0; j < arrayQRCode.size(); j++) {
+                        Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
+                        long score = (long) qrCode.get("qrscore");
+                        sum += score;
+                    }
+                    usersDataList.add(new RankingData(user.getUserId(),String.valueOf(sum),i,false));
                     i++;
                     if (i > linesUpperBound) {
                         break;
@@ -137,25 +138,32 @@ public class LeaderboardActivity extends AppCompatActivity {
             else {
                 for (User user : users) {
                     List<QRCode> arrayQRCode = user.getQRList();
+                    ArrayList<Long> uniqueQRCodes = new ArrayList<>();
                     for (int j = 0; j < arrayQRCode.size(); j++) {
                         Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
 
-                        long score = (long) qrCode.get("qrscore");
-                        usersDataList.add(new RankingTuple(user.getUserId(), score));
+                        String name = (String) qrCode.get("qrname");
+                        Log.d("L", name);
 
+                        long score = (long) qrCode.get("qrscore");
+                        Long id = Long.getLong((String) qrCode.get("qrid"));
+                        if(!uniqueQRCodes.contains(id)){
+                            usersDataList.add(new RankingData(user.getUserId(),name,score,true));
+                            uniqueQRCodes.add(id);
+                        }
                     }
                 }
             }
             Collections.sort(usersDataList);
-            if (!scoresDescending && totalScoreMode|| scoresDescending && !totalScoreMode){
+            if ((!scoresDescending && totalScoreMode)|| (scoresDescending && !totalScoreMode)){
                 Collections.reverse(usersDataList);
             }
-
             usersAdapter.notifyDataSetChanged();
 
 
-        });
-        Toast.makeText(this,"Refreshed", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(e -> Toast.makeText(getBaseContext(), "Unable to get the data. Check back later.",Toast.LENGTH_SHORT).show());
+
+        Toast.makeText(getBaseContext(),"Refreshed", Toast.LENGTH_SHORT).show();
     }
 
     /**
