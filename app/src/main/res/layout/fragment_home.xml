@@ -13,53 +13,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Hello,"
-        android:textSize="30sp"
+        android:gravity="center"
+        android:textSize="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></TextView>
 
-    <GridLayout
-        android:id="@+id/gridLayout_home_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:columnCount="2"
-        android:padding="5dp"
-        android:rowCount="2"
+
+    <Button
+        android:id="@+id/button_see_scores"
+        android:layout_width="0dp"
+        android:layout_height="65dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/rounded_button"
+        android:text="My Statistics"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcome_message">
+        app:layout_constraintTop_toBottomOf="@+id/welcome_message" />
 
-        <Button
-            android:id="@+id/button_see_scores"
-            android:layout_width="0dp"
-            android:layout_height="65dp"
-            android:layout_column="0"
-            android:layout_row="0"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:text="My Statistics" />
+    <Button
+        android:id="@+id/button_view_codes"
+        android:layout_width="0dp"
+        android:layout_height="65dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/rounded_button"
+        android:text="My Scanned QR Codes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_see_scores" />
 
-        <Button
-            android:id="@+id/button_view_codes"
-            android:layout_width="0dp"
-            android:layout_height="65dp"
-            android:layout_column="1"
-            android:layout_row="0"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:text="My Scanned QR Codes" />
-        <Button
-            android:id="@+id/button_see_leaderboard"
-            android:layout_width="0dp"
-            android:layout_height="65dp"
-            android:layout_column="0"
-            android:layout_row="1"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="2"
-            android:text="Leaderboard"/>
-    </GridLayout>
-
+    <Button
+        android:id="@+id/button_see_leaderboard"
+        android:layout_width="0dp"
+        android:layout_height="65dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/rounded_button"
+        android:text="Leaderboard"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_view_codes" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
