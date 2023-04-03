@@ -18,11 +18,17 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.theexplorer.databinding.FragmentHomeBinding;
+import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.ui.leaderboard.LeaderboardActivity;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    NewUserService userService = new NewUserService();
+
 
 
     /**
@@ -68,6 +74,16 @@ public class HomeFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity(), LeaderboardActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userEmail1 = firebaseUser.getEmail();
+        TextView nameUser = binding.welcomeMessage;
+        userService.getNameFromEmail(userEmail1).addOnSuccessListener(new OnSuccessListener<String>() {
+            @Override
+            public void onSuccess(String userName) {
+                nameUser.setText("Hello " + userName + "!");
             }
         });
 
