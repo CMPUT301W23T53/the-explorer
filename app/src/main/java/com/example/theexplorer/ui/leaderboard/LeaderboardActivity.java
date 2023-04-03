@@ -70,31 +70,11 @@ public class LeaderboardActivity extends AppCompatActivity {
             pullToRefresh.setRefreshing(false);
         });
 
-//        listFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                if(i == 1 && scoresDescending || i== 0 && !scoresDescending){
-//                    scoresDescending = !scoresDescending;
-//                    Collections.reverse(usersDataList);
-//                    usersAdapter.notifyDataSetChanged();
-//                    //refreshLeaderboardView();
-//                }
-//            }
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//                ;
-//            }
-//        });
-
         scoreType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if((i == 1 && totalScoreMode) || (i == 0 && !totalScoreMode)){
                     totalScoreMode = !totalScoreMode;
-                    //listFilter.setSelection(0);
-//                    if(!scoresDescending){
-//                        scoresDescending = !scoresDescending;
-//                    }
                     refreshLeaderboardView();
                 }
             }
@@ -145,33 +125,31 @@ public class LeaderboardActivity extends AppCompatActivity {
                 ArrayList<String> uniqueQRCodes = new ArrayList<>();
                 for (User user : users) {
                     List<QRCode> arrayQRCode = user.getQRList();
+                    Long score = Long.valueOf(0);
+                    String name = "";
                     for (int j = 0; j < arrayQRCode.size(); j++) {
                         Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
+                        Long scoreToCompare = (Long) qrCode.get("qrscore");
 
-
-                        String name = (String) qrCode.get("qrname");
-                        Log.d("L", qrCode.keySet().toString());
-
-                        Long score = (Long) qrCode.get("qrscore");
-                        String id = (String) qrCode.get("qrid");
-                        Log.d("L",(String) qrCode.get("qrid"));
-                        if(!uniqueQRCodes.contains(name)){
-                            usersDataList.add(new RankingData(user.getUserId(),name,score,true,null));
-                            uniqueQRCodes.add(name);
+                        if(scoreToCompare >= score){
+                            score = scoreToCompare;
+                            name = (String) qrCode.get("qrname");
                         }
+                    }
+                    if(score > 0){
+                        usersDataList.add(new RankingData(user.getUserId(),name,score,true,null));
+                    }
+                    i++;
+                    if(i > linesUpperBound){
+                        break;
                     }
                 }
             }
             Collections.sort(usersDataList);
-
-//            if(scoresDescending){i = 1;}
-//            else{i = usersDataList.size();}
             i = 1;
 
             for (RankingData data: usersDataList){
                 data.setRanking(i);
-//                if(scoresDescending){i++;}
-//                else{i--;}
                 i++;
             }
 
@@ -198,17 +176,12 @@ public class LeaderboardActivity extends AppCompatActivity {
      */
     private void initializeSpinners(){
         scoreType = findViewById(R.id.spinner_score_type);
-        //listFilter = findViewById(R.id.spinner_filter);
 
         String[] userScopeArray = {"Total Score","Highest QR Score"};
-        //String[] listFilterArray= {"Descending","Ascending"};
         ArrayList<String> scoreTypeChoices = new ArrayList<>(Arrays.asList(userScopeArray));
-        //ArrayList<String> listFilterChoices = new ArrayList<>(Arrays.asList(listFilterArray));
         ArrayAdapter<String> scoreTypeAdapter = new ArrayAdapter<>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, scoreTypeChoices);
-        //ArrayAdapter<String> listFilterAdapter = new ArrayAdapter<>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, listFilterChoices);
 
         scoreType.setAdapter(scoreTypeAdapter);
-        //listFilter.setAdapter(listFilterAdapter);
     }
 
 }
