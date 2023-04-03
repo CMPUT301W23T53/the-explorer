@@ -7,12 +7,11 @@ public class RankingData implements Comparable<RankingData>{
     private long value;
     private boolean isQRCode;
 
-    public RankingData(String userID, String subtitle, long value, boolean isQRCode, Integer ranking){
+    public RankingData(String userID, String subtitle, long value, boolean isQRCode){
         this.userID = userID;
         this.subtitle = subtitle;
         this.value = value;
         this.isQRCode = isQRCode;
-        this.ranking = ranking;
     }
 
     public String getSubtitle() {return subtitle;}

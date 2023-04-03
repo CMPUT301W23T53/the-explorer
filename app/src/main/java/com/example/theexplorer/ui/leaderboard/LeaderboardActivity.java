@@ -89,15 +89,12 @@ public class LeaderboardActivity extends AppCompatActivity {
             }
         });
 
-        usersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent goToUser = new Intent(LeaderboardActivity.this, ProfilesActivity.class);
-                userService.getNameFromEmail(usersDataList.get(i).getUserID()).addOnSuccessListener(s -> {
-                    goToUser.putExtra("userName1", s);
-                    startActivity(goToUser);
-                }).addOnFailureListener(e -> Toast.makeText(LeaderboardActivity.this,"Network error. Please try again.", Toast.LENGTH_SHORT).show());
-            }
+        usersList.setOnItemClickListener((adapterView, view, i, l) -> {
+            Intent goToUser = new Intent(LeaderboardActivity.this, ProfilesActivity.class);
+            userService.getNameFromEmail(usersDataList.get(i).getUserID()).addOnSuccessListener(s -> {
+                goToUser.putExtra("userName1", s);
+                startActivity(goToUser);
+            }).addOnFailureListener(e -> Toast.makeText(LeaderboardActivity.this,"Network error. Please try again.", Toast.LENGTH_SHORT).show());
         });
     }
 
@@ -121,46 +118,41 @@ public class LeaderboardActivity extends AppCompatActivity {
         userService.getGameWideHighScoreOfAllPlayers().addOnSuccessListener(users -> {
             Log.d("LEADERBOARD", "List successfully obtained.");
             int i = 1;
-            if(totalScoreMode){
-                for (User user : users) {
-                    long sum = 0;
-                    List<QRCode> arrayQRCode = user.getQRList();
-                    for (int j = 0; j < arrayQRCode.size(); j++) {
-                        Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
-                        long score = (long) qrCode.get("qrscore");
+
+            for (User user : users) {
+                long sum = 0;
+                List<QRCode> arrayQRCode = user.getQRList();
+                Long score = 0L;
+                String name = "";
+
+                for (int j = 0; j < arrayQRCode.size(); j++) {
+                    Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
+                    if(totalScoreMode) {
+                        score = (long) qrCode.get("qrscore");
                         sum += score;
                     }
-                    usersDataList.add(new RankingData(user.getUserId(),String.valueOf(sum),sum,false, null));
-                    i++;
-                    if (i > linesUpperBound) {
-                        break;
-                    }
-                }
-            }
-            else {
-                ArrayList<String> uniqueQRCodes = new ArrayList<>();
-                for (User user : users) {
-                    List<QRCode> arrayQRCode = user.getQRList();
-                    Long score = Long.valueOf(0);
-                    String name = "";
-                    for (int j = 0; j < arrayQRCode.size(); j++) {
-                        Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
+                    else{
                         Long scoreToCompare = (Long) qrCode.get("qrscore");
-
                         if(scoreToCompare >= score){
                             score = scoreToCompare;
                             name = (String) qrCode.get("qrname");
                         }
                     }
-                    if(score > 0){
-                        usersDataList.add(new RankingData(user.getUserId(),name,score,true,null));
-                    }
-                    i++;
-                    if(i > linesUpperBound){
-                        break;
+                }
+                if(totalScoreMode) {
+                    usersDataList.add(new RankingData(user.getUserId(), String.valueOf(sum), sum, false));
+                } else {
+                    if(score > 0) {
+                        usersDataList.add(new RankingData(user.getUserId(), name, score, true));
                     }
                 }
+                i++;
+                if (i > linesUpperBound) {
+                    break;
+                }
             }
+
+
             Collections.sort(usersDataList);
             i = 1;
 
@@ -199,5 +191,4 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         scoreType.setAdapter(scoreTypeAdapter);
     }
-
 }
