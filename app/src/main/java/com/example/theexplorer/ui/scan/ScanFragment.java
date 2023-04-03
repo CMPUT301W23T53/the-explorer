@@ -1,3 +1,7 @@
+/**
+ * A Fragment that handles the scanning functionality of the application.
+ */
+
 package com.example.theexplorer.ui.scan;
 
 import androidx.lifecycle.ViewModelProvider;
@@ -21,7 +25,14 @@ public class ScanFragment extends Fragment {
 
     private FragmentScanBinding binding;
 
-
+    /**
+     * Initializes the view for the scan fragment and sets up the start scan button.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate views in the fragment.
+     * @param container The parent view that this fragment's UI should be attached to.
+     * @param savedInstanceState This fragment's previously saved state, if any.
+     * @return The View for the fragment UI.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         ScanViewModel scanViewModel = new ViewModelProvider(this).get(ScanViewModel.class);
@@ -42,6 +53,9 @@ public class ScanFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Cleans up the binding when the fragment's view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

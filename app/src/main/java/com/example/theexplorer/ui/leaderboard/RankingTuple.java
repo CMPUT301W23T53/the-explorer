@@ -11,13 +11,29 @@ public class RankingTuple implements Comparable<RankingTuple>{
         this.value = value;
     }
 
+    /**
+     * Gets the value associated with this tuple.
+     * @return The value associated with this tuple.
+     */
     public long getValue() {
         return value;
     }
+
+    /**
+     * Gets the ID associated with this tuple.
+     * @return The ID associated with this tuple.
+     */
     public String getId(){
         return id;
     }
 
+    /**
+     * Compares this RankingTuple object with another RankingTuple object based on their values.
+     * @param rankingTuple The other RankingTuple object to compare this object to.
+     * @return An integer indicating the order of the two RankingTuple objects.
+     *         Returns 1 if this object is greater than the other object,
+     *         0 if they are equal, and -1 if this object is less than the other object.
+     */
     @Override
     public int compareTo(RankingTuple rankingTuple) {
         if(this.value > rankingTuple.value){return 1;}
