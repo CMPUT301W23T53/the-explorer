@@ -78,9 +78,11 @@ public class MapTest {
                         // Verify the controller is not null
                         assertTrue(googleMap.getUiSettings().isZoomControlsEnabled());
                         assertTrue(googleMap.getUiSettings().isMyLocationButtonEnabled());
+                        //add a marker
                         MarkerOptions markerOptions = new MarkerOptions()
                                 .position(new LatLng(37.7749, -122.4194))
                                 .title("San Francisco");
+                        //verify the marker is added
                         Marker marker = googleMap.addMarker(markerOptions);
                         assertNotNull(marker);
                         // Remove the marker when the test is done
