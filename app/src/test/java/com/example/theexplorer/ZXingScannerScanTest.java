@@ -47,8 +47,7 @@ public class ZXingScannerScanTest {
         when(geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1))
                 .thenReturn(Collections.singletonList(mock(Address.class)));
         activity.onLocationChanged(location);
-
-
     }
+
 }
 

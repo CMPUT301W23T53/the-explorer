@@ -1,12 +1,7 @@
 package com.example.theexplorer.ui.home;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.theexplorer.R;
-import com.example.theexplorer.services.QRCode;
-
-import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -15,44 +10,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.theexplorer.R;
 import com.example.theexplorer.services.Comment;
 import com.example.theexplorer.services.NewUserService;
-import com.example.theexplorer.services.QRCode;
-import com.example.theexplorer.services.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import com.example.theexplorer.services.NewUserService;
-
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -62,7 +34,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
     String qrId;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         // Get the selected QRCode object
         Map<String, Object> qrCode = (Map) getIntent().getSerializableExtra("qr_code_key");
 
