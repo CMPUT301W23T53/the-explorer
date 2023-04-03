@@ -168,7 +168,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
 
 
         // Initialize the ArrayAdapter and set it to the ListView
-        commentAdapter = new WhiteTextArrayAdapter(this, android.R.layout.simple_list_item_1, comments);
+        commentAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, comments);
 
 
         ListView commentListView = findViewById(R.id.comment_list_view);

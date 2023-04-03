@@ -5,9 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.DetailPageOfOneQR"
-    android:background="#1A1A1A"
-    android:textColor="@color/white">
+    tools:context=".ui.home.DetailPageOfOneQR">
 
     <TextView
         android:id="@+id/title_text_view"
@@ -18,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/white"/>
+        />
 
     <TextView
         android:id="@+id/qr_name"
@@ -27,7 +25,7 @@
         android:text="QR Name"
         app:layout_constraintTop_toBottomOf="@+id/title_text_view"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/white"/>
+        />
 
     <TextView
         android:id="@+id/qr_id"
@@ -35,8 +33,7 @@
         android:layout_height="wrap_content"
         android:text="QR ID"
         app:layout_constraintTop_toBottomOf="@+id/qr_name"
-        app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/white"/>
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/qr_score_for_detail"
@@ -44,8 +41,7 @@
         android:layout_height="wrap_content"
         android:text="QR Score"
         app:layout_constraintTop_toBottomOf="@+id/qr_id"
-        app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/white"/>
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/qr_location"
@@ -53,8 +49,7 @@
         android:layout_height="wrap_content"
         android:text="Latitude, Longitude"
         app:layout_constraintTop_toBottomOf="@id/qr_score_for_detail"
-        app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/white"/>
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <ImageView
         android:id="@+id/image_view_photo"
@@ -77,8 +72,7 @@
         android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_view_photo"
-        android:textColor="@color/white"/>
+        app:layout_constraintTop_toBottomOf="@+id/image_view_photo"/>
 
     <TextView
         android:id="@+id/vis_rep_forehead"
@@ -88,8 +82,7 @@
         android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vis_rep_top"
-        android:textColor="@color/white"/>
+        app:layout_constraintTop_toBottomOf="@+id/vis_rep_top"/>
 
     <TextView
         android:id="@+id/vis_rep_eyes"
@@ -99,8 +92,7 @@
         android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vis_rep_forehead"
-        android:textColor="@color/white"/>
+        app:layout_constraintTop_toBottomOf="@+id/vis_rep_forehead"/>
 
     <TextView
         android:id="@+id/vis_rep_mouth"
@@ -110,8 +102,7 @@
         android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vis_rep_eyes"
-        android:textColor="@color/white"/>
+        app:layout_constraintTop_toBottomOf="@+id/vis_rep_eyes"/>
 
     <TextView
         android:id="@+id/vis_rep_chin"
@@ -121,8 +112,7 @@
         android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vis_rep_mouth"
-        android:textColor="@color/white"/>
+        app:layout_constraintTop_toBottomOf="@+id/vis_rep_mouth"/>
 
     <TextView
         android:id="@+id/vis_rep_bot"
@@ -132,8 +122,7 @@
         android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vis_rep_chin"
-        android:textColor="@color/white"/>
+        app:layout_constraintTop_toBottomOf="@+id/vis_rep_chin"/>
 
 <!--    visual representation ends here-->
 
@@ -148,8 +137,7 @@
         android:text="Comments"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vis_rep_bot"
-        android:textColor="@color/white"/>
+        app:layout_constraintTop_toBottomOf="@+id/vis_rep_bot"/>
 
     <ListView
         android:id="@+id/comment_list_view"
@@ -158,8 +146,7 @@
         app:layout_constraintBottom_toTopOf="@id/add_comment_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/comments_title"
-        android:textColor="@color/white"/>
+        app:layout_constraintTop_toBottomOf="@+id/comments_title"/>
 
     <LinearLayout
         android:id="@+id/add_comment_container"
@@ -176,15 +163,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Add Comment"
-            android:inputType="text"
-            android:textColor="@color/white"/>
+            android:inputType="text"/>
 
         <Button
             android:id="@+id/add_comment_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add Comment"
-            android:textColor="@color/white"
             android:background="@drawable/rounded_button"/>
 
     </LinearLayout>
