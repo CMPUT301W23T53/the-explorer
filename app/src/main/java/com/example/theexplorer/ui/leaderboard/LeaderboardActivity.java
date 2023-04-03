@@ -128,7 +128,7 @@ public class LeaderboardActivity extends AppCompatActivity {
                         long score = (long) qrCode.get("qrscore");
                         sum += score;
                     }
-                    usersDataList.add(new RankingData(user.getUserId(),String.valueOf(sum),i,false));
+                    usersDataList.add(new RankingData(user.getUserId(),String.valueOf(sum),sum,false, null));
                     i++;
                     if (i > linesUpperBound) {
                         break;
@@ -136,28 +136,36 @@ public class LeaderboardActivity extends AppCompatActivity {
                 }
             }
             else {
+                ArrayList<String> uniqueQRCodes = new ArrayList<>();
                 for (User user : users) {
                     List<QRCode> arrayQRCode = user.getQRList();
-                    ArrayList<Long> uniqueQRCodes = new ArrayList<>();
                     for (int j = 0; j < arrayQRCode.size(); j++) {
                         Map<String, Object> qrCode = (Map<String, Object>) arrayQRCode.get(j);
 
                         String name = (String) qrCode.get("qrname");
                         Log.d("L", name);
 
-                        long score = (long) qrCode.get("qrscore");
-                        Long id = Long.getLong((String) qrCode.get("qrid"));
+                        Long score = (Long) qrCode.get("qrscore");
+                        String id = (String) qrCode.get("qrid");
+                        Log.d("L",(String) qrCode.get("qrid"));
                         if(!uniqueQRCodes.contains(id)){
-                            usersDataList.add(new RankingData(user.getUserId(),name,score,true));
+                            usersDataList.add(new RankingData(user.getUserId(),name,score,true,null));
                             uniqueQRCodes.add(id);
                         }
                     }
                 }
             }
             Collections.sort(usersDataList);
-            if ((!scoresDescending && totalScoreMode)|| (scoresDescending && !totalScoreMode)){
-                Collections.reverse(usersDataList);
+
+            if(scoresDescending){i = 1;}
+            else{i = usersDataList.size();}
+
+            for (RankingData data: usersDataList){
+                data.setRanking(i);
+                if(scoresDescending){i++;}
+                else{i--;}
             }
+
             usersAdapter.notifyDataSetChanged();
 
 

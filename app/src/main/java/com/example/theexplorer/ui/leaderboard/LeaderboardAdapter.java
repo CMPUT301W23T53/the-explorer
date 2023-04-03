@@ -51,11 +51,16 @@ public class LeaderboardAdapter extends ArrayAdapter<RankingData> {
         TextView title = view.findViewById(R.id.leaderboard_title);
         TextView subtitle = view.findViewById(R.id.leaderboard_subtitle);
 
-        ranking.setText(String.valueOf(data.getValue()));
+        ranking.setText(String.valueOf(data.getRanking()));
+
 
         NewUserService userService = new NewUserService();
         userService.getNameFromEmail(data.getUserID()).addOnSuccessListener(s -> {
-            title.setText(s);
+            String fin = s;
+            if(data.getIsQRCode()){
+                fin += System.lineSeparator() + "Score: " + data.getValue();
+            }
+            title.setText(fin);
             subtitle.setText(data.getSubtitle());
         });
         return view;
