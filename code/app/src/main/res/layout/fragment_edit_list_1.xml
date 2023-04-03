@@ -5,29 +5,38 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/text_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
-        android:id="@+id/text_id" />
+        android:fontFamily="@font/inter_thin"
+        android:textSize="24dp" />
+
     <TextView
+        android:id="@+id/text_score"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
-        android:id="@+id/text_score" />
+        android:fontFamily="@font/inter_thin"
+        android:textSize="24dp" />
+
     <TextView
+        android:id="@+id/text_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
-        android:id="@+id/text_name" />
+        android:fontFamily="@font/inter_thin"
+        android:textSize="24dp" />
+
     <TextView
+        android:id="@+id/text_latitude"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
-        android:id="@+id/text_latitude" />
+        android:fontFamily="@font/inter_thin"
+        android:textSize="24dp" />
+
     <TextView
+        android:id="@+id/text_longitude"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
-        android:id="@+id/text_longitude" />
+        android:fontFamily="@font/inter_thin"
+        android:textSize="24dp" />
 
 </LinearLayout>
