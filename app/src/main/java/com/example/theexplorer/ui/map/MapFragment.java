@@ -2,6 +2,7 @@ package com.example.theexplorer.ui.map;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -31,8 +32,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-
-import android.app.Activity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -144,7 +143,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnQRCod
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
-
+    /**
+     * Removes a marker from the map when its associated QR code is deleted.
+     * @param qrID the ID of the deleted QR code
+     */
     @Override
     public void onQRCodeDeleted(String qrID) {
         Marker marker = markersMap.get(qrID);
@@ -153,31 +155,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnQRCod
             markersMap.remove(qrID);
         }
     }
-
+    /**
+     * Resumes the MapView and its components when the activity is resumed.
+     */
     @Override
     public void onResume() {
         super.onResume();
         binding.map.onResume();
     }
-
+    /**
+     * Pauses the MapView and its components when the activity is paused.
+     */
     @Override
     public void onPause() {
         binding.map.onPause();
         super.onPause();
     }
-
+    /**
+     * Destroys the MapView and its components when the activity is destroyed.
+     */
     @Override
     public void onDestroy() {
         binding.map.onDestroy();
         super.onDestroy();
     }
-
+    /**
+     * Clears the MapView's cache when the device's memory is low.
+     */
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         binding.map.onLowMemory();
     }
-
+    /**
+     * Saves the last known location of the user in SharedPreferences.
+     * @param location the LatLng representing the user's location
+     */
     private void saveLastLocation(LatLng location) {
         Activity activity = getActivity();
         if (activity != null) {
@@ -189,7 +202,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnQRCod
         }
     }
 
-
+    /**
+     * Retrieves the last known location of the user from SharedPreferences.
+     * @return the LatLng representing the user's last known location
+     */
     private LatLng getLastLocation() {
         Activity activity = getActivity();
         if (activity != null) {

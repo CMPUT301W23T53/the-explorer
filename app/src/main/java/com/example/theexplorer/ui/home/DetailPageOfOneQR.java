@@ -46,6 +46,13 @@ public class DetailPageOfOneQR extends AppCompatActivity {
     String qrId;
     String userId;
     NewUserService userService = new NewUserService();
+    /**
+     * Called when the detail page of a QR code is created. This method initializes the UI components
+     * and displays the information related to the QR code. It also adds the comments to the ListView
+     * and provides functionality for adding a comment to the QR code.
+     * @param savedInstanceState the saved instance state bundle
+     */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,12 +233,20 @@ public class DetailPageOfOneQR extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * This method converts a byte array to a Bitmap image.
+     * @param bytes the byte array to be converted to a Bitmap image.
+     * @return the Bitmap image resulting from the conversion of the byte array.
+     */
     public Bitmap convertByteToBitmap(byte[] bytes) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         return bitmap;
     }
-
+    /**
+     * This method converts an ArrayList of Byte objects to a byte array.
+     * @param in the ArrayList of Byte objects to be converted to a byte array.
+     * @return the byte array resulting from the conversion of the ArrayList of Byte objects.
+     */
     public static byte[] toByteArray(ArrayList<Byte> in) {
         final int n = in.size();
         byte ret[] = new byte[n];
@@ -240,7 +255,11 @@ public class DetailPageOfOneQR extends AppCompatActivity {
         }
         return ret;
     }
-
+    /**
+     * This method converts an ArrayList of Double objects to a double array.
+     * @param doubles the ArrayList of Double objects to be converted to a double array.
+     * @return the double array resulting from the conversion of the ArrayList of Double objects.
+     */
     public static double[] toDoubleArray(ArrayList<Object> doubles) {
         double[] target = new double[doubles.size()];
         for (int i = 0; i < target.length; i++) {
@@ -252,7 +271,11 @@ public class DetailPageOfOneQR extends AppCompatActivity {
         }
         return target;
     }
-
+    /**
+     * This method converts a double array to a byte array.
+     * @param doubleArray the double array to be converted to a byte array.
+     * @return the byte array resulting from the conversion of the double array.
+     */
     public static byte[] toByteArray(double[] doubleArray) {
         int times = Double.SIZE / Byte.SIZE;
         byte[] bytes = new byte[doubleArray.length * times];
