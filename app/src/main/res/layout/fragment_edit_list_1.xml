@@ -8,13 +8,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24dp"
-        android:background="@color/white"
         android:id="@+id/text_id" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24dp"
-        android:background="@color/white"
         android:id="@+id/text_score" />
     <TextView
         android:layout_width="match_parent"
@@ -25,13 +23,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24dp"
-        android:background="@color/white"
         android:id="@+id/text_latitude" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24dp"
-        android:background="@color/white"
         android:id="@+id/text_longitude" />
 
 </LinearLayout>
