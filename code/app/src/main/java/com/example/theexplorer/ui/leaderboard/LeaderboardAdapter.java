@@ -17,14 +17,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
+/**
+ * Custom ArrayAdapter for displaying ranking data in the leaderboard ListView.
+ */
 public class LeaderboardAdapter extends ArrayAdapter<RankingData> {
 
     private Context context;
     public LeaderboardAdapter(@NonNull Context context, ArrayList<RankingData> content) {
         super(context, 0, content);
-
-        //this.truncatedUsers = content;
-        //this.context = context;
     }
 
     /**

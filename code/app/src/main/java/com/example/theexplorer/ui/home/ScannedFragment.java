@@ -38,6 +38,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+
+ ScannedFragment is an AppCompatActivity class that displays a list of scanned QR codes for the
+ current user. The list includes QR code details and options to view more information or delete
+ the QR code.
+ */
 public class ScannedFragment extends AppCompatActivity {
     ListView scannedListView;
     final NewUserService newUserService = new NewUserService();

@@ -24,6 +24,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ HomeFragment is a fragment class that serves as the main screen of the application. It contains
+ buttons to navigate to different parts of the app like viewing scores, scanned QR codes, and the
+ leaderboard.
+ */
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;

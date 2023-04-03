@@ -1,10 +1,5 @@
 package com.example.theexplorer.ui.leaderboard;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,11 +9,14 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.example.theexplorer.R;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
-import com.google.android.gms.tasks.OnFailureListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +24,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * LeaderboardActivity is an activity that displays a leaderboard of users
+ * based on either their total score or highest individual QR code score.
+ */
 public class LeaderboardActivity extends AppCompatActivity {
 
     //private Leaderboard leaderboard;

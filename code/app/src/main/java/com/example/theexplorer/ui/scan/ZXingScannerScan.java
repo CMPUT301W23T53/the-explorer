@@ -46,7 +46,10 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
 
-
+/**
+ * A class representing an activity that scans QR codes and handles the result.
+ * It also captures images and displays the current location of the device.
+ */
 public class ZXingScannerScan extends AppCompatActivity implements LocationListener {
     private Button scan;
     private ImageView preview;

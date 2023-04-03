@@ -36,6 +36,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * MapFragment is a class that extends Fragment and implements OnMapReadyCallback and OnQRCodeDeletedListener.
+ * It displays a GoogleMap with the user's current location and nearby QR codes.
+ */
 public class MapFragment extends Fragment implements OnMapReadyCallback, OnQRCodeDeletedListener {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;

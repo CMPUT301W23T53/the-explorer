@@ -39,7 +39,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * Activity for displaying the detail page of a selected QR code, including its comments and visual representation.
+ */
 public class DetailPageOfOneQR extends AppCompatActivity {
     private ArrayList<String> comments;
     private ArrayAdapter<String> commentAdapter;
@@ -196,22 +198,6 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                     comment.setCreatedAt(new Date());
                     comment.setQRId(qrId); // Set it to qrCode.getQRId()
                     comment.setContent(commentText);
-
-                    /** uncomment this to update comment when upload is successful. ie, we have newUserService.putComment(comment).addOnSuccessListener
-                     newUserService.putComment(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override public void onSuccess(Void aVoid) {
-                    // Add the new comment to the adapter's data set
-                    commentAdapter.add(commentText);
-
-                    // Clear the EditText
-                    editText.setText("");
-
-                    // Notify the adapter that the data set has changed
-                    commentAdapter.notifyDataSetChanged();
-                    }
-                    });
-                     */
-
                     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                     String userEmail1 = firebaseUser.getEmail();
 

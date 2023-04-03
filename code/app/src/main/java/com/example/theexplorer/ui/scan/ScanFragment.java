@@ -21,6 +21,10 @@ import android.widget.TextView;
 
 import com.example.theexplorer.databinding.FragmentScanBinding;
 
+/**
+ * A fragment that handles the scanning functionality of the app. It uses the ZXing library
+ * to perform barcode and QR code scanning.
+ */
 public class ScanFragment extends Fragment {
 
     private FragmentScanBinding binding;

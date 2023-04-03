@@ -23,10 +23,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Utility class that provides helper methods for handling images and files.
+ */
 public class Utils {
+    // Holds a reference to the image file.
     public static File image;
 
-
+    /**
+     * Retrieves the gallery path of the given URI and applies necessary modifications
+     * such as rotation based on the Exif information of the image.
+     *
+     * @param context The context used to access the content resolver.
+     * @param uri     The URI of the image to be processed.
+     * @return The modified URI with the correct gallery path.
+     */
     public static Uri getPathGallery(Context context, Uri uri) {
 
         String fileName = getFileName(context, uri);
@@ -42,7 +53,6 @@ public class Utils {
             String timeStamp =
                     new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_";
-//            File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
             File storageDir;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
@@ -92,7 +102,13 @@ public class Utils {
 
     }
 
-
+    /**
+     * Copies the content of the source InputStream to the target OutputStream.
+     *
+     * @param source The input stream to be copied.
+     * @param target The output stream where the content will be copied.
+     * @throws IOException If an I/O error occurs.
+     */
     public static void copyStream(InputStream source, OutputStream target) throws IOException {
         byte[] buf = new byte[8192];
         int length;
@@ -101,6 +117,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Retrieves the file name for the given URI.
+     *
+     * @param context The context used to access the content resolver.
+     * @param uri     The URI of the file.
+     * @return The file name with extension if available, otherwise a temporary file name with extension.
+     */
     public static String getFileName(Context context, Uri uri) {
         String fileName = getFileNameFromCursor(context, uri);
         if (fileName == null) {
@@ -113,11 +136,26 @@ public class Utils {
         return fileName;
     }
 
+    /**
+     * Retrieves the file extension for the given URI.
+     *
+     * @param context The context used to access the content resolver.
+     * @param uri     The URI of the file.
+     * @return The file extension, or null if not found.
+     */
+
     public static String getFileExtension(Context context, Uri uri) {
         String fileType = context.getContentResolver().getType(uri);
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(fileType);
     }
 
+    /**
+     * Retrieves the file name from the cursor for the given URI.
+     *
+     * @param context The context used to access the content resolver.
+     * @param uri     The URI of the file.
+     * @return The file name, or null if not found.
+     */
     public static String getFileNameFromCursor(Context context, Uri uri) {
         Cursor fileCursor = context.getContentResolver().query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null);
         String fileName = null;
@@ -128,9 +166,15 @@ public class Utils {
             }
         }
         return fileName;
-        // return Uri.fromFile(image);
     }
 
+    /**
+     * Rotates the given bitmap image by the specified angle.
+     *
+     * @param source The bitmap image to be rotated.
+     * @param angle  The rotation angle in degrees.
+     * @return The rotated bitmap image.
+     */
     public static Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
