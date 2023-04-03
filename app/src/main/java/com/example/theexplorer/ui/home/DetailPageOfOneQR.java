@@ -1,3 +1,12 @@
+/**
+ * The DetailPageOfOneQR activity displays the details of a selected QR code including its ID, name, score and location.
+ * It also displays a visual representation of the QR code's name using ASCII art.
+ * The comments for the QR code are retrieved from Firebase and displayed in a ListView.
+ * Users can add comments to the QR code using an EditText and a Button.
+ * The activity extends AppCompatActivity and implements the onCreate method to create the activity.
+ * It also initializes the comments ArrayList, commentAdapter ArrayAdapter and other variables used in the activity.
+ */
+
 package com.example.theexplorer.ui.home;
 
 import android.graphics.Bitmap;
@@ -17,7 +26,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.theexplorer.R;
 import com.example.theexplorer.services.Comment;
 import com.example.theexplorer.services.NewUserService;
+
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -32,14 +44,15 @@ public class DetailPageOfOneQR extends AppCompatActivity {
     private ArrayList<String> comments;
     private ArrayAdapter<String> commentAdapter;
     String qrId;
+    String userId;
+    NewUserService userService = new NewUserService();
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         // Get the selected QRCode object
         Map<String, Object> qrCode = (Map) getIntent().getSerializableExtra("qr_code_key");
 
-//        Intent intent = getIntent();
-//        QRCode qrCode = intent.getParcelableExtra("qr_code_key");
+        userId = getIntent().getStringExtra("userId");
 
 
         super.onCreate(savedInstanceState);
@@ -127,7 +140,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                 // Convert the List<Comment> to ArrayList<String> and store it in the comments variable
                 ArrayList<String> commentStrings = new ArrayList<>();
                 for (Comment comment : comments) {
-                    commentStrings.add(comment.getContent() +" - " + "waiting function to get user id");
+                    commentStrings.add(comment.getContent() + " - " + comment.getUserId());
                 }
 
                 // Update the ArrayAdapter with the new comments data
@@ -140,6 +153,8 @@ public class DetailPageOfOneQR extends AppCompatActivity {
 
         // Initialize the ArrayAdapter and set it to the ListView
         commentAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, comments);
+
+
         ListView commentListView = findViewById(R.id.comment_list_view);
         commentListView.setAdapter(commentAdapter);
 
@@ -159,6 +174,10 @@ public class DetailPageOfOneQR extends AppCompatActivity {
             }
         }
 
+        /**
+         * Add Comment button logic. When add, we send the qrcode data to Firebase
+         */
+
         Button addComment = findViewById(R.id.add_comment_button);
         addComment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,11 +189,7 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                     comment.setCreatedAt(new Date());
                     comment.setQRId(qrId); // Set it to qrCode.getQRId()
                     comment.setContent(commentText);
-                    comment.setUserId("waiting function to get user id");
-                    NewUserService newUserService = new NewUserService();
-                    newUserService.putComment(comment);
 
-                    editText.setText(""); // clear EditText
                     /** uncomment this to update comment when upload is successful. ie, we have newUserService.putComment(comment).addOnSuccessListener
                      newUserService.putComment(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override public void onSuccess(Void aVoid) {
@@ -190,8 +205,22 @@ public class DetailPageOfOneQR extends AppCompatActivity {
                     });
                      */
 
-                    commentAdapter.insert(commentText+" - "+"waiting function to get user id", 0);
-                    commentAdapter.notifyDataSetChanged();
+                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                    String userEmail1 = firebaseUser.getEmail();
+
+                    userService.getNameFromEmail(userEmail1).addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String userName) {
+                            comment.setUserId(userName);
+                            NewUserService newUserService = new NewUserService();
+                            newUserService.putComment(comment);
+
+                            editText.setText("");
+
+                            commentAdapter.insert(commentText + " - " + userName, 0);
+                            commentAdapter.notifyDataSetChanged();
+                        }
+                    });
                 }
             }
         });

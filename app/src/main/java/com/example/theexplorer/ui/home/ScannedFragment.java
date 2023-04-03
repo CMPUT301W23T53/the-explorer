@@ -1,3 +1,8 @@
+/**
+ * The ScannedFragment class extends AppCompatActivity and represents a fragment of the home page UI
+ * It displays a list of QR codes that the user has scanned.
+ */
+
 package com.example.theexplorer.ui.home;
 
 import android.content.DialogInterface;
@@ -41,6 +46,10 @@ public class ScannedFragment extends AppCompatActivity {
 
     FirebaseFirestore firebaseFirestore;
 
+    /**
+     * Called when the activity is starting
+     * @param savedInstanceState - the saved instance state
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -55,6 +64,10 @@ public class ScannedFragment extends AppCompatActivity {
         userEmail1 = firebaseUser.getEmail();
 
         newUserService.getUser(userEmail1).addOnSuccessListener(new OnSuccessListener<User>() {
+            /**
+             * Called when the user data has been successfully fetched from Firebase
+             * @param fetchUser - the fetched user
+             */
             @Override
             public void onSuccess(User fetchUser) {
                 user[0] = fetchUser;
@@ -69,15 +82,29 @@ public class ScannedFragment extends AppCompatActivity {
 
     }
 
+    /**
+     * The custom ArrayAdapter for displaying the list of QR codes
+     */
     private class MyListAdapter extends ArrayAdapter<QRCode> {
 
         List<QRCode> items;
 
+        /**
+         * Constructs a new MyListAdapter object with the given list of QR codes
+         * @param items - list of QR codes
+         */
         public MyListAdapter(List<QRCode> items) {
             super(ScannedFragment.this, 0, items);
             this.items = items;
         }
 
+        /**
+         * Returns the view for the list item at the specified position
+         * @param position - position of the list item
+         * @param convertView - the old view to reuse, if possible
+         * @param parent - the parent view
+         * @return - the view for the list item at the specified position
+         */
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
@@ -143,8 +170,10 @@ public class ScannedFragment extends AppCompatActivity {
                     builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            String qrId = (String) selectedItem.get("qrid");
                             List<QRCode> qrCodeList = user[0].getQRList();
                             qrCodeList.remove(selectedItem);
+                            newUserService.deleteQrcodeByID(qrId);
                             newUserService.putUser(user[0]);
                             notifyDataSetChanged();
                         }
@@ -198,6 +227,10 @@ public class ScannedFragment extends AppCompatActivity {
         }
     }
 
+    /**
+     * UsersListAdapter is an ArrayAdapter implementation that displays a list of Strings
+     * for the ScannedFragment class.
+     */
     private class UsersListAdapter extends ArrayAdapter<String> {
 
         List<String> items;
@@ -207,6 +240,13 @@ public class ScannedFragment extends AppCompatActivity {
             this.items = items;
         }
 
+        /**
+         * Returns a View that displays the data at the specified position in the data set.
+         * @param position The position of the item within the adapter's data set of the item whose view we want.
+         * @param convertView The old view to reuse, if possible.
+         * @param parent The parent that this view will eventually be attached to.
+         * @return A View corresponding to the data at the specified position.
+         */
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {

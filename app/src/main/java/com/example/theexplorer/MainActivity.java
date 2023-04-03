@@ -6,17 +6,14 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.theexplorer.ui.home.HomeFragment;
 import com.example.theexplorer.ui.map.MapFragment;
 import com.example.theexplorer.ui.profile.ProfileFragment;
 import com.example.theexplorer.ui.scan.ZXingScannerScan;
-import com.example.theexplorer.services.UserService;
 import com.example.theexplorer.ui.search.SearchActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -28,15 +25,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.theexplorer.databinding.ActivityMainBinding;
-import com.google.android.material.navigation.NavigationBarView;
-
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-
-    final private UserService userService = new UserService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

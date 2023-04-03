@@ -40,7 +40,11 @@ public class LeaderboardActivity extends AppCompatActivity {
     // note that this upper bound can +1 if the user is not in the list.
     private int linesUpperBound = 50;
 
-
+    /**
+     * Initializes the Leaderboard activity, including the ListView, Spinner, and associated components.
+     * Sets up the pull-to-refresh functionality and Spinner listeners.
+     * @param savedInstanceState The saved instance state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,10 +107,6 @@ public class LeaderboardActivity extends AppCompatActivity {
                 ;
             }
         });
-
-
-
-
     }
 
 

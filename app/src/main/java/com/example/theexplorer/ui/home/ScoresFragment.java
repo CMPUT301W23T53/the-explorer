@@ -2,8 +2,6 @@ package com.example.theexplorer.ui.home;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +10,6 @@ import com.example.theexplorer.R;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
-import com.example.theexplorer.services.UserService;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,7 +47,7 @@ public class ScoresFragment extends AppCompatActivity {
                     if (getHighestQRScore(arrayQRCode) == -1) {
                         highestScoreTextView.setText("No codes scanned");
                     } else {
-                        highestScoreTextView.setText(String.valueOf(getHighestQRScore(arrayQRCode)));
+                        highestScoreTextView.setText("Score: " + String.valueOf(getHighestQRScore(arrayQRCode)));
                         TextView highName = (TextView) findViewById(R.id.high_score_name);
                         highName.setText(getHighestQRScoreName(arrayQRCode));
                     }
@@ -59,7 +56,7 @@ public class ScoresFragment extends AppCompatActivity {
                     if (getLowestQRScore(arrayQRCode) == Integer.MAX_VALUE) {
                         low.setText("No codes scanned");
                     } else {
-                        low.setText(String.valueOf(getLowestQRScore(arrayQRCode)));
+                        low.setText("Score: " + String.valueOf(getLowestQRScore(arrayQRCode)));
                         TextView lowName = findViewById(R.id.low_score_name);
                         lowName.setText(getLowestQRScoreName(arrayQRCode));
                     }

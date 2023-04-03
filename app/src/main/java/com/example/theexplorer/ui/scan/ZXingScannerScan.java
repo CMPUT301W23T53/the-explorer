@@ -4,18 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -34,7 +30,6 @@ import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.QRCodeNameGenerator;
 import com.example.theexplorer.services.User;
-import com.example.theexplorer.services.UserService;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,9 +43,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 
@@ -312,6 +305,10 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
 
     }
 
+    /**
+     * Generates a bitmap that displays "Image not found" message for testing purposes.
+     * @return a bitmap that displays "Image not found" message.
+     */
     public Bitmap notFound() {
         //creating a testing bit map it can be used when no result is returned
         Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
@@ -325,6 +322,10 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         return bitmap;
     }
 
+    /**
+     * Generates a default image view that displays "Take a picture" message.
+     * @return a bitmap that displays "Take a picture" message.
+     */
     public Bitmap takePhoto() {
         //creatig a defalt image view
         Bitmap bitmap1 = Bitmap.createBitmap(400, 300, Bitmap.Config.ARGB_8888);
@@ -338,6 +339,13 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         return bitmap1;
     }
 
+    /**
+     * Calculates a score for the given QR code content based on a predefined strategy.
+     * Currently, each '&' is counted as 1, each '=' is counted as 1, and each '/' is counted as 1.
+     * In addition, each digit is counted based on its value, and each letter is counted based on its ASCII value.
+     * @param result the IntentResult object that contains the QR code content.
+     * @return an integer value representing the calculated score.
+     */
     public int calculateScore(IntentResult result) {
         String content = result.getContents();
         int theScore = 0;
@@ -361,6 +369,10 @@ public class ZXingScannerScan extends AppCompatActivity implements LocationListe
         return theScore;
     }
 
+    /**
+     * Generates a bitmap of a black and white checkerboard pattern with the text "HIDDEN" in the center.
+     * @return a bitmap of a black and white checkerboard pattern with the text "HIDDEN" in the center.
+     */
     public Bitmap makeUpQR() {
         Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
