@@ -81,7 +81,8 @@ public class DetailPageTest {
     @Test
     public void checkQRName() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click statistics button and show activity_scores
+        // click show code button and show scanded codes
+        solo.clickOnView(solo.getView(R.id.button_view_codes));
         ListView listView = (ListView) solo.getView(R.id.listview_scanned);
         int index = 0; // select the first item
         solo.clickInList(index);
@@ -102,13 +103,14 @@ public class DetailPageTest {
     @Test
     public void checkRep() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click statistics button and show activity_scores
+        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click show code button and show scanded codes
         ListView listView = (ListView) solo.getView(R.id.listview_scanned);
         int index = 0; // select the first item
         solo.clickInList(index);
         solo.clickOnButton("More");
         // Verify that the dialog is dismissed and the previous activity is resumed
         assertTrue(solo.waitForActivity(DetailPageOfOneQR.class));
+        // verify the represent is show up
         TextView repTopText = (TextView) solo.getView(R.id.vis_rep_top);
         String repTop = repTopText.getText().toString();
         assertNotNull(repTop);
@@ -123,17 +125,18 @@ public class DetailPageTest {
     @Test
     public void checkComment() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click statistics button and show activity_scores
+        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click show code button and show scanded codes
         ListView listView = (ListView) solo.getView(R.id.listview_scanned);
         int index = 0; // select the first item
         solo.clickInList(index);
         solo.clickOnButton("More");
         // Verify that the dialog is dismissed and the previous activity is resumed
         assertTrue(solo.waitForActivity(DetailPageOfOneQR.class));
+        //add a comment for test
         solo.enterText((EditText) solo.getView(R.id.comment_edit_text), "Test");
         solo.clickOnView(solo.getView(R.id.add_comment_button));
         solo.waitForText("Test", 1, 2000);
-
+        //verify the comment is added
         ListView commentList = (ListView) solo.getView(R.id.comment_list_view);
         String comment = (String) commentList.getItemAtPosition(0); // Get item from first position
         assertTrue("Test", comment.contains("Test"));
@@ -150,10 +153,11 @@ public class DetailPageTest {
     @Test
     public void checkOtherUser() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click statistics button and show activity_scores
+        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click show code button and show scanded codes
         ListView listView = (ListView) solo.getView(R.id.listview_scanned);
         int index = 0; // select the first item
         solo.clickInList(index);
+        //verify the user list is show up
         ListView userListView = (ListView) solo.getView(R.id.listview_users);
         assertNotNull(userListView);
 
@@ -167,7 +171,7 @@ public class DetailPageTest {
     @Test
     public void checkRemove() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
-        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click statistics button and show activity_scores
+        solo.clickOnView(solo.getView(R.id.button_view_codes)); // click show code button and show scanded codes
         ListView listView = (ListView) solo.getView(R.id.listview_scanned);
         int initialCount = listView.getCount();
 
