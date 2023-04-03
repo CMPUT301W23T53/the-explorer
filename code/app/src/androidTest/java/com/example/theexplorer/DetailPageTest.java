@@ -35,6 +35,7 @@ import java.util.HashMap;
  *
  * Assumes at least 1 code has been scanned to show off the information required in each US.
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DetailPageTest {
     private Solo solo;
 
@@ -169,7 +170,7 @@ public class DetailPageTest {
      * This test case is assuming the user has at least 1 code added to show the QR list view.
      */
     @Test
-    public void checkRemove() {
+    public void checkZRemove() {
         solo.assertCurrentActivity("Wrong Activity", MainActivity.class);
         solo.clickOnView(solo.getView(R.id.button_view_codes)); // click show code button and show scanded codes
         ListView listView = (ListView) solo.getView(R.id.listview_scanned);
