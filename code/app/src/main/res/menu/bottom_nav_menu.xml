@@ -3,13 +3,22 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/baseline_home_24" />
+        android:icon="@drawable/home"
+        android:height="100dp"
+        android:width="100dp"
+        android:gravity="center"/>
     <item
         android:id="@+id/navigation_scan"
-        android:icon="@drawable/baseline_camera_alt_24" />
+        android:icon="@drawable/scan"
+        android:height="100dp"
+        android:width="100dp"
+        android:gravity="center"/>
 
     <item
         android:id="@+id/navigation_map"
-        android:icon="@drawable/baseline_map_24" />
+        android:icon="@drawable/map"
+        android:height="100dp"
+        android:width="100dp"
+        android:gravity="center"/>
 
 </menu>

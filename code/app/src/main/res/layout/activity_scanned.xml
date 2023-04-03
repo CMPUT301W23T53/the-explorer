@@ -5,13 +5,19 @@
 
     <TextView
         android:id="@+id/your_scanned_title"
-        android:layout_width="match_parent"
+        android:layout_width="289dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="61dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="@font/inter_thin"
         android:gravity="center"
-        android:layout_margin="20dp"
         android:text="Your Scanned Codes"
         android:textColor="@color/white"
-        android:background="@drawable/rounded_button"
         android:textSize="24dp" />
 
     <ListView
