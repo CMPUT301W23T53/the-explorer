@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +19,10 @@ import com.example.theexplorer.R;
 import com.example.theexplorer.services.NewUserService;
 import com.example.theexplorer.services.QRCode;
 import com.example.theexplorer.services.User;
+import com.example.theexplorer.ui.profile.ProfilesActivity;
+import com.example.theexplorer.ui.search.SearchActivity;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,7 +88,19 @@ public class LeaderboardActivity extends AppCompatActivity {
                 ;
             }
         });
+
+        usersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent goToUser = new Intent(LeaderboardActivity.this, ProfilesActivity.class);
+                userService.getNameFromEmail(usersDataList.get(i).getUserID()).addOnSuccessListener(s -> {
+                    goToUser.putExtra("userName1", s);
+                    startActivity(goToUser);
+                }).addOnFailureListener(e -> Toast.makeText(LeaderboardActivity.this,"Network error. Please try again.", Toast.LENGTH_SHORT).show());
+            }
+        });
     }
+
 
 
     @Override
